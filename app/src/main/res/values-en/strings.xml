@@ -945,11 +945,12 @@
     <string name="lan_scanner_log_audit_warn_creds">WARN: admin/admin found!</string>
     <string name="lan_scanner_log_audit_wps">Checking WPS status...</string>
     <string name="lan_scanner_log_audit_warn_wps">WARN: WPS V1 Enabled</string>
-    <string name="welcome_dialog_title">Welcome to Deadcow</string>
-    <string name="welcome_dialog_text">Your Deadcow reached Level 1 !\n\nDeadcow is a free Android app for mobile pentesting that doesn\'t require Root rights. We recommend subscribing to the developer\'s Telegram channel so you don\'t miss updates!</string>
+    <string name="welcome_dialog_title">Welcome to Deadcow Tool</string>
+    <string name="welcome_dialog_text">Your Deadcow reached Level 1 !\n\nDeadcow Tool is a free Android app for mobile pentesting that doesn\'t require root rights.\n\nJoin our Discord community for support, announcements and releases!</string>
+    <string name="welcome_dialog_btn_discord">Join Discord (cdcleak)</string>
     <string name="welcome_dialog_btn_tg">Subscribe to TG</string>
-    <string name="welcome_dialog_btn_support">Support</string>
-    <string name="welcome_dialog_btn_ok">Got it</string>
+    <string name="welcome_dialog_btn_support">GitHub &amp; Support</string>
+    <string name="welcome_dialog_btn_ok">Open Deadcow Tool</string>
 
     
     <string name="qr_generator_title">QR Code Generator</string>

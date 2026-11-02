@@ -934,11 +934,12 @@
     <string name="lan_scanner_log_audit_wps">Проверка статуса WPS...</string>
     <string name="lan_scanner_log_audit_warn_wps">ВНИМАНИЕ: WPS V1 включен</string>
     <string name="brand_unknown">Неизвестно</string>
-    <string name="welcome_dialog_title">Добро пожаловать в Deadcow</string>
-    <string name="welcome_dialog_text">Ваш Deadcow получил уровень 1 !\n\nDeadcow - бесплатное Андроид-приложение для мобильного пентестинга, не требующее Root-прав. Советуем подписаться на Telegram-канал разработчика, чтобы не пропустить обновления!</string>
+    <string name="welcome_dialog_title">Добро пожаловать в Deadcow Tool</string>
+    <string name="welcome_dialog_text">Ваш Deadcow получил уровень 1 !\n\nDeadcow Tool - бесплатное приложение для мобильного пентестинга без root-прав.\n\nПрисоединяйтесь к нашему Discord (cdcleak) для поддержки и обновлений!</string>
+    <string name="welcome_dialog_btn_discord">Discord (cdcleak)</string>
     <string name="welcome_dialog_btn_tg">Подписаться на TG</string>
-    <string name="welcome_dialog_btn_support">Поддержать</string>
-    <string name="welcome_dialog_btn_ok">Понятно</string>
+    <string name="welcome_dialog_btn_support">GitHub</string>
+    <string name="welcome_dialog_btn_ok">Открыть Deadcow Tool</string>
 
     
     <string name="qr_generator_title">Генератор QR кодов</string>

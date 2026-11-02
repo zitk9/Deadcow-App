@@ -73,6 +73,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
@@ -763,8 +764,8 @@ fun MainScreen(
         } else {
             WelcomeDialog(
                 onDismiss = { spamViewModel.completeWelcomeDialog() },
-                onSubscribe = {
-                    runCatching { uriHandler.openUri("https://zitk9.github.io/Deadcow-App/") }
+                onDiscord = {
+                    runCatching { uriHandler.openUri("https://discord.gg/cdcleak") }
                 },
                 onSupport = {
                     runCatching { uriHandler.openUri("https://github.com/zitk9/Deadcow-App") }
@@ -2878,64 +2879,150 @@ fun LevelUpAnimation(modifier: Modifier = Modifier) {
 @Composable
 fun WelcomeDialog(
     onDismiss: () -> Unit,
-    onSubscribe: () -> Unit,
+    onDiscord: () -> Unit,
     onSupport: () -> Unit
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(
-                stringResource(R.string.welcome_dialog_title),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = primaryColor.copy(alpha = 0.15f),
+                    border = BorderStroke(1.dp, primaryColor.copy(alpha = 0.4f)),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        text = "CDC LEAK • EDITION",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            letterSpacing = 2.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = primaryColor,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.welcome_dialog_title),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center
+                )
+            }
         },
         text = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                LevelUpAnimation(modifier = Modifier.size(128.dp, 64.dp))
-                Spacer(Modifier.height(16.dp))
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.Black,
+                    border = BorderStroke(2.dp, primaryColor.copy(alpha = 0.7f)),
+                    shadowElevation = 6.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 6.dp)
+                    ) {
+                        LevelUpAnimation(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(84.dp)
+                        )
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
                 Text(
-                    stringResource(R.string.welcome_dialog_text),
+                    text = stringResource(R.string.welcome_dialog_text),
                     style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
         confirmButton = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 2.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AccentButton(
-                    onClick = onSubscribe,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                // Bouton Discord Officiel (Blurple / Highlighted)
+                Button(
+                    onClick = onDiscord,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF5865F2),
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
                 ) {
-                    Text(stringResource(R.string.welcome_dialog_btn_tg))
-                }
-                AccentButton(
-                    onClick = onSupport,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.Default.AttachMoney, null)
+                    Icon(
+                        painter = painterResource(R.drawable.ic_discord),
+                        contentDescription = "Discord",
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.welcome_dialog_btn_support))
+                    Text(
+                        text = "discord.gg/cdcleak",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall
+                    )
                 }
+
+                // Bouton GitHub & Assistance
+                OutlinedButton(
+                    onClick = onSupport,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Code,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.welcome_dialog_btn_support),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                // Bouton Principal d'entrée
                 AccentButton(
                     onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp)
                 ) {
-                    Text(stringResource(R.string.welcome_dialog_btn_ok))
+                    Text(
+                        text = stringResource(R.string.welcome_dialog_btn_ok),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall
+                    )
                 }
             }
         },
-        shape = RoundedCornerShape(28.dp)
+        shape = RoundedCornerShape(28.dp),
+        containerColor = MaterialTheme.colorScheme.surface
     )
 }
 

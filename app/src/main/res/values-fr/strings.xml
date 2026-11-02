@@ -871,13 +871,12 @@ Sous licence GNU GPL.</string>
     <string name="lan_scanner_log_audit_warn_creds">AVERTISSEMENT : admin/admin trouvé !</string>
     <string name="lan_scanner_log_audit_wps">Vérification de l\'état WPS...</string>
     <string name="lan_scanner_log_audit_warn_wps">AVERTISSEMENT : WPS V1 activé</string>
-    <string name="welcome_dialog_title">Bienvenue sur Deadcow</string>
-    <string name="welcome_dialog_text">Votre Deadcow a atteint le Niveau 1 !
-
-Deadcow est une application Android gratuite pour le pentest mobile qui ne nécessite aucun droit Root.</string>
+    <string name="welcome_dialog_title">Bienvenue sur Deadcow Tool</string>
+    <string name="welcome_dialog_text">Votre Deadcow a atteint le Niveau 1 !\n\nDeadcow Tool est une application Android gratuite pour le pentest mobile sans aucun droit root requis.\n\nRejoignez notre communauté sur Discord pour le support, les annonces et les releases exclusives !</string>
+    <string name="welcome_dialog_btn_discord">Rejoindre Discord (cdcleak)</string>
     <string name="welcome_dialog_btn_tg">Abonnez-vous à TG</string>
-    <string name="welcome_dialog_btn_support">Assistance</string>
-    <string name="welcome_dialog_btn_ok">Je l\'ai compris</string>
+    <string name="welcome_dialog_btn_support">GitHub &amp; Assistance</string>
+    <string name="welcome_dialog_btn_ok">Accéder à Deadcow Tool</string>
     <string name="qr_generator_title">Générateur de codes QR</string>
     <string name="qr_generator_desc">Créez et enregistrez vos codes QR</string>
     <string name="qr_generator_main_title">Générateur de QR</string>
