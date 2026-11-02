@@ -198,13 +198,17 @@ jobs:
         run: |
           gh release delete v9.1 -y || true
           gh release delete v10.1 -y || true
-          gh release create v1.0-pre --prerelease --title "Deadcow v1.0 Pre-Release" --notes "### 🐮 Deadcow Android Pre-Release v1.0
+          RELEASE_BODY=$(cat << 'EOF'
+          ### 🐮 Deadcow Android Pre-Release v1.0
 
-- **Nom** : Deadcow
-- **Version** : v1.0-pre
-- **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
-- **Mascotte** : Vache Deadcow.
-- **APK officiel Deadcow** : Téléchargez \`Deadcow-release.apk\` ci-dessous." || true
+          - **Nom** : Deadcow
+          - **Version** : v1.0-pre
+          - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
+          - **Mascotte** : Vache Deadcow.
+          - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
+          EOF
+          )
+          gh release create v1.0-pre --prerelease --title "Deadcow v1.0 Pre-Release" --notes "$RELEASE_BODY" || gh release edit v1.0-pre --prerelease --title "Deadcow v1.0 Pre-Release" --notes "$RELEASE_BODY" || true
 
           if [ -f Deadcow-release.apk ]; then
             echo "Uploading fresh Deadcow APK to release v1.0-pre..."
@@ -212,4 +216,3 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
