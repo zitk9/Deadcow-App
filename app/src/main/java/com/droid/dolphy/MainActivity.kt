@@ -838,12 +838,12 @@ fun MainScaffold(
     val hasBtHardware = remember {
         (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter != null
     }
+    val appStyleMode by spamViewModel.appStyleMode.collectAsState()
     val navBackStackEntry by screenNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route.orEmpty()
     val visibleRoute = currentRoute.ifEmpty { if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth" }
     val sectionTopBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val appStyleMode by spamViewModel.appStyleMode.collectAsState()
 
     LaunchedEffect(visibleRoute) {
         sectionTopBarScrollBehavior.state.heightOffset = 0f

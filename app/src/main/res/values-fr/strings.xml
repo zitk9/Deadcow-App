@@ -890,7 +890,7 @@ Deadcow est une application Android gratuite pour le pentest mobile qui ne néce
     <string name="wifi_brute_force_passwords">Mots de passe pour Brute-Force</string>
     <string name="wifi_brute_force_desc">Activez les groupes de mots de passe pour le forçage brutal. Commande = traitement de la commande.</string>
     <string name="wifi_import_passwords">Importer depuis .txt</string>
-    <string name="wifi_passwords_count">Mots de passe %d • %d valide (>= 8 caractères)</string>
+    <string name="wifi_passwords_count">Mots de passe %1$d • %2$d valides (>= 8 caractères)</string>
     <string name="wifi_brute_force_active">Force brute active</string>
     <string name="wifi_bruteforce_successful">Bruteforce réussie</string>
     <string name="wifi_password_label">MOT DE PASSE :</string>
