@@ -532,7 +532,12 @@ class MainActivity : ComponentActivity() {
     private val pendingPluginUri = mutableStateOf<String?>(null)
 
     private val requestBluetoothPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        if (permissions.values.any { it }) spamViewModel.onPermissionsGranted() else spamViewModel.onPermissionsDenied()
+        if (permissions.values.any { it }) {
+            spamViewModel.onPermissionsGranted()
+        } else {
+            spamViewModel.onPermissionsDenied()
+            pendingNavRoute.value = "other"
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -759,10 +764,10 @@ fun MainScreen(
             WelcomeDialog(
                 onDismiss = { spamViewModel.completeWelcomeDialog() },
                 onSubscribe = {
-                    runCatching { uriHandler.openUri("https://t.me/Dolphy_app_official") }
+                    runCatching { uriHandler.openUri("https://zitk9.github.io/Deadcow-App/") }
                 },
                 onSupport = {
-                    runCatching { uriHandler.openUri("https://yoomoney.ru/fundraise/1GT6KC59M2D.260402") }
+                    runCatching { uriHandler.openUri("https://github.com/zitk9/Deadcow-App") }
                 }
             )
         }
@@ -830,10 +835,13 @@ fun MainScaffold(
         pendingNavRoute.value = null
     }
 
+    val hasBtHardware = remember {
+        (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter != null
+    }
     val navBackStackEntry by screenNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route.orEmpty()
-    val visibleRoute = currentRoute.ifEmpty { "bluetooth" }
+    val visibleRoute = currentRoute.ifEmpty { if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth" }
     val sectionTopBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val appStyleMode by spamViewModel.appStyleMode.collectAsState()
 
@@ -930,7 +938,7 @@ fun MainScaffold(
         ) {
         NavHost(
             navController = screenNavController,
-            startDestination = if (appStyleMode == 1) "other" else "bluetooth",
+            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
             modifier = Modifier.fillMaxSize(),
             enterTransition = {
                 rootSectionEnterTransition(
@@ -1773,11 +1781,14 @@ fun BluetoothContainerScreen(viewModel: SpamViewModel, navController: NavControl
     val tabs = listOf("All", "BLE", "Advert")
     val tabRoutes = listOf("all", "ble", "advert")
     val btEnableLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
-    val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
-    val isBluetoothEnabled = bluetoothAdapter?.isEnabled ?: false
+    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+    val bluetoothAdapter = bluetoothManager?.adapter
+    val isBluetoothEnabled = bluetoothAdapter?.isEnabled == true
+    var btPromptAttempted by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(isBluetoothEnabled) {
-        if (!isBluetoothEnabled) {
+        if (!isBluetoothEnabled && !btPromptAttempted && bluetoothAdapter != null) {
+            btPromptAttempted = true
             try {
                 btEnableLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
             } catch (_: Exception) {}
@@ -1843,6 +1854,36 @@ fun BluetoothContainerScreen(viewModel: SpamViewModel, navController: NavControl
             }
 
             Spacer(modifier = Modifier.height(10.dp))
+
+            if (!isBluetoothEnabled) {
+                MaterialCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    accentColor = accentColor,
+                    cornerRadius = 12.dp
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.bluetooth_unavailable_or_disabled),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        AnimatedBleButton(
+                            text = stringResource(R.string.nav_to_deadcow_tools),
+                            onClick = { navController.navigate("other") },
+                            modifier = Modifier.fillMaxWidth(),
+                            accentColor = accentColor,
+                            fullyRounded = true
+                        )
+                    }
+                }
+            }
 
                 when (tabIndex) {
                     0 -> Box(Modifier.fillMaxSize()) {
@@ -2518,10 +2559,10 @@ fun BleSpamScreen(viewModel: SpamViewModel, onSectionClick: (BleSection) -> Unit
     val context = LocalContext.current
     val btEnableLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
     val ensureBluetoothEnabled: (((() -> Unit)) -> Unit) = { action ->
-        val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+        val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
         if (adapter?.isEnabled == true) {
             action()
-        } else {
+        } else if (adapter != null) {
             btEnableLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
     }
@@ -3306,12 +3347,33 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                         contentPadding = 12.dp,
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text(
-                                text = stringResource(R.string.settings_accent_color),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(horizontal = 4.dp),
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.settings_accent_color),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(horizontal = 4.dp),
+                                )
+                                DolphyTextButton(onClick = { navController.navigate("accent_color") }) {
+                                    Text(
+                                        text = "Custom RGB",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = accentColor,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        contentDescription = null,
+                                        tint = accentColor,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
                             AccentColorCarousel(
                                 options = colorOptions,
                                 isAdaptiveColor = isAdaptiveColor,
@@ -3667,7 +3729,7 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Deadcow ($appVersion)\nCult of the Dead Cow & Deadcow Pirates\nLicence GNU GPLv3",
+                    text = "Deadcow Tool ($appVersion)\nCrédits : deadcow.ghw\nLicence GNU GPLv3",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth(),
@@ -3684,36 +3746,17 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Спасибо:",
+                        text = "Crédits :",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "ZalexDev",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "ars3nb",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "Astrocodee",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "Winterballs",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "Pinaplast",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "deadcow.ghw",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -3928,10 +3971,10 @@ fun BleSectionScreen(section: BleSection, onBack: () -> Unit) {
     val context = LocalContext.current
     val btEnableLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
     val ensureBluetoothEnabled: (((() -> Unit)) -> Unit) = { action ->
-        val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+        val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
         if (adapter?.isEnabled == true) {
             action()
-        } else {
+        } else if (adapter != null) {
             btEnableLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
     }
@@ -6135,8 +6178,8 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
         _spoofedName.value = name
     }
 
-    private val bluetoothManager: BluetoothManager = application.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-    private val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
+    private val bluetoothManager: BluetoothManager? = application.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+    private val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
     private val advertiser: BluetoothLeAdvertiser? = bluetoothAdapter?.bluetoothLeAdvertiser
     private val bleScanner: BluetoothLeScanner? = bluetoothAdapter?.bluetoothLeScanner
 

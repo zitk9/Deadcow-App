@@ -347,24 +347,25 @@ object DolphyRepository {
 }
 
 private val dolphinNameLeft = listOf(
-    "ancient", "hollow", "strange", "disappeared", "unknown", "unthinkable", "unnameable",
-    "nameless", "my", "concealed", "forgotten", "hidden", "mysterious", "obscure",
-    "random", "remote", "uncharted", "undefined", "untraveled", "untold"
+    "cyber", "ghost", "matrix", "shadow", "dead", "bovine", "stealth", "crypto",
+    "null", "root", "dark", "zero", "byte", "iron", "phantom", "atomic"
 )
 
 private val dolphinNameRight = listOf(
-    "door",
-    "entrance",
-    "doorway",
-    "entry",
-    "portal",
-    "entree",
-    "opening",
-    "crack",
-    "access",
-    "corridor",
-    "passage",
-    "port",
+    "cow",
+    "bull",
+    "heifer",
+    "skull",
+    "daemon",
+    "spoofer",
+    "jammer",
+    "agent",
+    "beacon",
+    "proxy",
+    "breaker",
+    "payload",
+    "node",
+    "core",
 )
 
 private fun generateDolphinName(): String {

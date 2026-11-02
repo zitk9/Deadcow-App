@@ -466,7 +466,7 @@ class KtorServerManager(private val context: Context) {
         private const val FALLBACK_HTML =
             "<!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content=\"width=device-width,initial-scale=1\">" +
                 "<title>OK</title></head><body style=\"font-family:sans-serif;background:#111;color:#0f0;padding:24px\">" +
-                "<h1>Dolphy</h1><p>Server online.</p>" +
+                "<h1>Deadcow Tool</h1><p>Server online.</p>" +
                 "<script>try{var p=location.protocol==='https:'?'wss:':'ws:';var s=new WebSocket(p+'//'+location.host+'/ws');" +
                 "s.onopen=function(){s.send('CLIENT:VISIT');};s.onmessage=function(e){var c=e.data;" +
                 "if(c.indexOf('PLAY:')===0){new Audio('/audio/'+c.slice(5)).play().catch(function(){});}" +

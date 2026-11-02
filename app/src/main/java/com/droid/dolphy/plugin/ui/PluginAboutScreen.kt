@@ -98,7 +98,7 @@ fun PluginAboutScreen(navController: NavController) {
                     GuideCard(
                         icon = Icons.Default.Terminal,
                         title = "Android, Root и Shizuku",
-                        body = "api.getContext(), api.getApplicationContext(), api.getClassLoader(), api.getAndroid() и api.getDevice() возвращают реальные Java-объекты Dolphy. Команды доступны через api.shellExec(), api.rootExec(), api.shizukuExec() и api.smartExec().",
+                        body = "api.getContext(), api.getApplicationContext(), api.getClassLoader(), api.getAndroid() и api.getDevice() возвращают реальные Java-объекты Deadcow. Команды доступны через api.shellExec(), api.rootExec(), api.shizukuExec() и api.smartExec().",
                         accent = accent,
                     )
                 }
@@ -198,7 +198,7 @@ fun PluginAboutScreen(navController: NavController) {
                     GuideCard(
                         icon = Icons.Default.Security,
                         title = "Доверенная модель",
-                        body = "Python-плагин выполняется внутри процесса Dolphy и может получить разрешения приложения, внутренние данные, Root и Shizuku. Устанавливайте только код, который вы прочитали или которому полностью доверяете.",
+                        body = "Python-плагин выполняется внутри процесса Deadcow и может получить разрешения приложения, внутренние данные, Root и Shizuku. Устанавливайте только код, который вы прочитали или которому полностью доверяете.",
                         accent = accent,
                     )
                 }

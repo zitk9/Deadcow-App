@@ -30,7 +30,7 @@ class IppHttpTransport : IppClientTransport {
         connection.requestMethod = "POST"
         connection.setRequestProperty("Content-Type", "application/ipp")
         connection.setRequestProperty("Accept", "application/ipp")
-        connection.setRequestProperty("User-Agent", "Dolphy/2.3 IPP")
+        connection.setRequestProperty("User-Agent", "Deadcow/1.1 IPP")
         connection.setChunkedStreamingMode(64 * 1024)
         connection.doOutput = true
 
@@ -77,7 +77,7 @@ class IppPrinterClient(
             Types.copiesSupported,
             Types.pwgRasterDocumentResolutionSupported,
             Types.pwgRasterDocumentSheetBack,
-        ).putOperationAttributes(Types.requestingUserName.of("Dolphy")).build()
+        ).putOperationAttributes(Types.requestingUserName.of("Deadcow")).build()
         val response = transport.sendData(uri, IppPacketData(request)).packet
         requireSuccess(response)
         val group = Tag.printerAttributes
@@ -108,7 +108,7 @@ class IppPrinterClient(
     ): PrintResult {
         val uri = URI.create(printer.uri)
         val operationAttributes = listOf(
-            Types.requestingUserName.of("Dolphy"),
+            Types.requestingUserName.of("Deadcow"),
             Types.jobName.of(documentName.take(200)),
             Types.documentFormat.of(document.mimeType),
             Types.ippAttributeFidelity.of(true),

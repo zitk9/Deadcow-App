@@ -14,7 +14,7 @@ class BluetoothPhantomSpammer : Spammer {
         "iPhone 15 Pro Max",
         "Tesla Model 3",
         "Sony WH-1000XM5",
-        "Dolphy Phantom",
+        "Deadcow Phantom",
         "AirPods Pro",
         "Samsung S24 Ultra",
         "Google Pixel 8",

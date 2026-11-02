@@ -2,7 +2,9 @@
 <resources>
     <string name="ble_plugin_modes">Плагины</string>
     <string name="advertise_empty_presets">Вы пока не добавили ни одного устройства.</string>
-    <string name="app_name">Deadcow</string>
+    <string name="app_name">Deadcow Tool</string>
+    <string name="bluetooth_unavailable_or_disabled">Bluetooth недоступен или отключен на этом устройстве / VM.</string>
+    <string name="nav_to_deadcow_tools">Перейти к инструментам Deadcow</string>
     <string name="nav_modules">Функции</string>
     <string name="settings_personalisation">Персонализация</string>
     <string name="settings_functions_menu_view">Вид меню функций</string>
@@ -567,7 +569,7 @@
     <string name="smarttv_cast_title">SmartTV Cast</string>
     <string name="spam_status_current">Сейчас: %s</string>
     <string name="spam_status_empty">Сейчас: —</string>
-    <string name="splash_app_name">Deadcow</string>
+    <string name="splash_app_name">Deadcow Tool</string>
     <string name="start">Старт</string>
     <string name="stop">Стоп</string>
     <string name="success">Успешно</string>

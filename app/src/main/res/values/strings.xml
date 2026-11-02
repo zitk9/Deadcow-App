@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ble_plugin_modes">Plugins</string>
-    <string name="app_name">Deadcow</string>
+    <string name="app_name">Deadcow Tool</string>
+    <string name="bluetooth_unavailable_or_disabled">Bluetooth non disponible ou désactivé sur cet appareil / VM.</string>
+    <string name="nav_to_deadcow_tools">Accéder aux Outils Deadcow</string>
     <string name="nav_bluetooth">Bluetooth</string>
     <string name="nav_modules">Fonctions</string>
     <string name="settings_personalisation">Personnalisation</string>
@@ -534,7 +536,7 @@
     <string name="zero_js_not_implemented">JS Runner n\'est pas implémenté dans la version Android</string>
     <string name="zero_updater_firmware">Le programme de mise à jour est uniquement disponible dans le firmware</string>
     <string name="zero_u2f_not_supported">U2F n\'est pas pris en charge dans la version Android</string>
-    <string name="splash_app_name">Deadcow</string>
+    <string name="splash_app_name">Deadcow Tool</string>
     <string name="ble_smart_home">Maison intelligente BLE</string>
     <string name="ble_smart_light">Lumière intelligente</string>
     <string name="ble_allow">Autoriser</string>
