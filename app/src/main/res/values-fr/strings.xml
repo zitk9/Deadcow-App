@@ -1048,6 +1048,4 @@ Deadcow est une application Android gratuite pour le pentest mobile qui ne néce
     <string name="customize_animations_permanent_badge">Permanent</string>
     <string name="customize_animations_set_success">Animation définie comme permanente sur l\'écran d\'accueil</string>
     <string name="customize_animations_reset_success">Animation réinitialisée en mode standard</string>
-    <string name="language_french">Français</string>
-    <string name="language_english">English</string>
 </resources>
