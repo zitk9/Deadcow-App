@@ -974,6 +974,9 @@ fun MainScaffold(
                 "settings"
             ) { SettingsScreen(spamViewModel, dolphyViewModel, screenNavController) }
             composable(
+                "accent_color"
+            ) { AccentColorScreen(spamViewModel) { screenNavController.popBackStack() } }
+            composable(
                 "other"
             ) { OtherScreen(screenNavController, spamViewModel) }
 
@@ -1627,7 +1630,8 @@ private fun isSettingsSectionRoute(route: String): Boolean {
     if (route == "plugin_manager" || route == "plugin_security" ||
         route == "plugin_about" ||
         route == "plugin_install_helper" ||
-        route == "customize_animations"
+        route == "customize_animations" ||
+        route == "accent_color"
     ) {
         return true
     }
@@ -1876,6 +1880,7 @@ fun BluetoothContainerScreen(viewModel: SpamViewModel, navController: NavControl
                         Spacer(modifier = Modifier.height(8.dp))
                         AnimatedBleButton(
                             text = stringResource(R.string.nav_to_deadcow_tools),
+                            isActive = false,
                             onClick = { navController.navigate("other") },
                             modifier = Modifier.fillMaxWidth(),
                             accentColor = accentColor,
