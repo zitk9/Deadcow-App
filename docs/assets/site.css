@@ -320,7 +320,7 @@ h1 { max-width: 780px; margin: 0; font-size: clamp(50px, 6.5vw, 88px); line-heig
 .docs-cta img { border-radius: 23px; }
 .docs-cta p { margin: 3px 0 0; }
 
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s var(--ease), transform .75s var(--ease); }
+.reveal { opacity: 1; transform: none; transition: opacity .75s var(--ease), transform .75s var(--ease); }
 .reveal.visible { opacity: 1; transform: none; }
 .delay-one { transition-delay: .12s; }
 
