@@ -201,3 +201,14 @@ jobs:
             build_output.log
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync Documentation to gh-pages
+        if: github.ref == 'refs/heads/main' && success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          TREE=$(git rev-parse HEAD:docs)
+          COMMIT=$(git commit-tree "$TREE" -m "chore(pages): deploy website from main docs [skip ci]")
+          git push origin "$COMMIT":refs/heads/gh-pages --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
