@@ -149,9 +149,8 @@ jobs:
           fi
 
           if [ "$BUILD_SUCCESS" = "false" ]; then
-            echo "Direct compilation failed, fallback to base official release APK..."
-            curl -sSL "https://github.com/unvoiddd/Dolphy-App/releases/download/2.6/app-release.apk" -o Deadcow-release.apk
-            echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
+            echo "ERROR: Gradle compilation failed to produce a Deadcow APK." >&2
+            exit 1
           fi
           echo "APK successfully prepared at Deadcow-release.apk"
         env:
