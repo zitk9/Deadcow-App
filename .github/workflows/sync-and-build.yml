@@ -199,6 +199,8 @@ jobs:
           gh release delete v9.1 -y || true
           gh release delete v10.1 -y || true
           gh release delete v11.1 -y || true
+          gh release delete v1.0-pre -y || true
+          gh release delete-asset v1.1-pre Deadcow-v1.0-pre.apk -y || true
           RELEASE_BODY=$(cat << 'EOF'
           ### 🐮 Deadcow Android Pre-Release v1.1
 
