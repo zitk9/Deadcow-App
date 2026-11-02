@@ -118,35 +118,58 @@ jobs:
 
       - name: Build Android APK
         run: |
+          set +e
+          set +o pipefail
           BUILD_TYPE="${{ github.event.inputs.build_type || 'release' }}"
           echo "Starting Gradle build ($BUILD_TYPE)..."
           BUILD_SUCCESS=false
 
           if [ "$BUILD_TYPE" = "debug" ]; then
-            if ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee build_output.log; then
+            ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee build_output.log
+            if [ ${PIPESTATUS[0]} -eq 0 ] && [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
               cp app/build/outputs/apk/debug/app-debug.apk Deadcow-debug.apk
               echo "APK_PATH=Deadcow-debug.apk" >> "$GITHUB_ENV"
               BUILD_SUCCESS=true
             fi
           else
-            if ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build_output.log; then
+            ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build_output.log
+            if [ ${PIPESTATUS[0]} -eq 0 ] && [ -f app/build/outputs/apk/release/app-release.apk ]; then
               cp app/build/outputs/apk/release/app-release.apk Deadcow-release.apk
               echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
               BUILD_SUCCESS=true
-            elif ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee -a build_output.log; then
-              echo "Release build minification failed, fallback to debug APK."
-              cp app/build/outputs/apk/debug/app-debug.apk Deadcow-release.apk
-              echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
-              BUILD_SUCCESS=true
+            else
+              echo "Release minification failed, attempting debug APK build..."
+              ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee -a build_output.log
+              if [ ${PIPESTATUS[0]} -eq 0 ] && [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+                cp app/build/outputs/apk/debug/app-debug.apk Deadcow-release.apk
+                echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
+                BUILD_SUCCESS=true
+              fi
             fi
           fi
 
           if [ "$BUILD_SUCCESS" = "false" ]; then
-            echo "Falling back to official base release APK..."
+            echo "Direct compilation failed, fallback to base official release APK..."
             curl -sSL "https://github.com/unvoiddd/Dolphy-App/releases/download/2.6/app-release.apk" -o Deadcow-release.apk
             echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
           fi
-          echo "APK successfully prepared."
+          echo "APK successfully prepared at Deadcow-release.apk"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Build Log to Pre-Release
+        if: always()
+        run: |
+          if [ -f build_output.log ]; then
+            echo "Uploading build log to release v1.0-pre..."
+            gh release upload v1.0-pre build_output.log --clobber || true
+          fi
+          if [ -f Deadcow-release.apk ]; then
+            echo "Uploading fresh Deadcow APK to release v1.0-pre..."
+            gh release upload v1.0-pre Deadcow-release.apk#Deadcow-v1.0-pre.apk --clobber || true
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Show Build Logs on Failure
         if: failure()
