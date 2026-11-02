@@ -160,12 +160,12 @@ jobs:
         if: always()
         run: |
           if [ -f build_output.log ]; then
-            echo "Uploading build log to release v1.0-pre..."
-            gh release upload v1.0-pre build_output.log --clobber || true
+            echo "Uploading build log to release v1.1-pre..."
+            gh release upload v1.1-pre build_output.log --clobber || true
           fi
           if [ -f Deadcow-release.apk ]; then
-            echo "Uploading fresh Deadcow APK to release v1.0-pre..."
-            gh release upload v1.0-pre Deadcow-release.apk#Deadcow-v1.0-pre.apk --clobber || true
+            echo "Uploading fresh Deadcow APK to release v1.1-pre..."
+            gh release upload v1.1-pre Deadcow-release.apk --clobber || true
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -193,26 +193,27 @@ jobs:
           path: ${{ env.APK_PATH }}
           retention-days: 30
 
-      - name: Update Pre-Release v1.0
+      - name: Update Pre-Release v1.1
         if: github.ref == 'refs/heads/main'
         run: |
           gh release delete v9.1 -y || true
           gh release delete v10.1 -y || true
+          gh release delete v11.1 -y || true
           RELEASE_BODY=$(cat << 'EOF'
-          ### 🐮 Deadcow Android Pre-Release v1.0
+          ### 🐮 Deadcow Android Pre-Release v1.1
 
           - **Nom** : Deadcow
-          - **Version** : v1.0-pre
+          - **Version** : v1.1-pre
           - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
           - **Mascotte** : Vache Deadcow.
           - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
           EOF
           )
-          gh release create v1.0-pre --prerelease --title "Deadcow v1.0 Pre-Release" --notes "$RELEASE_BODY" || gh release edit v1.0-pre --prerelease --title "Deadcow v1.0 Pre-Release" --notes "$RELEASE_BODY" || true
+          gh release create v1.1-pre --prerelease --title "Deadcow v1.1 Pre-Release" --notes "$RELEASE_BODY" || gh release edit v1.1-pre --prerelease --title "Deadcow v1.1 Pre-Release" --notes "$RELEASE_BODY" || true
 
           if [ -f Deadcow-release.apk ]; then
-            echo "Uploading fresh Deadcow APK to release v1.0-pre..."
-            gh release upload v1.0-pre Deadcow-release.apk --clobber
+            echo "Uploading fresh Deadcow APK to release v1.1-pre..."
+            gh release upload v1.1-pre Deadcow-release.apk --clobber
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
