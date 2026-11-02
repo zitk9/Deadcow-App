@@ -1,0 +1,61 @@
+name: Publish Pre-Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Pre-Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Prepare Deadcow Release APK
+        run: |
+          echo "Downloading upstream release APK..."
+          curl -sSL "https://github.com/unvoiddd/Dolphy-App/releases/download/2.6/app-release.apk" -o Deadcow-v1.0-pre.apk
+          ls -lh Deadcow-v1.0-pre.apk
+
+      - name: Create GitHub Pre-Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Deadcow v1.0-pre (Cult of the Dead Cow & Deadcow Group)"
+          prerelease: true
+          draft: false
+          body: |
+            ### 🐮 Deadcow Android — Pré-release v1.0-pre
+            
+            Bienvenue sur la première pré-release de **Deadcow** ! Développée pour la communauté du **Cult of the Dead Cow (cDc)** et le groupe français de pirates **Deadcow**.
+            
+            ---
+            
+            #### 📦 Ce qui est inclus :
+            * **Deadcow-v1.0-pre.apk** : Paquet complet Android prêt à installer.
+            * **Support multilingue** : Français (par défaut), Anglais et Russe.
+            * **Arsenal sans-fil & pentest matériel** :
+              - Bluetooth Low Energy (BLE) : scanner, spam d'appairage multi-OS (iOS, Android, Windows, Samsung, etc.).
+              - Sous-GHz & Radio : passerelle Flipper Zero, analyseurs de spectre.
+              - Infrarouge (IR) : bibliothèque complète de télécommandes et émetteurs IR USB.
+              - Bad USB / Duckyscript : exécution et éditeur de payloads.
+              - Wi-Fi : scanner de réseaux et audit.
+              - NFC : lecture, émulation et analyse de badges Type 4.
+            * **100% Hors-ligne** : Zéro dépendance cloud, aucun pistage ni télémétrie.
+            
+            ---
+            
+            #### 📲 Guide d'installation :
+            1. Téléchargez le fichier **`Deadcow-v1.0-pre.apk`** ci-dessous.
+            2. Ouvrez le fichier sur votre smartphone Android.
+            3. Si nécessaire, autorisez l'installation d'applications inconnues pour votre navigateur ou gestionnaire de fichiers.
+            4. Cliquez sur **Installer** et explorez !
+          files: Deadcow-v1.0-pre.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
