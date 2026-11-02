@@ -185,9 +185,11 @@ val syncNmapMacPrefixes = tasks.register("syncNmapMacPrefixes") {
 }
 
 val syncFlipperIrAssets = tasks.register<Copy>("syncFlipperIrAssets") {
-    from(flipperIrAssetsSrc)
-    into(flipperIrAssetsDst)
-    include("*.ir")
+    if (flipperIrAssetsSrc.exists()) {
+        from(flipperIrAssetsSrc)
+        into(flipperIrAssetsDst)
+        include("*.ir")
+    }
 }
 
 tasks.named("preBuild") {

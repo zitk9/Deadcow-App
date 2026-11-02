@@ -108,9 +108,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Accept Android SDK Licenses
+      - name: Accept Android SDK Licenses & Install Components
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" 2>/dev/null || true
 
       - name: Grant Execute Permission to Gradlew
         run: chmod +x gradlew
@@ -120,14 +121,30 @@ jobs:
           BUILD_TYPE="${{ github.event.inputs.build_type || 'release' }}"
           echo "Starting Gradle build ($BUILD_TYPE)..."
           if [ "$BUILD_TYPE" = "debug" ]; then
-            ./gradlew :app:assembleDebug --stacktrace
+            ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee build_output.log
             cp app/build/outputs/apk/debug/app-debug.apk Deadcow-debug.apk
             echo "APK_PATH=Deadcow-debug.apk" >> "$GITHUB_ENV"
           else
-            ./gradlew :app:assembleRelease --stacktrace
+            ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build_output.log
             cp app/build/outputs/apk/release/app-release.apk Deadcow-release.apk
             echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
           fi
+
+      - name: Show Build Logs on Failure
+        if: failure()
+        run: |
+          if [ -f build_output.log ]; then
+            echo "=== Gradle Build Logs (Failure) ==="
+            tail -n 250 build_output.log
+          fi
+
+      - name: Upload Build Log Artifact on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Deadcow-Build-Log
+          path: build_output.log
+          retention-days: 7
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
