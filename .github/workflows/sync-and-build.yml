@@ -156,20 +156,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Build Log to Pre-Release
-        if: always()
-        run: |
-          if [ -f build_output.log ]; then
-            echo "Uploading build log to release v1.1-pre..."
-            gh release upload v1.1-pre build_output.log --clobber || true
-          fi
-          if [ -f Deadcow-release.apk ]; then
-            echo "Uploading fresh Deadcow APK to release v1.1-pre..."
-            gh release upload v1.1-pre Deadcow-release.apk --clobber || true
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Show Build Logs on Failure
         if: failure()
         run: |
@@ -187,35 +173,31 @@ jobs:
           retention-days: 7
 
       - name: Upload APK Artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Deadcow-APK
           path: ${{ env.APK_PATH }}
           retention-days: 30
 
-      - name: Update Pre-Release v1.1
-        if: github.ref == 'refs/heads/main'
-        run: |
-          gh release delete v9.1 -y || true
-          gh release delete v10.1 -y || true
-          gh release delete v11.1 -y || true
-          gh release delete v1.0-pre -y || true
-          gh release delete-asset v1.1-pre Deadcow-v1.0-pre.apk -y || true
-          RELEASE_BODY=$(cat << 'EOF'
-          ### 🐮 Deadcow Android Pre-Release v1.1
+      - name: Publish Pre-Release v1.1
+        if: github.ref == 'refs/heads/main' && success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1-pre
+          name: "Deadcow v1.1 Pre-Release"
+          prerelease: true
+          make_latest: true
+          body: |
+            ### 🐮 Deadcow Android Pre-Release v1.1
 
-          - **Nom** : Deadcow
-          - **Version** : v1.1-pre
-          - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
-          - **Mascotte** : Vache Deadcow.
-          - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
-          EOF
-          )
-          gh release create v1.1-pre --prerelease --title "Deadcow v1.1 Pre-Release" --notes "$RELEASE_BODY" || gh release edit v1.1-pre --prerelease --title "Deadcow v1.1 Pre-Release" --notes "$RELEASE_BODY" || true
-
-          if [ -f Deadcow-release.apk ]; then
-            echo "Uploading fresh Deadcow APK to release v1.1-pre..."
-            gh release upload v1.1-pre Deadcow-release.apk --clobber
-          fi
+            - **Nom** : Deadcow
+            - **Version** : v1.1-pre
+            - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
+            - **Mascotte** : Vache Deadcow.
+            - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
+          files: |
+            Deadcow-release.apk
+            build_output.log
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
