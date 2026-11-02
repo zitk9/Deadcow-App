@@ -90,7 +90,7 @@ fun functionDestinationSections(): List<Pair<String, List<FunctionDestination>>>
             FunctionDestination(Icons.Default.BluetoothAudio, audioScanTitle, audioScanDesc, "other/audio_scanner", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.ElectricScooter, scooterTitle, scooterDesc, "other/scooter_hack", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.Bluetooth, "NRF Scanner", nrfDesc, "other/nrf_scanner", OtherSections.BLUETOOTH),
-            FunctionDestination(Icons.Default.Chat, "Dolphy Chat", chatDesc, "other/dolphy_chat_global", OtherSections.BLUETOOTH),
+            FunctionDestination(Icons.Default.Chat, "Deadcow Chat", chatDesc, "other/dolphy_chat_global", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.Keyboard, hidTitle, hidDesc, "hid", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.BluetoothDisabled, "Bluetooth Jammer", "L2CAP flood attack", "other/bluetooth_jammer", OtherSections.BLUETOOTH),
         ) + plugins(OtherSections.BLUETOOTH)

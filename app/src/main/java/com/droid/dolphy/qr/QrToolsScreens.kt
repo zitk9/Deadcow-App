@@ -481,7 +481,7 @@ fun QrAudioSpooferScreen(
     var expanded by remember { mutableStateOf(false) }
     val customHtmlName by viewModel.customHtmlName.collectAsState()
     val pages = listOf(
-        "dolphy" to "Dolphy (Default)",
+        "dolphy" to "Deadcow (Default)",
         "wifi" to "Free WiFi",
         "error" to "Error (Chrome style)",
         "vpn" to "VPN Service",

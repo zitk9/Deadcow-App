@@ -608,7 +608,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
 
 
                 Text(
-                    text = "Dolphy Chat",
+                    text = "Deadcow Chat",
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold
@@ -701,7 +701,7 @@ fun DolphyChatMainScreen(userName: String, navController: NavController) {
         Column(modifier = Modifier.fillMaxSize()) {
             SectionTopBar(
                 transparent = true,
-                title = "Dolphy Chat",
+                title = "Deadcow Chat",
                 onBack = { navController.popBackStack() }
             )
 

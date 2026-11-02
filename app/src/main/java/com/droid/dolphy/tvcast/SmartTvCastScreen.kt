@@ -757,7 +757,7 @@ private fun sendDlnaRequest(device: CastDevice, videoUrl: String) {
 }
 
 private fun buildDlnaMetaData(videoUrl: String): String {
-    val title = "Dolphy Cast"
+    val title = "Deadcow Cast"
     val didl = """
         <DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"
          xmlns:dc="http://purl.org/dc/elements/1.1/"

@@ -75,7 +75,7 @@ fun GlobalChatScreen(navController: NavController) {
         Column(modifier = Modifier.fillMaxSize()) {
             SectionTopBar(
                 transparent = true,
-                title = "Dolphy Chat",
+                title = "Deadcow Chat",
                 onBack = {
                     chatManager.stopAdvertising()
                     chatManager.stopScanning()

@@ -192,7 +192,7 @@ private fun MatrixSplashContent() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Dolphy",
+                text = "Deadcow",
                 color = Color.White.copy(alpha = titleAlpha),
                 fontSize = 38.sp,
                 fontWeight = FontWeight.Bold,

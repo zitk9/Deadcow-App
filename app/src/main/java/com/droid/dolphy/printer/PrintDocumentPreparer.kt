@@ -284,7 +284,7 @@ private class TestPage(width: Int, height: Int) : RenderablePage(width, height) 
                 widthPixels * 0.015f,
                 accent,
             )
-            canvas.drawText("Dolphy Wi-Fi Print", widthPixels * 0.08f, heightPixels * 0.21f - yOffset, title)
+            canvas.drawText("Deadcow Wi-Fi Print", widthPixels * 0.08f, heightPixels * 0.21f - yOffset, title)
             canvas.drawText("IPP Everywhere test page", widthPixels * 0.08f, heightPixels * 0.28f - yOffset, body)
             canvas.drawText("Connection and raster printing are working.", widthPixels * 0.08f, heightPixels * 0.34f - yOffset, body)
             canvas.drawText(java.time.LocalDateTime.now().toString(), widthPixels * 0.08f, heightPixels * 0.40f - yOffset, body)

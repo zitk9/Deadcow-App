@@ -193,19 +193,23 @@ jobs:
           path: ${{ env.APK_PATH }}
           retention-days: 30
 
-      - name: Create GitHub Release
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || needs.sync.outputs.has_updates == 'true')
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ github.run_number }}.${{ github.run_attempt }}
-          name: "Deadcow Release v${{ github.run_number }}"
-          body: |
-            ### 🐮 Deadcow Android Release
-            
-            - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
-            - **Mascotte** : Deadcow Cow.
-            - **Synchronisation amont** : Automatique depuis `unvoiddd/Dolphy-App`.
-            - **APK inclus** : Téléchargez `${{ env.APK_PATH }}` ci-dessous et installez-le sur votre appareil Android.
-          files: ${{ env.APK_PATH }}
+      - name: Update Pre-Release v1.0
+        if: github.ref == 'refs/heads/main'
+        run: |
+          gh release delete v9.1 -y || true
+          gh release delete v10.1 -y || true
+          gh release create v1.0-pre --prerelease --title "Deadcow v1.0 Pre-Release" --notes "### 🐮 Deadcow Android Pre-Release v1.0
+
+- **Nom** : Deadcow
+- **Version** : v1.0-pre
+- **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
+- **Mascotte** : Vache Deadcow.
+- **APK officiel Deadcow** : Téléchargez \`Deadcow-release.apk\` ci-dessous." || true
+
+          if [ -f Deadcow-release.apk ]; then
+            echo "Uploading fresh Deadcow APK to release v1.0-pre..."
+            gh release upload v1.0-pre Deadcow-release.apk --clobber
+          fi
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

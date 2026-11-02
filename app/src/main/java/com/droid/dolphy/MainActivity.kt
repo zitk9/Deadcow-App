@@ -3286,7 +3286,7 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                     val isAdaptiveColor by spamViewModel.isAdaptiveColor.collectAsState()
                     val colorOptions = remember {
                         val base = listOf(
-                            SettingColorOption("Dolphy", OrangeAccent),
+                            SettingColorOption("Deadcow", OrangeAccent),
                             SettingColorOption("Red", RedThemeAccent),
                             SettingColorOption("Green", GreenThemeAccent),
                             SettingColorOption("Purple", PurpleThemeAccent),
@@ -4106,7 +4106,7 @@ fun AccentColorScreen(viewModel: SpamViewModel, onNavigateBack: () -> Unit) {
 
     data class Theme(val name: String, val accent: Color, val gradientColors: List<Color>, val isAdaptive: Boolean = false)
     val baseThemes = listOf(
-        Theme("Dolphy", OrangeAccent, listOf(OrangeAccent, Color(0xFFFF6600), Color(0xFFFF3300))),
+        Theme("Deadcow", OrangeAccent, listOf(OrangeAccent, Color(0xFFFF6600), Color(0xFFFF3300))),
         Theme("Red", RedThemeAccent, listOf(Color.Red, Color(0xFF990000), Color.Black)),
         Theme("Green", GreenThemeAccent, listOf(Color.Green, Color.Yellow, Color.Green)),
         Theme("Purple", PurpleThemeAccent, listOf(Color(0xFF8800FF), Color(0xFF4400FF), PurpleThemeAccent)),

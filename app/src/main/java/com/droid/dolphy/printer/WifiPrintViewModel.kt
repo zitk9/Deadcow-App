@@ -142,7 +142,7 @@ class WifiPrintViewModel(application: Application) : AndroidViewModel(applicatio
     fun printTestPage() {
         val snapshot = _state.value
         val capabilities = snapshot.capabilities ?: return
-        executePrint("Dolphy test page") {
+        executePrint("Deadcow test page") {
             preparer.prepareTestPage(capabilities, snapshot.options)
         }
     }
