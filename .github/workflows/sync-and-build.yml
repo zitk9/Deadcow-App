@@ -164,6 +164,20 @@ jobs:
             tail -n 250 build_output.log
           fi
 
+      - name: Push Build Log to Branch on Failure
+        if: failure()
+        run: |
+          if [ -f build_output.log ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git checkout -B build-log
+            git add -f build_output.log
+            git commit -m "chore(ci): build failure log [skip ci]" || true
+            git push origin build-log --force || true
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Build Log Artifact on Failure
         if: failure()
         uses: actions/upload-artifact@v4
