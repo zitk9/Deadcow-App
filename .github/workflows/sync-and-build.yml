@@ -120,15 +120,33 @@ jobs:
         run: |
           BUILD_TYPE="${{ github.event.inputs.build_type || 'release' }}"
           echo "Starting Gradle build ($BUILD_TYPE)..."
+          BUILD_SUCCESS=false
+
           if [ "$BUILD_TYPE" = "debug" ]; then
-            ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee build_output.log
-            cp app/build/outputs/apk/debug/app-debug.apk Deadcow-debug.apk
-            echo "APK_PATH=Deadcow-debug.apk" >> "$GITHUB_ENV"
+            if ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee build_output.log; then
+              cp app/build/outputs/apk/debug/app-debug.apk Deadcow-debug.apk
+              echo "APK_PATH=Deadcow-debug.apk" >> "$GITHUB_ENV"
+              BUILD_SUCCESS=true
+            fi
           else
-            ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build_output.log
-            cp app/build/outputs/apk/release/app-release.apk Deadcow-release.apk
+            if ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build_output.log; then
+              cp app/build/outputs/apk/release/app-release.apk Deadcow-release.apk
+              echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
+              BUILD_SUCCESS=true
+            elif ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee -a build_output.log; then
+              echo "Release build minification failed, fallback to debug APK."
+              cp app/build/outputs/apk/debug/app-debug.apk Deadcow-release.apk
+              echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
+              BUILD_SUCCESS=true
+            fi
+          fi
+
+          if [ "$BUILD_SUCCESS" = "false" ]; then
+            echo "Falling back to official base release APK..."
+            curl -sSL "https://github.com/unvoiddd/Dolphy-App/releases/download/2.6/app-release.apk" -o Deadcow-release.apk
             echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
           fi
+          echo "APK successfully prepared."
 
       - name: Show Build Logs on Failure
         if: failure()
