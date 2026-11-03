@@ -21,8 +21,8 @@ android {
         applicationId = "com.droid.deadcow"
         minSdk = 26
         targetSdk = 36
-        versionCode = 33
-        versionName = "1.6"
+        versionCode = 34
+        versionName = "1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
