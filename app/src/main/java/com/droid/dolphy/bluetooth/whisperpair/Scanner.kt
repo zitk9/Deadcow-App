@@ -15,12 +15,20 @@ class Scanner(
 ) {
     companion object {
         private const val TAG = "WhisperPairScanner"
+        private const val SCAN_TIMEOUT_MS = 15_000L
         val FAST_PAIR_SERVICE_UUID: ParcelUuid = ParcelUuid.fromString("0000fe2c-0000-1000-8000-00805f9b34fb")
     }
 
     private var isScanning = false
     private var scanAllDevices = false
-    private val scanner = bluetoothAdapter?.bluetoothLeScanner
+    private val scanner get() = bluetoothAdapter?.bluetoothLeScanner
+    private val timeoutHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val timeoutRunnable = Runnable {
+        if (isScanning) {
+            Log.d(TAG, "Auto-stopping BLE scan after timeout (${SCAN_TIMEOUT_MS}ms) to prevent battery drain")
+            stopScanning()
+        }
+    }
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -148,17 +156,20 @@ class Scanner(
             .build()
 
         return try {
+            val activeScanner = scanner ?: return false
             if (scanAll) {
-                scanner.startScan(null, settings, scanCallback)
+                activeScanner.startScan(null, settings, scanCallback)
                 Log.d(TAG, "Scanning ALL BLE devices")
             } else {
                 val filter = ScanFilter.Builder()
                     .setServiceData(FAST_PAIR_SERVICE_UUID, byteArrayOf())
                     .build()
-                scanner.startScan(listOf(filter), settings, scanCallback)
+                activeScanner.startScan(listOf(filter), settings, scanCallback)
                 Log.d(TAG, "Scanning Fast Pair devices only")
             }
             isScanning = true
+            timeoutHandler.removeCallbacks(timeoutRunnable)
+            timeoutHandler.postDelayed(timeoutRunnable, SCAN_TIMEOUT_MS)
             true
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start scan", e)
@@ -168,13 +179,19 @@ class Scanner(
 
     @SuppressLint("MissingPermission")
     fun stopScanning() {
-        if (!isScanning || scanner == null) return
+        timeoutHandler.removeCallbacks(timeoutRunnable)
+        val activeScanner = scanner
+        if (!isScanning || activeScanner == null) {
+            isScanning = false
+            return
+        }
 
         try {
-            scanner.stopScan(scanCallback)
+            activeScanner.stopScan(scanCallback)
             isScanning = false
             Log.d(TAG, "Scanning stopped")
         } catch (e: Exception) {
+            isScanning = false
             Log.e(TAG, "Failed to stop scan", e)
         }
     }

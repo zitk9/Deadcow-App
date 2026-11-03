@@ -21,6 +21,8 @@ class SmartLightManager(context: Context) : BleManager(context) {
                     UUID.fromString("0000fff3-0000-1000-8000-00805f9b34fb"),
                 UUID.fromString("0000ffd0-0000-1000-8000-00805f9b34fb") to
                     UUID.fromString("0000ffd1-0000-1000-8000-00805f9b34fb"),
+                UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb") to
+                    UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb"),
             )
 
             for ((svcUuid, chrUuid) in candidates) {

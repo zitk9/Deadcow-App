@@ -213,20 +213,25 @@ fun AudioScannerScreen(navController: NavController) {
                             connectionStates[device.address] = ConnectionStatus.SUCCESS
                         }
                     }
-                    BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> { isScanning = false }
+                    BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                        try {
+                            bluetoothAdapter?.bluetoothLeScanner?.stopScan(bleCallback)
+                        } catch (_: Exception) {}
+                        isScanning = false
+                    }
                 }
             }
         }
     }
 
     fun stopScan() {
-        if (isScanning) {
-            try {
-                bluetoothAdapter?.cancelDiscovery()
-                bleScanner?.stopScan(bleCallback)
-            } catch (_: Exception) {}
-            isScanning = false
-        }
+        try {
+            bluetoothAdapter?.cancelDiscovery()
+        } catch (_: Exception) {}
+        try {
+            bluetoothAdapter?.bluetoothLeScanner?.stopScan(bleCallback)
+        } catch (_: Exception) {}
+        isScanning = false
     }
 
     fun startScan() {
@@ -253,7 +258,7 @@ fun AudioScannerScreen(navController: NavController) {
         isScanning = true
         bluetoothAdapter.startDiscovery()
         val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
-        try { bleScanner?.startScan(null, settings, bleCallback) } catch (_: Exception) {}
+        try { bluetoothAdapter.bluetoothLeScanner?.startScan(null, settings, bleCallback) } catch (_: Exception) {}
 
         scope.launch {
             delay(15000)

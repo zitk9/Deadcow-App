@@ -194,21 +194,22 @@ jobs:
           path: ${{ env.APK_PATH }}
           retention-days: 30
 
-      - name: Publish Pre-Release v1.1
+      - name: Publish Pre-Release v1.2
         if: github.ref == 'refs/heads/main' && success()
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1-pre
-          name: "Deadcow v1.1 Pre-Release"
+          tag_name: v1.2-pre
+          name: "Deadcow v1.2 Pre-Release"
           prerelease: true
           make_latest: true
           body: |
-            ### 🐮 Deadcow Android Pre-Release v1.1
+            ### 🐮 Deadcow Android Pre-Release v1.2
 
             - **Nom** : Deadcow
-            - **Version** : v1.1-pre
+            - **Version** : v1.2-pre
             - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
-            - **Mascotte** : Vache Deadcow.
+            - **Mascotte** : Vache Deadcow (Animations 128x64, Level Up, Portraits Passeport, NFC/RFID/IR/BLE).
+            - **Correctifs Bluetooth** : Arrêt automatique des scans BLE en arrière-plan (fin de la fuite de batterie), buffer circulaire (64 appareils) et support UUID `0000ffe0-0000-1000-8000-00805f9b34fb`.
             - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
           files: |
             Deadcow-release.apk

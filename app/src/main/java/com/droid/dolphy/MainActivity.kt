@@ -2399,7 +2399,7 @@ internal fun RandomExternalDolphinAnimation(modifier: Modifier = Modifier) {
         context.getSharedPreferences("DolphyPrefs", Context.MODE_PRIVATE)
     }
     var cyclicAnimationEnabled by remember {
-        mutableStateOf(prefs.getBoolean("cyclic_dolphin_animation_enabled", false))
+        mutableStateOf(prefs.getBoolean("cyclic_dolphin_animation_enabled", true))
     }
     var pinnedAnimName by remember {
         mutableStateOf(prefs.getString("pinned_dolphin_animation_name", null))
@@ -2412,7 +2412,7 @@ internal fun RandomExternalDolphinAnimation(modifier: Modifier = Modifier) {
     DisposableEffect(prefs) {
         val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "cyclic_dolphin_animation_enabled") {
-                cyclicAnimationEnabled = sharedPreferences.getBoolean(key, false)
+                cyclicAnimationEnabled = sharedPreferences.getBoolean(key, true)
             } else if (key == "pinned_dolphin_animation_name" || key == "pinned_dolphin_animation_root") {
                 pinnedAnimName = sharedPreferences.getString("pinned_dolphin_animation_name", null)
                 pinnedAnimRoot = sharedPreferences.getString("pinned_dolphin_animation_root", null)
@@ -2542,8 +2542,9 @@ internal fun RandomExternalDolphinAnimation(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .aspectRatio(2f),
                 contentScale = ContentScale.Fit,
+                filterQuality = androidx.compose.ui.graphics.FilterQuality.None,
                 colorFilter = ColorFilter.tint(
-                    color = accent.copy(alpha = 0.58f),
+                    color = accent.copy(alpha = 0.78f),
                     blendMode = BlendMode.Modulate
                 )
             )
@@ -2848,14 +2849,19 @@ fun BleSpamScreen(viewModel: SpamViewModel, onSectionClick: (BleSection) -> Unit
 
 @Composable
 fun LevelUpAnimation(modifier: Modifier = Modifier) {
+    val accent = MaterialTheme.colorScheme.primary
     val frames = remember {
         listOf(
-            R.drawable.levelup_frame_00, R.drawable.levelup_frame_01,
-            R.drawable.levelup_frame_02, R.drawable.levelup_frame_03,
-            R.drawable.levelup_frame_04, R.drawable.levelup_frame_05,
-            R.drawable.levelup_frame_06, R.drawable.levelup_frame_07,
-            R.drawable.levelup_frame_08, R.drawable.levelup_frame_09,
-            R.drawable.levelup_frame_10
+            R.drawable.levelup_frame_00, R.drawable.levelup_frame_00,
+            R.drawable.levelup_frame_01, R.drawable.levelup_frame_02,
+            R.drawable.levelup_frame_03, R.drawable.levelup_frame_04,
+            R.drawable.levelup_frame_05, R.drawable.levelup_frame_06,
+            R.drawable.levelup_frame_07, R.drawable.levelup_frame_08,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10
         )
     }
 
@@ -2863,16 +2869,20 @@ fun LevelUpAnimation(modifier: Modifier = Modifier) {
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(100)
+            delay(115)
             currentFrame = (currentFrame + 1) % frames.size
         }
     }
 
     Image(
         painter = painterResource(id = frames[currentFrame]),
-        contentDescription = null,
+        contentDescription = "Deadcow Level Up Animation",
         modifier = modifier,
-        contentScale = ContentScale.Fit
+        contentScale = ContentScale.Fit,
+        colorFilter = ColorFilter.tint(
+            color = accent,
+            blendMode = BlendMode.Modulate
+        )
     )
 }
 
@@ -4791,65 +4801,53 @@ fun LevelUpAnimation(
     onComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val accent = MaterialTheme.colorScheme.primary
-    val folderPath = "flipperzero-firmware-dev/assets/icons/Animations/Levelup1_128x64"
-
-    val decodedFrames by androidx.compose.runtime.produceState(
-        initialValue = emptyList<ImageBitmap>(),
-        key1 = folderPath
-    ) {
-        value = withContext(Dispatchers.IO) {
-            val list = context.assets.list(folderPath) ?: emptyArray()
-            list.filter { it.startsWith("frame_") && it.endsWith(".png") }
-                .sorted()
-                .mapNotNull { frameName ->
-                    runCatching {
-                        context.assets.open("$folderPath/$frameName").use { stream ->
-                            BitmapFactory.decodeStream(stream)?.asImageBitmap()
-                        }
-                    }.getOrNull()
-                }
-        }
+    val frames = remember {
+        listOf(
+            R.drawable.levelup_frame_00, R.drawable.levelup_frame_00,
+            R.drawable.levelup_frame_01, R.drawable.levelup_frame_02,
+            R.drawable.levelup_frame_03, R.drawable.levelup_frame_04,
+            R.drawable.levelup_frame_05, R.drawable.levelup_frame_06,
+            R.drawable.levelup_frame_07, R.drawable.levelup_frame_08,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10,
+            R.drawable.levelup_frame_09, R.drawable.levelup_frame_10
+        )
     }
 
     var frameIndex by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(decodedFrames) {
-        if (decodedFrames.isEmpty()) {
-            delay(500)
-            onComplete()
-            return@LaunchedEffect
-        }
+    LaunchedEffect(frames) {
         frameIndex = 0
-        while (frameIndex < decodedFrames.size - 1) {
-            delay(100)
+        while (frameIndex < frames.size - 1) {
+            delay(115)
             frameIndex++
         }
-        delay(3000)
+        delay(600)
         onComplete()
     }
 
-    val frameBitmap = decodedFrames.getOrNull(frameIndex)
-
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.Black.copy(alpha = 0.35f))
+            .clickable { onComplete() }
+            .padding(vertical = 4.dp, horizontal = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        if (frameBitmap != null) {
-            Image(
-                bitmap = frameBitmap,
-                contentDescription = "Level up animation",
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.colorMatrix(ColorMatrix(floatArrayOf(
-                    1f, 0f, 0f, 0f, 0f,
-                    0f, 1f, 0f, 0f, 0f,
-                    0f, 0f, 1f, 0f, 0f,
-                    1f, 1f, 1f, 0f, -0.01f
-                )))
+        Image(
+            painter = painterResource(id = frames[frameIndex]),
+            contentDescription = "Level up animation",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
+            colorFilter = ColorFilter.tint(
+                color = accent,
+                blendMode = BlendMode.Modulate
             )
-        }
+        )
     }
 }
 
@@ -4978,23 +4976,34 @@ fun DolphyScreen(viewModel: DolphyViewModel, navController: NavController? = nul
                 )
             } else {
 
-                val portrait = when {
-                    dolphyState.butthurt <= 4 -> when (dolphyState.level) {
-                        1 -> R.drawable.passport_happy1_46x49
-                        2 -> R.drawable.passport_happy2_46x49
-                        else -> R.drawable.passport_happy3_46x49
-                    }
-                    dolphyState.butthurt <= 9 -> when (dolphyState.level) {
-                        1 -> R.drawable.passport_okay1_46x49
-                        2 -> R.drawable.passport_okay2_46x49
-                        else -> R.drawable.passport_okay3_46x49
-                    }
-                    else -> when (dolphyState.level) {
-                        1 -> R.drawable.passport_bad1_46x49
-                        2 -> R.drawable.passport_bad2_46x49
-                        else -> R.drawable.passport_bad3_46x49
+                val portraitFrames = when {
+                    dolphyState.butthurt <= 4 -> listOf(
+                        R.drawable.passport_happy1_46x49,
+                        R.drawable.passport_happy2_46x49,
+                        R.drawable.passport_happy3_46x49
+                    )
+                    dolphyState.butthurt <= 9 -> listOf(
+                        R.drawable.passport_okay1_46x49,
+                        R.drawable.passport_okay2_46x49,
+                        R.drawable.passport_okay3_46x49
+                    )
+                    else -> listOf(
+                        R.drawable.passport_bad1_46x49,
+                        R.drawable.passport_bad2_46x49,
+                        R.drawable.passport_bad3_46x49
+                    )
+                }
+
+                var portraitFrameIdx by remember(dolphyState.butthurt, dolphyState.level) {
+                    mutableIntStateOf((dolphyState.level - 1).coerceIn(0, 2))
+                }
+                LaunchedEffect(portraitFrames) {
+                    while (true) {
+                        delay(750)
+                        portraitFrameIdx = (portraitFrameIdx + 1) % portraitFrames.size
                     }
                 }
+                val portrait = portraitFrames[portraitFrameIdx]
 
                 Image(
                     painter = painterResource(id = portrait),
@@ -5004,6 +5013,7 @@ fun DolphyScreen(viewModel: DolphyViewModel, navController: NavController? = nul
                         .clip(RoundedCornerShape(12.dp))
                         .clickable {
                             clickCount++
+                            portraitFrameIdx = (portraitFrameIdx + 1) % portraitFrames.size
                             if (clickCount >= 10) clickCount = 0
                         },
                     contentScale = ContentScale.Fit,
@@ -5035,20 +5045,18 @@ fun DolphyScreen(viewModel: DolphyViewModel, navController: NavController? = nul
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            if (dolphyState.level >= 50) {
-                                DolphyIconButton(
-                                    onClick = { navController?.navigate("customize_animations") },
-                                    liquidTint = accentColor,
-                                    modifier = Modifier.size(24.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Filled.Star,
-                                        contentDescription = "Customize Animations",
-                                        tint = if (isLiquidGlassChrome()) Color.Black
-                                        else accentColor,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
+                            DolphyIconButton(
+                                onClick = { navController?.navigate("customize_animations") },
+                                liquidTint = accentColor,
+                                modifier = Modifier.size(24.dp)
+                            ) {
+                                Icon(
+                                    Icons.Filled.Star,
+                                    contentDescription = "Customize Animations",
+                                    tint = if (isLiquidGlassChrome()) Color.Black
+                                    else accentColor,
+                                    modifier = Modifier.size(18.dp)
+                                )
                             }
                             DolphyIconButton(
                                 onClick = { showInfoDialog = true },
@@ -5957,7 +5965,7 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
     val expressiveEnabled: StateFlow<Boolean> = _expressiveEnabled
     private val _appLanguage = MutableStateFlow(prefs.getString("app_language", "fr") ?: "fr")
     val appLanguage: StateFlow<String> = _appLanguage
-    private val _cyclicDolphinAnimationEnabled = MutableStateFlow(prefs.getBoolean("cyclic_dolphin_animation_enabled", false))
+    private val _cyclicDolphinAnimationEnabled = MutableStateFlow(prefs.getBoolean("cyclic_dolphin_animation_enabled", true))
     val cyclicDolphinAnimationEnabled: StateFlow<Boolean> = _cyclicDolphinAnimationEnabled
     private val _quickStartupEnabled = MutableStateFlow(prefs.getBoolean("quick_startup_enabled", false))
     val quickStartupEnabled: StateFlow<Boolean> = _quickStartupEnabled

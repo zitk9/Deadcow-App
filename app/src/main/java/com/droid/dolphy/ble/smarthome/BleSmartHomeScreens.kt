@@ -104,9 +104,17 @@ fun BleSmartHomeScanScreen(navController: NavController) {
     }
 
     fun ensurePerms() {
-        val required = buildList {
-            add(Manifest.permission.BLUETOOTH_SCAN)
-            add(Manifest.permission.BLUETOOTH_CONNECT)
+        val required = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            listOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT
+            )
+        } else {
+            listOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
         }
         val missing = required.filter {
             ActivityCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
@@ -121,9 +129,8 @@ fun BleSmartHomeScanScreen(navController: NavController) {
     LaunchedEffect(Unit) { ensurePerms() }
 
     val bluetoothAdapter = remember {
-        (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+        (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
     }
-    val scanner = remember { bluetoothAdapter.bluetoothLeScanner }
 
     val callback = remember {
         object : ScanCallback() {
@@ -135,13 +142,15 @@ fun BleSmartHomeScanScreen(navController: NavController) {
                 val rssi = result.rssi
                 items = (items.filterNot { it.address == addr } + SmartHomeScanItem(addr, name, vendor, rssi))
                     .sortedByDescending { it.rssi }
+                    .take(64)
             }
         }
     }
 
     fun startScan() {
         if (!hasPerm) return
-        if (bluetoothAdapter.isEnabled != true) return
+        if (bluetoothAdapter?.isEnabled != true) return
+        val scanner = bluetoothAdapter.bluetoothLeScanner ?: return
         runCatching { scanner.stopScan(callback) }
         items = emptyList()
         noDevicesFound = false
@@ -150,11 +159,12 @@ fun BleSmartHomeScanScreen(navController: NavController) {
             .build()
         isScanning = true
         scanSessionId++
-        scanner.startScan(null, settings, callback)
+        runCatching { scanner.startScan(null, settings, callback) }
+            .onFailure { isScanning = false }
     }
 
     fun stopScan() {
-        runCatching { scanner.stopScan(callback) }
+        runCatching { bluetoothAdapter?.bluetoothLeScanner?.stopScan(callback) }
         isScanning = false
     }
 
@@ -202,7 +212,7 @@ fun BleSmartHomeScanScreen(navController: NavController) {
                     com.droid.dolphy.AccentButton(onClick = { ensurePerms() }) { Text(stringResource(R.string.ble_allow)) }
                     return@Column
                 }
-                if (bluetoothAdapter.isEnabled != true) {
+                if (bluetoothAdapter?.isEnabled != true) {
                     Text("Bluetooth выключен. Включите Bluetooth.", color = MaterialTheme.colorScheme.onBackground)
                     return@Column
                 }

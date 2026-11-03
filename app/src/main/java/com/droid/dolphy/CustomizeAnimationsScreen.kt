@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -165,6 +166,21 @@ suspend fun loadExternalAnimationMeta(
             .find(metaText)?.groupValues?.getOrNull(1)?.toIntOrNull() ?: 2
         val duration = Regex("""(?im)^Duration:\s*(\d+)""")
             .find(metaText)?.groupValues?.getOrNull(1)?.toIntOrNull() ?: 20
+        val framesOrderIds = Regex("""(?im)^Frames order:\s*([0-9\s]+)""")
+            .find(metaText)?.groupValues?.getOrNull(1)
+            ?.trim()
+            ?.split(Regex("""\s+"""))
+            ?.mapNotNull { it.toIntOrNull() }
+            .orEmpty()
+        val orderedFrames = if (framesOrderIds.isNotEmpty()) {
+            val mapped = framesOrderIds.mapNotNull { id ->
+                val candidate = "$folderPath/frame_$id.png"
+                candidate.takeIf { it in frames }
+            }
+            mapped.ifEmpty { frames }
+        } else {
+            frames
+        }
         ExternalAnimationMeta(
             name = row.name,
             root = root,
@@ -175,7 +191,7 @@ suspend fun loadExternalAnimationMeta(
             weight = row.weight,
             frameRate = frameRate,
             durationSec = duration,
-            frames = frames,
+            frames = orderedFrames,
         )
     }
 }
@@ -225,6 +241,7 @@ fun DolphinAnimationPreview(
                     .fillMaxWidth()
                     .aspectRatio(2f),
                 contentScale = ContentScale.Fit,
+                filterQuality = FilterQuality.None,
                 colorFilter = ColorFilter.tint(
                     color = accent.copy(alpha = 0.85f),
                     blendMode = BlendMode.Modulate
@@ -483,7 +500,7 @@ fun CustomizeAnimationsScreen(
                                             }
                                         ) {
                                             Text(
-                                                text = if (anim.isWatchDogs) "WatchDogs" else "Classic",
+                                                text = if (anim.isWatchDogs) "WatchDogs" else "Deadcow",
                                                 style = MaterialTheme.typography.labelSmall,
                                                 fontSize = 9.sp,
                                                 fontWeight = FontWeight.Medium,

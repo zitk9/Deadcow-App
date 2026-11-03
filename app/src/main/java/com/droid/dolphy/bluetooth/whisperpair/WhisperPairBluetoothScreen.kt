@@ -118,6 +118,9 @@ fun WhisperPairBluetoothScreen(navController: NavController) {
             mainHandler.post {
                 val index = devices.indexOfFirst { it.address == device.address }
                 if (index == -1) {
+                    if (devices.size >= 64) {
+                        devices.removeAt(0)
+                    }
                     devices.add(device)
                 } else {
                     devices[index] = device.copy(status = devices[index].status)
