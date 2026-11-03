@@ -576,11 +576,12 @@ class MainActivity : ComponentActivity() {
             val filter = IntentFilter().apply {
                 addAction("android.intent.action.ACTION_CONFIGURATION_CHANGED")
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                registerReceiver(systemThemeReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-            } else {
-                registerReceiver(systemThemeReceiver, filter)
-            }
+            androidx.core.content.ContextCompat.registerReceiver(
+                this,
+                systemThemeReceiver,
+                filter,
+                androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+            )
         }
 
         setContent {
@@ -667,12 +668,16 @@ class MainActivity : ComponentActivity() {
 
     private fun requestPermissions() {
         val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            arrayOf(
+            val list = mutableListOf(
                 Manifest.permission.BLUETOOTH_SCAN,
                 Manifest.permission.BLUETOOTH_CONNECT,
                 Manifest.permission.BLUETOOTH_ADVERTISE,
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                list.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            list.toTypedArray()
         } else {
             arrayOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION)
         }
@@ -754,7 +759,11 @@ fun MainScreen(
     val currentVersion = remember {
         runCatching {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        }.getOrNull()?.takeIf { !it.isNullOrBlank() } ?: "2.3"
+        }.getOrNull()?.takeIf { !it.isNullOrBlank() } ?: "1.6"
+    }
+
+    var showStartupChangelog by rememberSaveable {
+        mutableStateOf(!DeadcowChangelog.hasSeenChangelog(context, currentVersion))
     }
 
     val autoUpdateState by AutoUpdater.state.collectAsState()
@@ -764,6 +773,129 @@ fun MainScreen(
     }
 
     when (val uState = autoUpdateState) {
+        is AutoUpdateState.Available -> {
+            AlertDialog(
+                onDismissRequest = { AutoUpdater.dismissPrompt() },
+                shape = RoundedCornerShape(24.dp),
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.SystemUpdate,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(28.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = "Mise à jour v${uState.release.versionName}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                text = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 300.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "🚀 Une nouvelle version de Deadcow est disponible !",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(10.dp)
+                            )
+                        }
+
+                        Text(
+                            text = "Nouveautés & Correctifs :",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = uState.release.releaseNotes.ifBlank {
+                                "• Fix Bluetooth Samsung Watch & Galaxy Buds (canaux hérités 37/38/39 & scan response)\n• Fix SwiftPair, FastPair et Continuity pop-ups\n• Fix plantages Android 13/14/15 (FOREGROUND_SERVICE_CONNECTED_DEVICE & receivers)\n• Journal des modifications au démarrage"
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            AutoUpdater.startDownloadAndInstall(context, uState.release)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Télécharger & Installer")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { AutoUpdater.dismissPrompt() }
+                    ) {
+                        Text("Plus tard")
+                    }
+                }
+            )
+        }
+        is AutoUpdateState.ReadyToInstall -> {
+            AlertDialog(
+                onDismissRequest = { AutoUpdater.dismissPrompt() },
+                shape = RoundedCornerShape(24.dp),
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(28.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = "Installation prête",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                text = {
+                    Text(
+                        text = "L'APK Deadcow v${uState.release.versionName} est prêt. Appuyez sur Installer pour terminer la mise à jour.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            AutoUpdater.launchPackageInstaller(context, uState.apkFile)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Installer")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { AutoUpdater.dismissPrompt() }
+                    ) {
+                        Text("Fermer")
+                    }
+                }
+            )
+        }
         is AutoUpdateState.Downloading -> {
             ExpressiveDialog(
                 onDismissRequest = {},
@@ -835,7 +967,9 @@ fun MainScreen(
             PluginSystemWarningDialog(onConfirm = { spamViewModel.completeWelcomeDialog() })
         } else {
             WelcomeDialog(
-                onDismiss = { spamViewModel.completeWelcomeDialog() },
+                onDismiss = {
+                    spamViewModel.completeWelcomeDialog()
+                },
                 onDiscord = {
                     runCatching { uriHandler.openUri("https://discord.gg/cdcleak") }
                 },
@@ -844,6 +978,14 @@ fun MainScreen(
                 }
             )
         }
+    } else if (showStartupChangelog && autoUpdateState !is AutoUpdateState.Downloading && autoUpdateState !is AutoUpdateState.Installing) {
+        ChangelogDialog(
+            currentVersion = currentVersion,
+            onDismiss = {
+                DeadcowChangelog.markChangelogSeen(context, currentVersion)
+                showStartupChangelog = false
+            }
+        )
     }
 
     NavHost(
@@ -3174,6 +3316,7 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
     val dolphyState by dolphyViewModel.dolphyState.collectAsState()
     val context = LocalContext.current
     var showAuthDialog by remember { mutableStateOf(false) }
+    var showChangelogDialog by remember { mutableStateOf(false) }
 
     val appVersion = remember {
         runCatching {
@@ -3909,6 +4052,20 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                                 }
                                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
+                            MaterialDivider()
+                            SettingsItem(onClick = { showChangelogDialog = true }) {
+                                Icon(Icons.Default.Article, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Journal des modifications (Changelog)", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Nouveautés v1.6 : Bluetooth Samsung Watch, pop-ups et correctifs",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
                         }
                     }
                 }
@@ -3949,6 +4106,13 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                 }
             }
         }
+        }
+
+        if (showChangelogDialog) {
+            ChangelogDialog(
+                currentVersion = appVersion,
+                onDismiss = { showChangelogDialog = false }
+            )
         }
     }
 }
@@ -6486,7 +6650,12 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
     init {
         BleSpamRuntime.init(application)
         checkBluetoothState()
-        application.registerReceiver(bluetoothStateReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+        androidx.core.content.ContextCompat.registerReceiver(
+            application,
+            bluetoothStateReceiver,
+            IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED),
+            androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+        )
         val discoveryFilter = IntentFilter().apply {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)

@@ -269,16 +269,22 @@ class HidKeyboardActivity : ComponentActivity(), KeyboardService.Listener {
             originalBtName = adapter.name
         }
 
-        registerReceiver(discoveryReceiver, IntentFilter().apply {
+        val discoveryFilter = IntentFilter().apply {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-        })
+        }
+        androidx.core.content.ContextCompat.registerReceiver(
+            this,
+            discoveryReceiver,
+            discoveryFilter,
+            androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+        )
         bindKeyboardService()
 
+        val btEnableLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
         if (!adapter.isEnabled) {
-            val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
-            launcher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+            runCatching { btEnableLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)) }
         }
 
         val permLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->

@@ -90,8 +90,8 @@ fun BluetoothJammerScanScreen(onBack: () -> Unit, accentColor: Color) {
         var adapter: BluetoothAdapter? = null
 
         if (checkPermissions()) {
-            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            adapter = manager.adapter
+            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+            adapter = manager?.adapter ?: BluetoothHelper.bluetoothAdapter
             if (adapter?.isEnabled == true) {
                 isScanning = true
                 receiver = object : BroadcastReceiver() {
@@ -114,15 +114,21 @@ fun BluetoothJammerScanScreen(onBack: () -> Unit, accentColor: Color) {
                         }
                     }
                 }
-                context.registerReceiver(receiver, IntentFilter().apply {
+                val filter = IntentFilter().apply {
                     addAction(BluetoothDevice.ACTION_FOUND)
                     addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-                })
-                adapter.startDiscovery()
+                }
+                androidx.core.content.ContextCompat.registerReceiver(
+                    context,
+                    receiver,
+                    filter,
+                    androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+                )
+                adapter?.startDiscovery()
             }
         }
         onDispose {
-            receiver?.let { context.unregisterReceiver(it) }
+            receiver?.let { runCatching { context.unregisterReceiver(it) } }
             adapter?.cancelDiscovery()
         }
     }

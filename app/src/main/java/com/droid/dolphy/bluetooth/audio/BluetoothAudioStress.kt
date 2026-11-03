@@ -233,6 +233,11 @@ class BluetoothStressService : Service() {
                     delay(1200)
                     continue
                 }
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+                    l2capDisabledForSession = true
+                    BluetoothStressBus.appendLog("L2CAP non supporté sur cette version d'Android (< Q)")
+                    continue
+                }
                 try {
                     val socket = device.createL2capChannel(0x1001)
                     socket.connect()
@@ -488,7 +493,12 @@ fun BtAudioStressScanScreen(navController: NavController) {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         }
-        context.registerReceiver(receiver, filter)
+        androidx.core.content.ContextCompat.registerReceiver(
+            context,
+            receiver,
+            filter,
+            androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+        )
         onDispose {
             keepScanning = false
             try {
@@ -500,7 +510,7 @@ fun BtAudioStressScanScreen(navController: NavController) {
             } catch (_: Throwable) {
             }
             scanning = false
-            context.unregisterReceiver(receiver)
+            runCatching { context.unregisterReceiver(receiver) }
         }
     }
 

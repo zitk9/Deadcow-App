@@ -117,11 +117,12 @@ object UsbIrManager {
             addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
             addAction(ACTION_USB_PERMISSION)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            app.registerReceiver(usbReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            app.registerReceiver(usbReceiver, filter)
-        }
+        androidx.core.content.ContextCompat.registerReceiver(
+            app,
+            usbReceiver,
+            filter,
+            androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+        )
 
         isInitialized = true
         scanDevices()

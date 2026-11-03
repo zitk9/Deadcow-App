@@ -1,5 +1,8 @@
 package com.droid.dolphy
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +10,8 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +40,7 @@ data class DeadcowReleaseInfo(
 sealed class AutoUpdateState {
     object Idle : AutoUpdateState()
     object Checking : AutoUpdateState()
+    data class Available(val release: DeadcowReleaseInfo) : AutoUpdateState()
     data class Downloading(val release: DeadcowReleaseInfo, val progressPercent: Int) : AutoUpdateState()
     data class Installing(val release: DeadcowReleaseInfo) : AutoUpdateState()
     data class ReadyToInstall(val release: DeadcowReleaseInfo, val apkFile: File) : AutoUpdateState()
@@ -49,6 +55,8 @@ object AutoUpdater {
     private const val BUILD_GRADLE_RAW = "https://raw.githubusercontent.com/zitk9/Deadcow-App/main/app/build.gradle.kts"
     private const val PREFS_NAME = "DeadcowUpdaterPrefs"
     private const val KEY_AUTO_UPDATE_ENABLED = "auto_update_enabled"
+    private const val NOTIFICATION_CHANNEL_ID = "deadcow_updates"
+    private const val NOTIFICATION_ID = 202611
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -117,24 +125,87 @@ object AutoUpdater {
                     return@launch
                 }
 
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        appContext,
-                        "Nouvelle mise à jour Deadcow v${remoteRelease.versionName} détectée ! Téléchargement automatique...",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                showUpdateNotification(appContext, remoteRelease)
+                _state.value = AutoUpdateState.Available(remoteRelease)
+            } catch (e: Exception) {
+                Log.e(TAG, "Auto-update check failed", e)
+                _state.value = AutoUpdateState.Error(e.message ?: "Erreur inconnue")
+            }
+        }
+    }
 
-                val apkFile = downloadApk(appContext, remoteRelease)
+    fun showUpdateNotification(context: Context, release: DeadcowReleaseInfo) {
+        runCatching {
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    "Mises à jour Deadcow",
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    description = "Notifications des nouvelles versions et correctifs Deadcow"
+                }
+                nm.createNotificationChannel(channel)
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.POST_NOTIFICATIONS
+                    ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+                ) {
+                    return
+                }
+            }
+
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val pi = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val notes = release.releaseNotes.takeIf { it.isNotBlank() }
+                ?: "Une nouvelle version de Deadcow (v${release.versionName}) est disponible avec les correctifs Bluetooth et Samsung Watch !"
+
+            val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Mise à jour v${release.versionName} disponible")
+                .setContentText("Nouveaux correctifs Deadcow disponibles")
+                .setStyle(NotificationCompat.BigTextStyle().bigText("Deadcow v${release.versionName} est disponible !\n\n$notes"))
+                .setContentIntent(pi)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build()
+
+            nm.notify(NOTIFICATION_ID, notification)
+        }.onFailure {
+            Log.e(TAG, "Failed to show update notification", it)
+        }
+    }
+
+    fun dismissPrompt() {
+        _state.value = AutoUpdateState.Idle
+    }
+
+    fun startDownloadAndInstall(context: Context, release: DeadcowReleaseInfo) {
+        val appContext = context.applicationContext
+        scope.launch {
+            try {
+                _state.value = AutoUpdateState.Downloading(release, 0)
+                val apkFile = downloadApk(appContext, release)
                 if (apkFile == null || !apkFile.exists() || apkFile.length() < 100_000L) {
                     _state.value = AutoUpdateState.Error("Échec du téléchargement de l'APK")
                     return@launch
                 }
 
-                _state.value = AutoUpdateState.Installing(remoteRelease)
+                _state.value = AutoUpdateState.Installing(release)
                 val installedSilently = trySilentInstall(appContext, apkFile)
                 if (!installedSilently) {
-                    _state.value = AutoUpdateState.ReadyToInstall(remoteRelease, apkFile)
+                    _state.value = AutoUpdateState.ReadyToInstall(release, apkFile)
                     withContext(Dispatchers.Main) {
                         launchPackageInstaller(appContext, apkFile)
                     }
@@ -142,8 +213,8 @@ object AutoUpdater {
                     _state.value = AutoUpdateState.UpToDate
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Auto-update check failed", e)
-                _state.value = AutoUpdateState.Error(e.message ?: "Erreur inconnue")
+                Log.e(TAG, "Download and install failed", e)
+                _state.value = AutoUpdateState.Error(e.message ?: "Erreur d'installation")
             }
         }
     }

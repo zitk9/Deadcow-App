@@ -292,9 +292,14 @@ fun AudioScannerScreen(navController: NavController) {
             addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         }
-        context.registerReceiver(receiver, filter)
+        androidx.core.content.ContextCompat.registerReceiver(
+            context,
+            receiver,
+            filter,
+            androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+        )
         onDispose {
-            context.unregisterReceiver(receiver)
+            runCatching { context.unregisterReceiver(receiver) }
             stopScan()
             audioManager.release()
         }

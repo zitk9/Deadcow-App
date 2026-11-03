@@ -928,7 +928,7 @@ class PluginAndroidApis(
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         }
         try {
-            ContextCompat.registerReceiver(appCtx, discoveryReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+            ContextCompat.registerReceiver(appCtx, discoveryReceiver, filter, ContextCompat.RECEIVER_EXPORTED)
             @Suppress("DEPRECATION")
             return adapter.startDiscovery()
         } catch (e: Exception) {
