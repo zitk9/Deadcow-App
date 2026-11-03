@@ -1,6 +1,8 @@
 package com.droid.dolphy
 
 import android.bluetooth.le.AdvertiseData
+import android.os.ParcelUuid
+import java.util.UUID
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.random.Random
@@ -14,6 +16,7 @@ class XiaomiQuickConnect : Spammer {
 
     companion object {
         private const val COMPANY_ID = 0x038F
+        private val XIAOMI_SERVICE_UUID = ParcelUuid(UUID.fromString("0000fe95-0000-1000-8000-00805f9b34fb"))
 
         private fun generateManufacturerData(
             controlled: Boolean = false,
@@ -103,8 +106,11 @@ class XiaomiQuickConnect : Spammer {
                     val data = AdvertiseData.Builder()
                         .addManufacturerData(COMPANY_ID, bytes)
                         .build()
+                    val scanResponse = AdvertiseData.Builder()
+                        .addServiceUuid(XIAOMI_SERVICE_UUID)
+                        .build()
 
-                    bluetoothAdvertiser.advertise(data, null, forceLegacy = true, connectable = true)
+                    bluetoothAdvertiser.advertise(data, scanResponse, forceLegacy = true, connectable = true)
                     blinkRunnable?.run()
                     com.droid.dolphy.trackBlePackets(1)
 

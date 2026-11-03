@@ -775,7 +775,7 @@ fun MainScreen(
     when (val uState = autoUpdateState) {
         is AutoUpdateState.Available -> {
             AlertDialog(
-                onDismissRequest = { AutoUpdater.dismissPrompt() },
+                onDismissRequest = { AutoUpdater.dismissPrompt(context, uState.release) },
                 shape = RoundedCornerShape(24.dp),
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -821,7 +821,7 @@ fun MainScreen(
                         )
                         Text(
                             text = uState.release.releaseNotes.ifBlank {
-                                "• Fix Bluetooth Samsung Watch & Galaxy Buds (canaux hérités 37/38/39 & scan response)\n• Fix SwiftPair, FastPair et Continuity pop-ups\n• Fix plantages Android 13/14/15 (FOREGROUND_SERVICE_CONNECTED_DEVICE & receivers)\n• Journal des modifications au démarrage"
+                                "• Support Android 12 (API 31/32) optimisé\n• Fix téléchargement des mises à jour & fin de la boucle infinie\n• Sauvegarde persistante de la progression et thèmes\n• Système de classement & Leaderboard Cyber Bovin\n• Fix BLE Xiaomi HyperOS & Vivo TWS\n• Améliorations de l'outil trottinette (Verrouillage, Phares, Bip, Débridage)\n• Suppression des textes russes résiduels"
                             },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -829,21 +829,37 @@ fun MainScreen(
                     }
                 },
                 confirmButton = {
-                    Button(
-                        onClick = {
-                            AutoUpdater.startDownloadAndInstall(context, uState.release)
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        shape = RoundedCornerShape(12.dp)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text("Télécharger & Installer")
+                        OutlinedButton(
+                            onClick = {
+                                AutoUpdater.launchBrowserDownload(context, uState.release)
+                                AutoUpdater.dismissPrompt(context, uState.release)
+                            },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("Navigateur")
+                        }
+                        Button(
+                            onClick = {
+                                AutoUpdater.startDownloadAndInstall(context, uState.release)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("Installer")
+                        }
                     }
                 },
                 dismissButton = {
                     TextButton(
-                        onClick = { AutoUpdater.dismissPrompt() }
+                        onClick = { AutoUpdater.dismissPrompt(context, uState.release) }
                     ) {
                         Text("Plus tard")
                     }
@@ -852,7 +868,7 @@ fun MainScreen(
         }
         is AutoUpdateState.ReadyToInstall -> {
             AlertDialog(
-                onDismissRequest = { AutoUpdater.dismissPrompt() },
+                onDismissRequest = { AutoUpdater.dismissPrompt(context, uState.release) },
                 shape = RoundedCornerShape(24.dp),
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -889,7 +905,7 @@ fun MainScreen(
                 },
                 dismissButton = {
                     TextButton(
-                        onClick = { AutoUpdater.dismissPrompt() }
+                        onClick = { AutoUpdater.dismissPrompt(context, uState.release) }
                     ) {
                         Text("Fermer")
                     }
@@ -913,7 +929,11 @@ fun MainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Téléchargement automatique de l'APK en cours... (${uState.progressPercent}%)",
+                            text = if (uState.progressPercent > 0) {
+                                "Téléchargement automatique de l'APK... (${uState.progressPercent}%)"
+                            } else {
+                                "Connexion au serveur de mise à jour..."
+                            },
                             style = MaterialTheme.typography.bodyMedium
                         )
                         LinearProgressIndicator(
@@ -921,6 +941,19 @@ fun MainScreen(
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.primary
                         )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    AutoUpdater.launchBrowserDownload(context, uState.release)
+                                    AutoUpdater.dismissPrompt(context, uState.release)
+                                }
+                            ) {
+                                Text("Télécharger via navigateur")
+                            }
+                        }
                     }
                 },
                 confirmButton = {},
@@ -949,13 +982,62 @@ fun MainScreen(
                             strokeWidth = 2.5.dp
                         )
                         Text(
-                            text = "Installation automatique de la nouvelle version...",
+                            text = "Installation de la nouvelle version...",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
                 confirmButton = {},
                 accentColor = MaterialTheme.colorScheme.primary
+            )
+        }
+        is AutoUpdateState.Error -> {
+            AlertDialog(
+                onDismissRequest = { AutoUpdater.dismissPrompt(context) },
+                shape = RoundedCornerShape(24.dp),
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(28.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = "Téléchargement interrompu",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                text = {
+                    Text(
+                        text = "Le téléchargement automatique n'a pas pu se terminer (${uState.message}).\n\nVous pouvez télécharger directement le fichier APK via votre navigateur ou réessayer.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            AutoUpdater.launchBrowserDownload(context)
+                            AutoUpdater.dismissPrompt(context)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Télécharger via navigateur")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { AutoUpdater.dismissPrompt(context) }
+                    ) {
+                        Text("Fermer")
+                    }
+                }
             )
         }
         else -> {}
@@ -2832,7 +2914,7 @@ fun BleSpamScreen(viewModel: SpamViewModel, onSectionClick: (BleSection) -> Unit
                             )
                         }
                         Text(
-                            text = "$bleDelay мс",
+                            text = "$bleDelay ms",
                             modifier = Modifier.padding(horizontal = 16.dp),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge
@@ -3005,7 +3087,7 @@ fun BleSpamScreen(viewModel: SpamViewModel, onSectionClick: (BleSection) -> Unit
 
         item {
             AnimatedBleButton(
-                text = "Swift Pair на Windows",
+                text = stringResource(R.string.ble_swift_pair_windows),
                 isActive = spammingStates[Pair(SpamType.SWIFT_PAIR, null)] == true,
                 onClick = { ensureBluetoothEnabled { viewModel.toggleBleSpam(SpamType.SWIFT_PAIR, null) } },
                 blinkIntervalMs = bleDelay.toLong(),
@@ -3317,6 +3399,7 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
     val context = LocalContext.current
     var showAuthDialog by remember { mutableStateOf(false) }
     var showChangelogDialog by remember { mutableStateOf(false) }
+    var showLeaderboardDialog by remember { mutableStateOf(false) }
 
     val appVersion = remember {
         runCatching {
@@ -3364,7 +3447,19 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                         accentColor = accentColor,
                         contentPadding = 12.dp
                     ) {
-                        DolphyScreen(dolphyViewModel, navController)
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            DolphyScreen(dolphyViewModel, navController)
+                            Spacer(Modifier.height(8.dp))
+                            FilledTonalButton(
+                                onClick = { showLeaderboardDialog = true },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Icon(Icons.Default.EmojiEvents, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Tableau des Rangs & Classement Cyber")
+                            }
+                        }
                     }
                 }
             }
@@ -4059,7 +4154,63 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text("Journal des modifications (Changelog)", style = MaterialTheme.typography.bodyLarge)
                                     Text(
-                                        text = "Nouveautés v1.6 : Bluetooth Samsung Watch, pop-ups et correctifs",
+                                        text = "Nouveautés v1.8 : Android 12, Leaderboard, Trottinette, BLE Xiaomi & Vivo",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = { showLeaderboardDialog = true }) {
+                                Icon(Icons.Default.EmojiEvents, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Système de classement & Rangs", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Voir le tableau d'honneur des Cyber Bovins et votre score",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = {
+                                val ok = DeadcowBackupManager.saveBackup(context)
+                                Toast.makeText(
+                                    context,
+                                    if (ok) "Progression et thèmes sauvegardés !" else "Erreur de sauvegarde",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }) {
+                                Icon(Icons.Default.CloudUpload, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Sauvegarder ma progression & mes thèmes", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Sauvegarde persistante de vos données (XP, paquets, thèmes)",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = {
+                                val ok = DeadcowBackupManager.restoreBackup(context)
+                                Toast.makeText(
+                                    context,
+                                    if (ok) "Progression et thèmes restaurés avec succès !" else "Aucune sauvegarde trouvée",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }) {
+                                Icon(Icons.Default.CloudDownload, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Restaurer ma progression & mes thèmes", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Restaure vos statistiques et configurations enregistrées",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -4112,6 +4263,13 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
             ChangelogDialog(
                 currentVersion = appVersion,
                 onDismiss = { showChangelogDialog = false }
+            )
+        }
+
+        if (showLeaderboardDialog) {
+            DeadcowLeaderboardDialog(
+                dolphyState = dolphyState,
+                onDismiss = { showLeaderboardDialog = false }
             )
         }
     }

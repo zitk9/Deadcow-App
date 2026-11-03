@@ -258,13 +258,14 @@ jobs:
             - **Mise à jour automatique** : L'application Deadcow détecte et installe automatiquement cette mise à jour au lancement.
             - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
             - **Mascotte** : Vache Deadcow (Animations 128x64, Level Up, Portraits Passeport, NFC/RFID/IR/BLE).
-            - **Correctifs & Nouveautés (v1.7)** :
-              * **Harmonisation complète des thèmes et typographies** : Police Deadcow (Flipper) appliquée uniformément sur l'ensemble des écrans et composants, avec interlignes proportionnels et tailles harmonisées.
-              * **Cadence et fluidité des animations** : Vitesse d'affichage de la mascotte Deadcow et des prévisualisations recalibrée pour un rendu fluide et naturel.
-              * **Journal des modifications (Changelog)** : Affichage automatique au lancement et accès permanent depuis les Paramètres.
-              * **Système de notification de mise à jour** : Notification push système Android avec changelog intégré et téléchargement guidé.
-              * **Samsung Watch & Galaxy Buds** : Émission BLE EasySetup Legacy (canaux 37, 38, 39) et réponse de scan (0x0075) pour déclencher les fenêtres d'appairage One UI.
-              * **Compatibilité Android 13/14/15** : Correction des récepteurs système (`RECEIVER_EXPORTED`), permission `POST_NOTIFICATIONS` et `FOREGROUND_SERVICE_CONNECTED_DEVICE`.
+            - **Correctifs & Nouveautés (v1.8)** :
+              * **Compatibilité Android 12 (API 31/32)** : Permissions Bluetooth Scan affinées avec `neverForLocation` et règles de sauvegarde persistantes.
+              * **Téléchargement des mises à jour & Fin de boucle** : Sauvegarde des APK dans le dossier Download externe, résolution des blocages de l'installateur, arrêt définitif de la boucle infinie après refus et bouton de téléchargement direct par navigateur.
+              * **Sauvegarde persistante de progression & thèmes** : Préservation continue des XP, niveaux, paquets BLE émis et configurations visuelles, avec restauration automatique lors des mises à jour.
+              * **Système de classement & Rangs Cyber Bovins** : Nouveau Leaderboard communautaire interactif avec 7 rangs exclusifs (Veau, Scout, Sentinelle, Guerrier, Cyber Taureau, Seigneur des Ondes, Légende Apex) et calcul dynamique du score.
+              * **Correctifs BLE Xiaomi HyperOS & Vivo TWS** : Correction de l'erreur `ADVERTISE_FAILED_DATA_TOO_LARGE` par séparation des données constructeur et de réponse de scan (`0xFE95` Xiaomi et `0x027D` Vivo).
+              * **Outil Trottinette enrichi** : Nouvelles commandes UART Ninebot/Xiaomi de Verrouillage, Déverrouillage, Bip/Klaxon, Phares LED, Débridage vitesse Sport 30 km/h et Mode Éco 15 km/h.
+              * **Zéro texte russe résiduel** : Élimination de tous les textes russes codés en dur dans les écrans, widgets et journaux d'activité, traduits en français et anglais.
             - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
           files: |
             Deadcow-release.apk

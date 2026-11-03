@@ -467,9 +467,9 @@ fun QrAudioSpooferScreen(
         val s = serverIp!!
         if (s.startsWith("http://")) s else "http://$s"
     } else if (isStarted) {
-        "Запуск локального сервера…"
+        "Démarrage du serveur local…"
     } else {
-        "Waiting..."
+        "En attente…"
     }
 
     val qrBitmap = remember(qrUrl, isStarted) {
@@ -481,11 +481,11 @@ fun QrAudioSpooferScreen(
     var expanded by remember { mutableStateOf(false) }
     val customHtmlName by viewModel.customHtmlName.collectAsState()
     val pages = listOf(
-        "dolphy" to "Deadcow (Default)",
+        "dolphy" to "Deadcow (Défaut)",
         "wifi" to "Free WiFi",
-        "error" to "Error (Chrome style)",
+        "error" to "Error (Style Chrome)",
         "vpn" to "VPN Service",
-        "custom_html" to if (customHtmlName != null) "Импорт html ($customHtmlName)" else "Импорт html",
+        "custom_html" to if (customHtmlName != null) "Import HTML ($customHtmlName)" else "Import HTML",
     )
     val isCustomHtml = pageType == "custom_html"
 
@@ -649,8 +649,8 @@ fun QrAudioSpooferScreen(
             if (isCustomHtml) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    "Импортированный стиль: только логи. Аудио-управление скрыто. " +
-                        "В логах: заходы на сайт и весь текст, введённый на странице.",
+                    "Mode HTML importé : journaux uniquement. Contrôle audio masqué. " +
+                        "Dans les journaux : visites du site et saisies sur la page.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     modifier = Modifier.fillMaxWidth()
@@ -660,7 +660,7 @@ fun QrAudioSpooferScreen(
                     onClick = { htmlPickerLauncher.launch("*/*") },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Заменить HTML")
+                    Text("Remplacer le fichier HTML")
                 }
             }
 
@@ -670,7 +670,7 @@ fun QrAudioSpooferScreen(
 
             val deviceCount by viewModel.deviceCount.collectAsState()
             Text("SOUNDBOARD", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
-            Text("Подключено: $deviceCount устройств", color = accentColor, fontSize = 11.sp, modifier = Modifier.fillMaxWidth())
+            Text("Connecté : $deviceCount appareils", color = accentColor, fontSize = 11.sp, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SoundButton("", Icons.Default.Message, accentColor) { viewModel.sendCommand("PLAY:iphone_message.mp3") }
@@ -745,7 +745,7 @@ fun QrAudioSpooferScreen(
 
 
             Text(
-                if (isCustomHtml) "ЛОГИ САЙТА" else "TERMINAL LOGS",
+                if (isCustomHtml) "JOURNAUX DU SITE" else "TERMINAL LOGS",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,

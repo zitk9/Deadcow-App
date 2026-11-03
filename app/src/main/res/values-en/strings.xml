@@ -1200,4 +1200,8 @@
     <string name="lan_mitm_log_http">HTTP · %s</string>
     <string name="lan_mitm_log_auth">Basic-auth · %s</string>
     <string name="lan_mitm_log_portal">Portal · %s</string>
+    <string name="tv_remotes_label">TVs</string>
+    <string name="other_ble_spam_desc">Pairing request spam for Apple, Android, Windows, Samsung</string>
+    <string name="other_bond_spam_desc">Bluetooth Classic bonding requests (Bond flood)</string>
+    <string name="ble_swift_pair_windows">Swift Pair on Windows</string>
 </resources>

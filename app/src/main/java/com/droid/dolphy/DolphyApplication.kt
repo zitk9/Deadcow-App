@@ -19,6 +19,7 @@ class DolphyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        DeadcowBackupManager.autoRestoreIfEmpty(this)
         PluginDownloadPolicy.initialize(this)
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->

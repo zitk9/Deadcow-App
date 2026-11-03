@@ -1115,4 +1115,8 @@ Sous licence GNU GPL.</string>
     <string name="lan_mitm_log_auth">Basic-auth · %s</string>
     <string name="lan_mitm_log_portal">Portail · %s</string>
     <string name="other_dolphy_chat_desc">Chat BLE avec d\'autres utilisateurs Deadcow</string>
+    <string name="tv_remotes_label">Téléviseurs</string>
+    <string name="other_ble_spam_desc">Spam de requêtes d\'appairage Apple, Android, Windows, Samsung</string>
+    <string name="other_bond_spam_desc">Requêtes d\'association Bluetooth Classic (Bond flood)</string>
+    <string name="ble_swift_pair_windows">Swift Pair sur Windows</string>
 </resources>

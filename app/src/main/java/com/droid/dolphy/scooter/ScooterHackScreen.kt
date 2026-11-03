@@ -287,6 +287,13 @@ private fun ScooterDeviceCard(
 
             if (connected) {
                 Spacer(Modifier.height(12.dp))
+                Text(
+                    text = "Contrôles du véhicule :",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -295,6 +302,44 @@ private fun ScooterDeviceCard(
                         .padding(horizontal = 10.dp, vertical = 10.dp)
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    ActionChip(icon = Icons.Filled.Lock, label = "Verrou", accent = accent) {
+                        onSendPayload(ScooterProtocol.COMMAND_LOCK, "Verrouillage")
+                    }
+                    ActionChip(icon = Icons.Filled.LockOpen, label = "Déverrou", accent = accent) {
+                        onSendPayload(ScooterProtocol.COMMAND_UNLOCK, "Déverrouillage")
+                    }
+                    ActionChip(icon = Icons.Filled.VolumeUp, label = "Klaxon", accent = accent) {
+                        onSendPayload(ScooterProtocol.COMMAND_BEEP, "Klaxon/Bip")
+                    }
+                    ActionChip(icon = Icons.Filled.Bolt, label = "Phares", accent = accent) {
+                        onSendPayload(ScooterProtocol.COMMAND_LIGHTS_TOGGLE, "Phares LED")
+                    }
+                    ActionChip(icon = Icons.Filled.ElectricScooter, label = "Sport 30k", accent = accent) {
+                        onSendPayload(ScooterProtocol.COMMAND_SPORT_SPEED_30, "Sport 30km/h")
+                    }
+                    ActionChip(icon = Icons.Filled.BatteryStd, label = "Éco 15k", accent = accent) {
+                        onSendPayload(ScooterProtocol.COMMAND_ECO_SPEED_15, "Mode Éco 15km/h")
+                    }
+                }
+
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Firmware Tuning & Payloads :",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp))
+                        .background(colorScheme.surfaceVariant.copy(alpha = 0.35f))
+                        .padding(horizontal = 10.dp, vertical = 8.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     val icon = Icons.Filled.Build

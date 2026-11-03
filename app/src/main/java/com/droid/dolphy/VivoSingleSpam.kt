@@ -21,6 +21,11 @@ class VivoSingleSpam(private val device: VivoDevice) : Spammer {
     private fun buildTwsData(): AdvertiseData {
         return AdvertiseData.Builder()
             .addManufacturerData(VivoDevice.COMPANY_ID, device.toRandomizedManufacturerData())
+            .build()
+    }
+
+    private fun buildTwsScanResponse(): AdvertiseData {
+        return AdvertiseData.Builder()
             .addServiceUuid(twsServiceUuid)
             .build()
     }
@@ -46,13 +51,18 @@ class VivoSingleSpam(private val device: VivoDevice) : Spammer {
             val gamepadData: AdvertiseData? = if (device.deviceType == VivoDevice.Type.GAMEPAD) {
                 AdvertiseData.Builder()
                     .addServiceUuid(hidServiceUuid)
+                    .build()
+            } else null
+            val gamepadScanResp: AdvertiseData? = if (device.deviceType == VivoDevice.Type.GAMEPAD) {
+                AdvertiseData.Builder()
                     .setIncludeDeviceName(true)
                     .build()
             } else null
 
             try {
                 if (device.deviceType == VivoDevice.Type.TWS) {
-                    advertiser.advertise(buildTwsData(), null, forceLegacy = true, connectable = true)
+                    val twsResp = buildTwsScanResponse()
+                    advertiser.advertise(buildTwsData(), twsResp, forceLegacy = true, connectable = true)
                     blinkRunnable?.run()
                     var sinceRefresh = 0L
                     while (isSpamming) {
@@ -65,13 +75,13 @@ class VivoSingleSpam(private val device: VivoDevice) : Spammer {
                         sinceRefresh += Helper.delay
                         if (sinceRefresh >= VivoDevice.TWS_PAYLOAD_REFRESH_MS) {
                             advertiser.stopAdvertising()
-                            advertiser.advertise(buildTwsData(), null, forceLegacy = true, connectable = true)
+                            advertiser.advertise(buildTwsData(), twsResp, forceLegacy = true, connectable = true)
                             sinceRefresh = 0
                         }
                     }
                 } else {
                     while (isSpamming) {
-                        advertiser.advertise(gamepadData!!, null, forceLegacy = true, connectable = true)
+                        advertiser.advertise(gamepadData!!, gamepadScanResp, forceLegacy = true, connectable = true)
                         blinkRunnable?.run()
                         try {
                             Thread.sleep(Helper.delay.toLong())

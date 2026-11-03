@@ -106,6 +106,7 @@ object DolphyRepository {
             if(initialized) return
             appContext = context.applicationContext
             initialized = true
+            DeadcowBackupManager.autoRestoreIfEmpty(appContext)
             _state.value = refreshAndLoad(appContext)
         }
     }
@@ -173,6 +174,7 @@ object DolphyRepository {
                 wifiBruteSuccessCount = nextWifiBrute,
                 dolphinName = current.dolphinName,
             )
+            DeadcowBackupManager.autoBackup(appContext)
         }
     }
 
@@ -199,6 +201,7 @@ object DolphyRepository {
                 blePacketsSent = newTotal,
                 icounter = nextIcounter
             )
+            DeadcowBackupManager.autoBackup(appContext)
         }
     }
 
@@ -225,6 +228,7 @@ object DolphyRepository {
                 nrfDevicesFound = newTotal,
                 icounter = nextIcounter
             )
+            DeadcowBackupManager.autoBackup(appContext)
         }
     }
 

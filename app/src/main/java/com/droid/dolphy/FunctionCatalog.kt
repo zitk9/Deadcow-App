@@ -34,13 +34,17 @@ fun functionDestinationSections(): List<Pair<String, List<FunctionDestination>>>
     val bySection = androidx.compose.runtime.remember(revision, pluginCards) { PluginRegistry.otherBySection() }
 
     val irFlipperTitle = stringResource(R.string.ir_flipper_remotes)
-    val irFlipperDesc = stringResource(R.string.other_ir_flipper_desc) + " + Телевизоры"
+    val irFlipperDesc = stringResource(R.string.other_ir_flipper_desc) + " + " + stringResource(R.string.tv_remotes_label)
     val irStormTitle = stringResource(R.string.ir_storm)
     val irStormDesc = stringResource(R.string.other_ir_storm_desc)
     val irJammerTitle = stringResource(R.string.ir_jammer)
     val irJammerDesc = stringResource(R.string.other_ir_jammer_desc)
     val irUnivTitle = stringResource(R.string.ir_universal_remotes)
     val irUnivDesc = stringResource(R.string.other_ir_universal_desc)
+
+    val bleSpamTitle = stringResource(R.string.ble_spam_screen_title)
+    val bleSpamDesc = stringResource(R.string.other_ble_spam_desc)
+    val bondSpamDesc = stringResource(R.string.other_bond_spam_desc)
 
     val audioScanTitle = stringResource(R.string.audio_scanner_title)
     val audioScanDesc = stringResource(R.string.audio_scanner_desc)
@@ -85,8 +89,8 @@ fun functionDestinationSections(): List<Pair<String, List<FunctionDestination>>>
             FunctionDestination(Icons.Default.Tv, irUnivTitle, irUnivDesc, "other/universal_remotes_home", OtherSections.INFRARED),
         ) + plugins(OtherSections.INFRARED)
         sections += OtherSections.BLUETOOTH to listOf(
-            FunctionDestination(Icons.Default.Bolt, "BLE Spam", "Спам запросами сопряжения Apple, Android, Windows, Samsung", "ble_spam_screen", OtherSections.BLUETOOTH),
-            FunctionDestination(Icons.Default.Link, "Bond Spam", "Запрос сопряжения Bluetooth Classic (Bond flood)", "bond_spam_screen", OtherSections.BLUETOOTH),
+            FunctionDestination(Icons.Default.Bolt, bleSpamTitle, bleSpamDesc, "ble_spam_screen", OtherSections.BLUETOOTH),
+            FunctionDestination(Icons.Default.Link, "Bond Spam", bondSpamDesc, "bond_spam_screen", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.BluetoothAudio, audioScanTitle, audioScanDesc, "other/audio_scanner", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.ElectricScooter, scooterTitle, scooterDesc, "other/scooter_hack", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.Bluetooth, "NRF Scanner", nrfDesc, "other/nrf_scanner", OtherSections.BLUETOOTH),

@@ -1231,7 +1231,7 @@ fun IRFlipperHome(navController: NavController) {
         Triple(Icons.Default.FolderOpen, userRemotesTitle, "other/user_ir_remotes"),
     )
     val catRows = buildList {
-        add(Triple(Icons.Default.Tv, "Телевизоры", "other/ir_tv_home"))
+        add(Triple(Icons.Default.Tv, res.getString(R.string.tv_remotes_label), "other/ir_tv_home"))
         categories!!.forEach { catId ->
             add(
                 Triple(

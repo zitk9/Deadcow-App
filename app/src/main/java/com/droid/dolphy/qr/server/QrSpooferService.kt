@@ -67,7 +67,7 @@ class QrSpooferService : Service() {
 
         return NotificationCompat.Builder(this, "qr_spoofer_channel")
             .setContentTitle("Deadcow Spoofer")
-            .setContentText("Сервер активен в фоновом режиме")
+            .setContentText("Serveur actif en arrière-plan")
             .setSmallIcon(android.R.drawable.stat_sys_headset)
             .setOngoing(true)
             .setContentIntent(mainPendingIntent)

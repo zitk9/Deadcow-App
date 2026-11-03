@@ -32,9 +32,23 @@ object DeadcowChangelog {
 
     val ENTRIES = listOf(
         ChangelogEntry(
-            version = "v1.7",
+            version = "v1.8",
             date = "Novembre 2026",
             isCurrent = true,
+            items = listOf(
+                "🤖 Compatibilité Android 12 (API 31/32) : Déclaration des permissions Bluetooth Scan avec neverForLocation et règles de sauvegarde complètes.",
+                "🚀 Mises à jour in-app & Fin de boucle : Correction du téléchargement vers les dossiers persistants, fin des rappels intempestifs en boucle infinie et option directe de téléchargement navigateur.",
+                "💾 Sauvegarde de la progression & Thèmes : Vos statistiques (XP, niveaux, paquets, exploits) et styles sont préservés à chaque mise à jour et restaurables à tout moment.",
+                "🏆 Système de classement Cyber Bovin : Découvrez votre rang (Veau, Scout, Sentinelle, Guerrier, Cyber Taureau, Légende Apex) et comparez vos points au Top 10 communautaire.",
+                "📡 BLE Xiaomi & Vivo réparés : Répartition conforme Bluetooth 4.x/5.x sous la limite des 31 octets (Scan Response 0xFE95 et 0x027D) pour éliminer l'erreur DATA_TOO_LARGE.",
+                "🛴 Outil Trottinette amélioré : Commandes directes de verrouillage, déverrouillage, klaxon, phares LED, mode Sport 30 km/h et mode Éco 15 km/h.",
+                "🌐 Zéro texte russe résiduel : Localisation et harmonisation intégrale en français et anglais sur l'ensemble des modules, widgets et journaux."
+            )
+        ),
+        ChangelogEntry(
+            version = "v1.7",
+            date = "Novembre 2026",
+            isCurrent = false,
             items = listOf(
                 "🎨 Thèmes & Typographie unifiée : Harmonisation complète de la police d'écriture sur tous les écrans (police Deadcow Flipper par défaut) avec tailles et interlignes proportionnels.",
                 "🎞️ Fluidité des animations : Correction de la cadence d'affichage des animations de la mascotte Deadcow et des aperçus pour un rendu naturel et fluide (suppression de l'accélération anormale x4).",

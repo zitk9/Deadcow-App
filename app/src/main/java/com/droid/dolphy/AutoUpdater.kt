@@ -1,5 +1,6 @@
 package com.droid.dolphy
 
+import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -7,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -55,6 +57,7 @@ object AutoUpdater {
     private const val BUILD_GRADLE_RAW = "https://raw.githubusercontent.com/zitk9/Deadcow-App/main/app/build.gradle.kts"
     private const val PREFS_NAME = "DeadcowUpdaterPrefs"
     private const val KEY_AUTO_UPDATE_ENABLED = "auto_update_enabled"
+    private const val KEY_DISMISSED_VERSION_CODE = "dismissed_version_code"
     private const val NOTIFICATION_CHANNEL_ID = "deadcow_updates"
     private const val NOTIFICATION_ID = 202611
 
@@ -75,6 +78,18 @@ object AutoUpdater {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(KEY_AUTO_UPDATE_ENABLED, enabled)
+            .apply()
+    }
+
+    fun getDismissedVersionCode(context: Context): Long {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getLong(KEY_DISMISSED_VERSION_CODE, 0L)
+    }
+
+    fun setDismissedVersionCode(context: Context, code: Long) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putLong(KEY_DISMISSED_VERSION_CODE, code)
             .apply()
     }
 
@@ -122,6 +137,13 @@ object AutoUpdater {
                             ).show()
                         }
                     }
+                    return@launch
+                }
+
+                // If this is an auto-check at startup and the user already dismissed this specific version, do not prompt repeatedly in an infinite loop
+                val dismissedCode = getDismissedVersionCode(appContext)
+                if (!manualTrigger && remoteRelease.versionCode <= dismissedCode) {
+                    _state.value = AutoUpdateState.Idle
                     return@launch
                 }
 
@@ -187,8 +209,48 @@ object AutoUpdater {
         }
     }
 
-    fun dismissPrompt() {
+    fun dismissPrompt(context: Context? = null, release: DeadcowReleaseInfo? = null) {
+        if (context != null && release != null) {
+            setDismissedVersionCode(context, release.versionCode)
+        }
         _state.value = AutoUpdateState.Idle
+    }
+
+    fun launchBrowserDownload(context: Context, release: DeadcowReleaseInfo? = null) {
+        runCatching {
+            val url = release?.apkUrl?.takeIf { it.isNotBlank() } ?: "https://github.com/zitk9/Deadcow-App/releases/latest"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }.onFailure {
+            Log.e(TAG, "Failed to launch browser download", it)
+            Toast.makeText(context, "Impossible d'ouvrir le navigateur", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun downloadViaSystemDownloadManager(context: Context, release: DeadcowReleaseInfo) {
+        runCatching {
+            val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager
+            if (dm == null) {
+                launchBrowserDownload(context, release)
+                return
+            }
+            val uri = Uri.parse(release.apkUrl)
+            val fileName = "Deadcow-v${release.versionName}-b${release.versionCode}.apk"
+            val request = DownloadManager.Request(uri)
+                .setTitle("Deadcow v${release.versionName}")
+                .setDescription("Téléchargement de la mise à jour Deadcow...")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, fileName)
+                .setMimeType("application/vnd.android.package-archive")
+            dm.enqueue(request)
+            Toast.makeText(context, "Téléchargement lancé en arrière-plan !", Toast.LENGTH_LONG).show()
+            dismissPrompt(context, release)
+        }.onFailure {
+            Log.e(TAG, "DownloadManager failed", it)
+            launchBrowserDownload(context, release)
+        }
     }
 
     fun startDownloadAndInstall(context: Context, release: DeadcowReleaseInfo) {
@@ -376,8 +438,8 @@ object AutoUpdater {
     }
 
     private fun downloadApk(context: Context, release: DeadcowReleaseInfo): File? {
-        val updateDir = File(context.cacheDir, "updates").apply { mkdirs() }
-        val targetFile = File(updateDir, "Deadcow-update-${release.versionCode}.apk")
+        val updateDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir, "updates").apply { mkdirs() }
+        val targetFile = File(updateDir, "Deadcow-v${release.versionName}-b${release.versionCode}.apk")
         if (targetFile.exists()) targetFile.delete()
 
         return runCatching {
@@ -386,8 +448,8 @@ object AutoUpdater {
             var conn: HttpURLConnection? = null
             while (redirects < 6) {
                 val c = (URL(currentUrl).openConnection() as HttpURLConnection).apply {
-                    connectTimeout = 15_000
-                    readTimeout = 30_000
+                    connectTimeout = 25_000
+                    readTimeout = 60_000
                     instanceFollowRedirects = true
                     requestMethod = "GET"
                     setRequestProperty("User-Agent", "Deadcow-Android-Updater")
@@ -405,6 +467,12 @@ object AutoUpdater {
             }
 
             val activeConn = conn ?: return null
+            val responseCode = activeConn.responseCode
+            if (responseCode !in 200..299) {
+                activeConn.disconnect()
+                throw java.io.IOException("HTTP error code $responseCode")
+            }
+
             val totalBytes = activeConn.contentLengthLong
             var downloadedBytes = 0L
             var lastReportedPercent = -1
@@ -413,7 +481,7 @@ object AutoUpdater {
 
             activeConn.inputStream.use { input ->
                 FileOutputStream(targetFile).use { output ->
-                    val buffer = ByteArray(16 * 1024)
+                    val buffer = ByteArray(64 * 1024)
                     var read: Int
                     while (input.read(buffer).also { read = it } != -1) {
                         output.write(buffer, 0, read)
@@ -429,6 +497,7 @@ object AutoUpdater {
                     output.flush()
                 }
             }
+            activeConn.disconnect()
             targetFile
         }.onFailure {
             Log.e(TAG, "Failed to download APK", it)

