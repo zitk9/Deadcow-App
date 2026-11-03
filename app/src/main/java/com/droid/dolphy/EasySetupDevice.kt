@@ -7,9 +7,19 @@ data class EasySetupDevice(
 ) {
     enum class Type { BUDS, WATCH }
 
-    fun toManufacturerData(): String = when (deviceType) {
-        Type.WATCH -> "010002000101FF000043${value.removePrefix("0x").removePrefix("0X")}"
-        Type.BUDS -> "42098102141503210109${value.removePrefix("0x").removePrefix("0X").take(4)}01${value.removePrefix("0x").removePrefix("0X").drop(4)}063C948E00000000C700"
+    fun toManufacturerData(): String {
+        val clean = value.removePrefix("0x").removePrefix("0X").trim().uppercase()
+        return when (deviceType) {
+            Type.WATCH -> {
+                val watchId = if (clean.length % 2 != 0) "0$clean" else clean
+                "010002000101FF000043$watchId"
+            }
+            Type.BUDS -> {
+                val budsVal = clean.padEnd(6, '0').take(6)
+                "42098102141503210109${budsVal.take(4)}01${budsVal.drop(4)}063C948E00000000C700"
+            }
+        }
     }
 }
+
 

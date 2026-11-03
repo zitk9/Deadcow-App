@@ -24,14 +24,19 @@ class FastPairSingleSpam(private val device: FastPairDevice) : Spammer {
                 .setIncludeTxPowerLevel(true)
                 .build()
 
-            while (isSpamming) {
-                advertiser.advertise(data, null)
-                blinkRunnable?.run()
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (_: InterruptedException) {
-                    break
+            advertiser.advertise(data, null, forceLegacy = true, connectable = true)
+
+            try {
+                while (isSpamming) {
+                    blinkRunnable?.run()
+                    com.droid.dolphy.trackBlePackets(1)
+                    try {
+                        Thread.sleep(Helper.delay.coerceAtLeast(100).toLong())
+                    } catch (_: InterruptedException) {
+                        break
+                    }
                 }
+            } finally {
                 advertiser.stopAdvertising()
             }
         }

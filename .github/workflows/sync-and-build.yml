@@ -258,7 +258,11 @@ jobs:
             - **Mise à jour automatique** : L'application Deadcow détecte et installe automatiquement cette mise à jour au lancement.
             - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
             - **Mascotte** : Vache Deadcow (Animations 128x64, Level Up, Portraits Passeport, NFC/RFID/IR/BLE).
-            - **Correctifs Bluetooth** : Arrêt automatique des scans BLE en arrière-plan, buffer circulaire (64 appareils) et support UUID `0000ffe0-0000-1000-8000-00805f9b34fb`.
+            - **Correctifs Bluetooth & Périphériques (v1.5)** :
+              * **Samsung Watch & Galaxy Buds** : Correction de l'émission BLE EasySetup, transmission des paquets Legacy requis pour déclencher les pop-ups sur les montres Samsung Watch et téléphones, et inclusion de la réponse de scan.
+              * **Périphériques Android, Windows & iOS** : Fiabilisation des flux FastPair, SwiftPair et Continuity avec cycle d'émission stable (suppression des boucles d'arrêt/relance à 20ms qui saturaient la pile Bluetooth).
+              * **Compatibilité Android 14/15** : Ajout de la permission `FOREGROUND_SERVICE_CONNECTED_DEVICE` et du type de service associé pour le clavier HID et les services Bluetooth, éliminant les plantages au lancement.
+              * **Détection dynamique Bluetooth** : Récupération dynamique de l'adaptateur et prise en charge des appareils dont le firmware signale incorrectement l'absence de multi-advertising.
             - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
           files: |
             Deadcow-release.apk

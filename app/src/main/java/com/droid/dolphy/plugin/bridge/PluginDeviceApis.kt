@@ -235,7 +235,7 @@ class PluginDeviceApis(private val context: Context, private val pluginId: Strin
     }
 
     fun btSupportsMultipleAdvertisement(): Boolean = try {
-        btAdapter?.isMultipleAdvertisementSupported == true
+        btAdapter?.isMultipleAdvertisementSupported == true || btAdapter?.bluetoothLeAdvertiser != null
     } catch (_: Exception) {
         false
     }

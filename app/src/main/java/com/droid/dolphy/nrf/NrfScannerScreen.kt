@@ -39,7 +39,7 @@ fun NrfScannerScreen(
     val colorScheme = MaterialTheme.colorScheme
 
     LaunchedEffect(Unit) {
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        val bluetoothAdapter = BluetoothHelper.bluetoothAdapter
         viewModel.initialize(context, bluetoothAdapter)
     }
 

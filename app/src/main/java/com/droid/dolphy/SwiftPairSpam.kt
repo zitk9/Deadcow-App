@@ -114,24 +114,27 @@ class SwiftPairSpam : Spammer {
     override fun start() {
         executor.execute {
             _isSpamming = true
+            val pool = generateAdvertiseData(isExtended = false)
+            val advertiser = BluetoothAdvertiser()
 
+            try {
+                while (_isSpamming) {
+                    val data = pool.random()
+                    advertiser.advertise(data, null, forceLegacy = true, connectable = true)
+                    blinkRunnable?.run()
+                    com.droid.dolphy.trackBlePackets(1)
 
-            val isExtendedCapable = Helper.canUseExtendedAdvertising()
-            val pool = generateAdvertiseData(isExtendedCapable)
-
-            while (_isSpamming) {
-                val advertiser = BluetoothAdvertiser()
-                val data = pool.random()
-                advertiser.advertise(data, null)
-                com.droid.dolphy.trackBlePackets(1)
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (_: InterruptedException) {
-                    break
+                    val dwellMs = Helper.delay.coerceAtLeast(180).toLong()
+                    try {
+                        Thread.sleep(dwellMs)
+                    } catch (_: InterruptedException) {
+                        break
+                    }
                 }
+            } finally {
                 advertiser.stopAdvertising()
+                _isSpamming = false
             }
-            _isSpamming = false
         }
     }
 

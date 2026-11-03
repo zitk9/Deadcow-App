@@ -21,14 +21,25 @@ class EasySetupSingleSpam(private val device: EasySetupDevice) : Spammer {
                 .addManufacturerData(0x0075, Helper.convertHexToByteArray("0000000000000000000000000000"))
                 .build()
 
-            while (isSpamming) {
-                advertiser.advertise(data, if (device.deviceType == EasySetupDevice.Type.BUDS) scanResponse else null)
-                blinkRunnable?.run()
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (_: InterruptedException) {
-                    break
+            val isBuds = device.deviceType == EasySetupDevice.Type.BUDS
+            advertiser.advertise(
+                data,
+                if (isBuds) scanResponse else null,
+                forceLegacy = true,
+                connectable = isBuds
+            )
+
+            try {
+                while (isSpamming) {
+                    blinkRunnable?.run()
+                    com.droid.dolphy.trackBlePackets(1)
+                    try {
+                        Thread.sleep(Helper.delay.coerceAtLeast(100).toLong())
+                    } catch (_: InterruptedException) {
+                        break
+                    }
                 }
+            } finally {
                 advertiser.stopAdvertising()
             }
         }

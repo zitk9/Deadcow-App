@@ -55,8 +55,8 @@ class BluetoothPhantomSpammer : Spammer {
 
     private fun setName(name: String) {
         try {
-            val adapter = BluetoothAdapter.getDefaultAdapter()
-            if (adapter != null) {
+            val adapter = BluetoothHelper.bluetoothAdapter
+            if (adapter != null && adapter.isEnabled) {
                 adapter.name = name
                 Log.d("BluetoothPhantom", "Name updated to: $name")
             }

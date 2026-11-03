@@ -96,27 +96,31 @@ class XiaomiQuickConnect : Spammer {
             _isSpamming = true
             loop = 0
 
-            while (loop <= Helper.MAX_LOOP && _isSpamming) {
-                val (hex, bytes) = Companion.generateManufacturerDataBytes(controlled = true)
+            try {
+                while (loop <= Helper.MAX_LOOP && _isSpamming) {
+                    val (hex, bytes) = Companion.generateManufacturerDataBytes(controlled = true)
 
-                val data = AdvertiseData.Builder()
-                    .addManufacturerData(COMPANY_ID, bytes)
-                    .build()
+                    val data = AdvertiseData.Builder()
+                        .addManufacturerData(COMPANY_ID, bytes)
+                        .build()
 
-                bluetoothAdvertiser.advertise(data, null)
-                com.droid.dolphy.trackBlePackets(1)
+                    bluetoothAdvertiser.advertise(data, null, forceLegacy = true, connectable = true)
+                    blinkRunnable?.run()
+                    com.droid.dolphy.trackBlePackets(1)
 
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    return@execute
+                    val dwellMs = Helper.delay.coerceAtLeast(180).toLong()
+                    try {
+                        Thread.sleep(dwellMs)
+                    } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                        return@execute
+                    }
+                    loop++
                 }
-
+            } finally {
                 bluetoothAdvertiser.stopAdvertising()
-                loop++
+                _isSpamming = false
             }
-            _isSpamming = false
         }
     }
 

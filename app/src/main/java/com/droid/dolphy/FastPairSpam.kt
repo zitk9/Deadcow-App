@@ -510,24 +510,27 @@ class FastPairSpam : Spammer {
         executor.execute {
             _isSpamming = true
             val b = BluetoothAdvertiser()
-            for (loop in 0..Helper.MAX_LOOP) {
-                if (!_isSpamming) break
+            try {
+                for (loop in 0..Helper.MAX_LOOP) {
+                    if (!_isSpamming) break
 
-                val data = devicesAdvertiseData[Helper.random.nextInt(devices.size)]
-                b.advertise(data, null)
-                com.droid.dolphy.trackBlePackets(1)
+                    val data = devicesAdvertiseData[Helper.random.nextInt(devices.size)]
+                    b.advertise(data, null, forceLegacy = true, connectable = true)
+                    blinkRunnable?.run()
+                    com.droid.dolphy.trackBlePackets(1)
 
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    break
+                    val dwellMs = Helper.delay.coerceAtLeast(180).toLong()
+                    try {
+                        Thread.sleep(dwellMs)
+                    } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                        break
+                    }
                 }
-
+            } finally {
                 b.stopAdvertising()
+                _isSpamming = false
             }
-            b.stopAdvertising()
-            _isSpamming = false
         }
     }
 

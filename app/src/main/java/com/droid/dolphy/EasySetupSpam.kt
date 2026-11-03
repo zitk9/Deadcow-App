@@ -116,29 +116,35 @@ class EasySetupSpam(private val type: EasySetupDevice.Type) : Spammer {
         executor.execute {
             isSpamming = true
             val bluetoothAdvertiser = BluetoothAdvertiser()
-            repeat(Helper.MAX_LOOP + 1) {
-                if (!isSpamming) {
-                    bluetoothAdvertiser.stopAdvertising()
-                    return@execute
+            try {
+                repeat(Helper.MAX_LOOP + 1) {
+                    if (!isSpamming) return@execute
+
+                    val device = devices.random()
+                    val data = devicesAdvertiseData[devices.indexOf(device)]
+                    val isBuds = device.deviceType == EasySetupDevice.Type.BUDS
+
+                    bluetoothAdvertiser.advertise(
+                        data,
+                        if (isBuds) scanResponse else null,
+                        forceLegacy = true,
+                        connectable = isBuds
+                    )
+                    blinkRunnable?.run()
+                    com.droid.dolphy.trackBlePackets(1)
+
+                    val dwellMs = Helper.delay.coerceAtLeast(180).toLong()
+                    try {
+                        Thread.sleep(dwellMs)
+                    } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                        return@execute
+                    }
                 }
-
-                val device = devices.random()
-                val data = devicesAdvertiseData[devices.indexOf(device)]
-
-                bluetoothAdvertiser.advertise(data, if (device.deviceType == EasySetupDevice.Type.BUDS) scanResponse else null)
-                com.droid.dolphy.trackBlePackets(1)
-
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    return@execute
-                }
-
+            } finally {
                 bluetoothAdvertiser.stopAdvertising()
+                isSpamming = false
             }
-            bluetoothAdvertiser.stopAdvertising()
-            isSpamming = false
         }
     }
 

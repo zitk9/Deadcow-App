@@ -7,12 +7,18 @@ import com.droid.dolphy.plugin.PluginDownloadPolicy
 
 class DolphyApplication : Application() {
 
+    companion object {
+        lateinit var instance: DolphyApplication
+            private set
+    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(AppLocale.wrap(base))
     }
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         PluginDownloadPolicy.initialize(this)
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->

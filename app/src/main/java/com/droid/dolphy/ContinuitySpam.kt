@@ -121,7 +121,7 @@ class ContinuitySpam(private val type: ContinuityType, private val crashMode: Bo
                     .build()
 
                 try {
-                    bluetoothAdvertiser.advertise(data, scanResponse)
+                    bluetoothAdvertiser.advertise(data, scanResponse, forceLegacy = true)
                     blinkRunnable?.run()
                     BleSpamRuntime.trackSentPackets()
                 } catch (e: Exception) {
@@ -160,7 +160,7 @@ class ContinuitySpam(private val type: ContinuityType, private val crashMode: Bo
     override fun getBlinkRunnable(): Runnable? = blinkRunnable
 
     private fun getRandomDelayMs(): Long {
-        val base = Helper.delay.coerceIn(10, 2000)
+        val base = Helper.delay.coerceIn(180, 2000)
         return (base + rand.nextInt((base / 2).coerceAtLeast(1) + 1)).toLong()
     }
 

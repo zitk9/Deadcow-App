@@ -56,7 +56,7 @@ class BluetoothJammerEngine(private val context: Context) {
 
         attackJob = scope.launch {
             post(onLog, "Initializing maximum-power jammer...")
-            val adapter = BluetoothAdapter.getDefaultAdapter()
+            val adapter = BluetoothHelper.bluetoothAdapter
             if (adapter == null) {
                 post(onLog, "Error: Bluetooth adapter not found")
                 isRunning = false

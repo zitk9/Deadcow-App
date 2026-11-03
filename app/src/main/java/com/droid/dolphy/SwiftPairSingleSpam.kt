@@ -19,16 +19,20 @@ class SwiftPairSingleSpam(
         executor.execute {
             isSpamming = true
             val advertiser = BluetoothAdvertiser()
-            val data = buildAdvertiseData(name, isHeadphone, Helper.canUseExtendedAdvertising())
+            val data = buildAdvertiseData(name, isHeadphone, isExtended = false)
+            advertiser.advertise(data, null, forceLegacy = true, connectable = true)
 
-            while (isSpamming) {
-                advertiser.advertise(data, null)
-                blinkRunnable?.run()
-                try {
-                    Thread.sleep(Helper.delay.toLong())
-                } catch (_: InterruptedException) {
-                    break
+            try {
+                while (isSpamming) {
+                    blinkRunnable?.run()
+                    com.droid.dolphy.trackBlePackets(1)
+                    try {
+                        Thread.sleep(Helper.delay.coerceAtLeast(100).toLong())
+                    } catch (_: InterruptedException) {
+                        break
+                    }
                 }
+            } finally {
                 advertiser.stopAdvertising()
             }
         }

@@ -6364,10 +6364,14 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
         _spoofedName.value = name
     }
 
-    private val bluetoothManager: BluetoothManager? = application.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
-    private val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
-    private val advertiser: BluetoothLeAdvertiser? = bluetoothAdapter?.bluetoothLeAdvertiser
-    private val bleScanner: BluetoothLeScanner? = bluetoothAdapter?.bluetoothLeScanner
+    private val bluetoothManager: BluetoothManager?
+        get() = application.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+    private val bluetoothAdapter: BluetoothAdapter?
+        get() = bluetoothManager?.adapter ?: BluetoothHelper.bluetoothAdapter
+    private val advertiser: BluetoothLeAdvertiser?
+        get() = bluetoothAdapter?.bluetoothLeAdvertiser
+    private val bleScanner: BluetoothLeScanner?
+        get() = bluetoothAdapter?.bluetoothLeScanner
 
     private val _discoveredDevices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
     val discoveredDevices: StateFlow<List<BluetoothDevice>> = _discoveredDevices
@@ -6542,7 +6546,7 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
 
         bleScanner?.startScan(bleScanCallback)
 
-        _isScanningDevices.value = classicStarted
+        _isScanningDevices.value = classicStarted || (bleScanner != null)
     }
 
     fun startSpam() {
@@ -6653,7 +6657,7 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
             return AdvertiseStartResult.Error(application.getString(R.string.error_enable_bluetooth_first))
         }
 
-        if (bluetoothAdapter?.isMultipleAdvertisementSupported != true) {
+        if (bluetoothAdapter?.isMultipleAdvertisementSupported != true && bluetoothAdapter?.bluetoothLeAdvertiser == null) {
             return AdvertiseStartResult.Error(application.getString(R.string.error_ble_advertising_unsupported))
         }
 

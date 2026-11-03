@@ -63,16 +63,23 @@ object Helper {
             .edit().putBoolean(KEY_CONCURRENT, enabled).apply()
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     fun isPermissionGranted(c: Context): Boolean {
-        return (ActivityCompat.checkSelfPermission(c, Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED) &&
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            (ActivityCompat.checkSelfPermission(c, Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED) &&
             (ActivityCompat.checkSelfPermission(c, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED)
+        } else {
+            (ActivityCompat.checkSelfPermission(c, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) &&
+            (ActivityCompat.checkSelfPermission(c, Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED)
+        }
     }
 
     fun convertHexToByteArray(hex: String): ByteArray {
-        val cleanHex = hex.lowercase().replace("0x", "").replace(" ", "")
-        if (cleanHex.isEmpty() || cleanHex.length % 2 != 0) {
-            throw IllegalArgumentException("Invalid hex string: $cleanHex")
+        var cleanHex = hex.lowercase().replace("0x", "").replace(" ", "").trim()
+        if (cleanHex.isEmpty()) {
+            return ByteArray(0)
+        }
+        if (cleanHex.length % 2 != 0) {
+            cleanHex = "0$cleanHex"
         }
         val data = ByteArray(cleanHex.length / 2)
         for (i in 0 until cleanHex.length step 2) {
