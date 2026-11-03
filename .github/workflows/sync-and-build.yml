@@ -78,11 +78,38 @@ jobs:
               git add -A
               git commit -m "chore(sync): resolve upstream merge keeping Deadcow customizations"
             }
+
+            echo "Auto-bumping versionCode and versionName after upstream sync..."
+            OLD_CODE=$(grep -oP 'versionCode\s*=\s*\K\d+' app/build.gradle.kts || echo "28")
+            NEW_CODE=$((OLD_CODE + 1))
+            OLD_NAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "1.2")
+            MAJOR=$(echo "$OLD_NAME" | cut -d. -f1)
+            MINOR=$(echo "$OLD_NAME" | cut -d. -f2)
+            NEW_MINOR=$((MINOR + 1))
+            NEW_NAME="${MAJOR}.${NEW_MINOR}"
+            sed -i "s/versionCode = ${OLD_CODE}/versionCode = ${NEW_CODE}/" app/build.gradle.kts
+            sed -i "s/versionName = \"${OLD_NAME}\"/versionName = \"${NEW_NAME}\"/" app/build.gradle.kts
+            git add app/build.gradle.kts
+            git commit -m "chore(release): auto-bump version to v${NEW_NAME} (${NEW_CODE}) after upstream sync" || true
+
             git push origin main || echo "No changes to push or push not allowed."
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Already up to date."
+            echo "Already up to date with upstream."
             echo "has_updates=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Also auto-bump version if the push came from main without a manual versionCode bump compared to HEAD~1
+          if [ "${{ github.event_name }}" == "push" ]; then
+            PREV_CODE=$(git show HEAD~1:app/build.gradle.kts 2>/dev/null | grep -oP 'versionCode\s*=\s*\K\d+' || echo "0")
+            CURR_CODE=$(grep -oP 'versionCode\s*=\s*\K\d+' app/build.gradle.kts || echo "28")
+            if [ "$PREV_CODE" == "$CURR_CODE" ] && [ "$CURR_CODE" != "0" ]; then
+              NEW_CODE=$((CURR_CODE + 1))
+              sed -i "s/versionCode = ${CURR_CODE}/versionCode = ${NEW_CODE}/" app/build.gradle.kts
+              git add app/build.gradle.kts
+              git commit -m "chore(release): auto-increment versionCode to ${NEW_CODE} [skip ci]" || true
+              git push origin main || true
+            fi
           fi
 
   build:
@@ -94,6 +121,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 1
 
       - name: Set up JDK 17
@@ -186,6 +214,26 @@ jobs:
           path: build_output.log
           retention-days: 7
 
+      - name: Extract App Version & Generate version.json
+        if: success()
+        id: app_version
+        run: |
+          VER_CODE=$(grep -oP 'versionCode\s*=\s*\K\d+' app/build.gradle.kts || echo "28")
+          VER_NAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "1.2")
+          TAG_NAME="v${VER_NAME}-b${VER_CODE}"
+          echo "ver_code=${VER_CODE}" >> "$GITHUB_OUTPUT"
+          echo "ver_name=${VER_NAME}" >> "$GITHUB_OUTPUT"
+          echo "tag_name=${TAG_NAME}" >> "$GITHUB_OUTPUT"
+          cat <<EOF > version.json
+          {
+            "versionCode": ${VER_CODE},
+            "versionName": "${VER_NAME}",
+            "tagName": "${TAG_NAME}",
+            "apkUrl": "https://github.com/zitk9/Deadcow-App/releases/download/${TAG_NAME}/Deadcow-release.apk"
+          }
+          EOF
+          cat version.json
+
       - name: Upload APK Artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -194,25 +242,27 @@ jobs:
           path: ${{ env.APK_PATH }}
           retention-days: 30
 
-      - name: Publish Pre-Release v1.2
+      - name: Publish Auto-Update Release
         if: github.ref == 'refs/heads/main' && success()
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2-pre
-          name: "Deadcow v1.2 Pre-Release"
-          prerelease: true
+          tag_name: ${{ steps.app_version.outputs.tag_name }}
+          name: "Deadcow v${{ steps.app_version.outputs.ver_name }} (Build ${{ steps.app_version.outputs.ver_code }})"
+          prerelease: false
           make_latest: true
           body: |
-            ### 🐮 Deadcow Android Pre-Release v1.2
+            ### 🐮 Deadcow Android Release v${{ steps.app_version.outputs.ver_name }} (Build ${{ steps.app_version.outputs.ver_code }})
 
             - **Nom** : Deadcow
-            - **Version** : v1.2-pre
+            - **Version** : v${{ steps.app_version.outputs.ver_name }} (`versionCode = ${{ steps.app_version.outputs.ver_code }}`)
+            - **Mise à jour automatique** : L'application Deadcow détecte et installe automatiquement cette mise à jour au lancement.
             - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
             - **Mascotte** : Vache Deadcow (Animations 128x64, Level Up, Portraits Passeport, NFC/RFID/IR/BLE).
-            - **Correctifs Bluetooth** : Arrêt automatique des scans BLE en arrière-plan (fin de la fuite de batterie), buffer circulaire (64 appareils) et support UUID `0000ffe0-0000-1000-8000-00805f9b34fb`.
+            - **Correctifs Bluetooth** : Arrêt automatique des scans BLE en arrière-plan, buffer circulaire (64 appareils) et support UUID `0000ffe0-0000-1000-8000-00805f9b34fb`.
             - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
           files: |
             Deadcow-release.apk
+            version.json
             build_output.log
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -222,8 +272,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp -f version.json docs/version.json || true
+          git add -f docs/version.json || true
+          git commit -m "chore(pages): add version.json [skip ci]" || true
           TREE=$(git rev-parse HEAD:docs)
-          COMMIT=$(git commit-tree "$TREE" -m "chore(pages): deploy website from main docs [skip ci]")
+          COMMIT=$(git commit-tree "$TREE" -m "chore(pages): deploy website and version.json from main docs [skip ci]")
           git push origin "$COMMIT":refs/heads/gh-pages --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -757,6 +757,78 @@ fun MainScreen(
         }.getOrNull()?.takeIf { !it.isNullOrBlank() } ?: "2.3"
     }
 
+    val autoUpdateState by AutoUpdater.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        AutoUpdater.checkAndAutoUpdateOnLaunch(context)
+    }
+
+    when (val uState = autoUpdateState) {
+        is AutoUpdateState.Downloading -> {
+            ExpressiveDialog(
+                onDismissRequest = {},
+                title = {
+                    Text(
+                        text = "Mise à jour Deadcow v${uState.release.versionName}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Téléchargement automatique de l'APK en cours... (${uState.progressPercent}%)",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        LinearProgressIndicator(
+                            progress = { (uState.progressPercent / 100f).coerceIn(0f, 1f) },
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                confirmButton = {},
+                accentColor = MaterialTheme.colorScheme.primary
+            )
+        }
+        is AutoUpdateState.Installing -> {
+            ExpressiveDialog(
+                onDismissRequest = {},
+                title = {
+                    Text(
+                        text = "Installation de Deadcow v${uState.release.versionName}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 2.5.dp
+                        )
+                        Text(
+                            text = "Installation automatique de la nouvelle version...",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                },
+                confirmButton = {},
+                accentColor = MaterialTheme.colorScheme.primary
+            )
+        }
+        else -> {}
+    }
+
 
     if (lastSeenVersion != currentVersion) {
         if (currentVersion == "2.5") {
@@ -3821,6 +3893,20 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                                 Spacer(Modifier.width(12.dp))
                                 Text("GitHub Repository", style = MaterialTheme.typography.bodyLarge)
                                 Spacer(Modifier.weight(1f))
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = { AutoUpdater.checkForUpdates(context, manualTrigger = true) }) {
+                                Icon(Icons.Default.SystemUpdate, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Mise à jour automatique (GitHub)", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Vérifier et installer la dernière version Deadcow",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
