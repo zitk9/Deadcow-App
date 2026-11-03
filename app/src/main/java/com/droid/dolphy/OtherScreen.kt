@@ -227,10 +227,8 @@ fun OtherScreen(navController: NavController, spamViewModel: SpamViewModel) {
                             ) {
                                 Text(
                                     text = "Deadcow",
-                                    fontFamily = flipperFontFamily,
+                                    style = MaterialTheme.typography.displayMedium,
                                     fontStyle = FontStyle.Italic,
-                                    fontSize = 42.sp,
-                                    fontWeight = FontWeight.Bold,
                                     color = accent,
                                     modifier = Modifier.align(Alignment.Center)
                                 )
@@ -506,10 +504,8 @@ fun OtherScreen(navController: NavController, spamViewModel: SpamViewModel) {
                             ) {
                                 Text(
                                     text = "Deadcow",
-                                    fontFamily = flipperFontFamily,
+                                    style = MaterialTheme.typography.displayMedium,
                                     fontStyle = FontStyle.Italic,
-                                    fontSize = 42.sp,
-                                    fontWeight = FontWeight.Bold,
                                     color = accent,
                                     modifier = Modifier.align(Alignment.Center)
                                 )

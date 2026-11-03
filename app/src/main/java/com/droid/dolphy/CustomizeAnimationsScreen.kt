@@ -209,7 +209,7 @@ fun DolphinAnimationPreview(
 
     val frameDelayMs = remember(meta.frameRate) {
         val frameRate = meta.frameRate.coerceAtLeast(1)
-        (1000L / (frameRate * 4)).coerceAtLeast(35L)
+        (1000L / frameRate).coerceIn(60L, 800L)
     }
 
     LaunchedEffect(meta.name, frames, isPlaying) {

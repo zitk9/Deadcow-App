@@ -32,9 +32,18 @@ object DeadcowChangelog {
 
     val ENTRIES = listOf(
         ChangelogEntry(
-            version = "v1.6",
+            version = "v1.7",
             date = "Novembre 2026",
             isCurrent = true,
+            items = listOf(
+                "🎨 Thèmes & Typographie unifiée : Harmonisation complète de la police d'écriture sur tous les écrans (police Deadcow Flipper par défaut) avec tailles et interlignes proportionnels.",
+                "🎞️ Fluidité des animations : Correction de la cadence d'affichage des animations de la mascotte Deadcow et des aperçus pour un rendu naturel et fluide (suppression de l'accélération anormale x4).",
+                "✨ Cohérence visuelle : Harmonisation des thèmes sombre/clair, intégration complète de l'accentuation Deadcow et élimination des polices isolées ou disparates."
+            )
+        ),
+        ChangelogEntry(
+            version = "v1.6",
+            date = "Novembre 2026",
             items = listOf(
                 "📡 Bluetooth & BLE : Correction complète de l'émission pour Samsung Watch, Galaxy Buds, Android Fast Pair, Windows Swift Pair et iOS Continuity.",
                 "⌚ Samsung Watch : Restauration de l'émission Legacy standard sur canaux 37, 38, 39 pour déclencher les fenêtres d'appairage sur One UI.",

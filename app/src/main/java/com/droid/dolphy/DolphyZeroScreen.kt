@@ -319,7 +319,6 @@ private fun MiniFirmwareScreen(
                 Text(
                     text = "LOCKED",
                     color = accent,
-                    fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -327,21 +326,18 @@ private fun MiniFirmwareScreen(
                 Text(
                     text = "Flipper Zero style lockscreen",
                     color = accent.copy(alpha = 0.85f),
-                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Press CENTER to unlock",
                     color = accent.copy(alpha = 0.85f),
-                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = "Only available features launch.\nHardware-only modules stay disabled.",
                     color = accent.copy(alpha = 0.65f),
-                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.labelSmall
                 )
                 return@Column
@@ -350,14 +346,12 @@ private fun MiniFirmwareScreen(
             Text(
                 text = menu.title,
                 color = accent,
-                fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleSmall
             )
             Text(
                 text = menu.sourcePath,
                 color = accent.copy(alpha = 0.65f),
-                fontFamily = FontFamily.Monospace,
                 style = MaterialTheme.typography.labelSmall
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -365,7 +359,6 @@ private fun MiniFirmwareScreen(
                 Text(
                     text = "^ more",
                     color = accent.copy(alpha = 0.65f),
-                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -384,7 +377,6 @@ private fun MiniFirmwareScreen(
                     Text(
                         text = if(selected) "> [${item.glyph}] ${item.title}" else "  [${item.glyph}] ${item.title}",
                         color = if(selected) Color.Black else accent,
-                        fontFamily = FontFamily.Monospace,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = if(selected) FontWeight.Bold else FontWeight.Normal
                     )
@@ -396,7 +388,6 @@ private fun MiniFirmwareScreen(
                 Text(
                     text = "v more",
                     color = accent.copy(alpha = 0.65f),
-                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.labelSmall
                 )
             }

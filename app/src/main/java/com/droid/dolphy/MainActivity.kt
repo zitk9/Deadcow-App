@@ -759,7 +759,7 @@ fun MainScreen(
     val currentVersion = remember {
         runCatching {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        }.getOrNull()?.takeIf { !it.isNullOrBlank() } ?: "1.6"
+        }.getOrNull()?.takeIf { !it.isNullOrBlank() } ?: "1.7"
     }
 
     var showStartupChangelog by rememberSaveable {
@@ -2716,7 +2716,7 @@ internal fun RandomExternalDolphinAnimation(modifier: Modifier = Modifier) {
     var frameIndex by remember(decodedFrames) { mutableIntStateOf(0) }
     val frameDelayMs = remember(currentAnimation) {
         val frameRate = (currentAnimation?.frameRate ?: 2).coerceAtLeast(1)
-        (1000L / (frameRate * 4)).coerceAtLeast(28L)
+        (1000L / frameRate).coerceIn(60L, 800L)
     }
 
     LaunchedEffect(decodedFrames, cyclicAnimationEnabled) {
@@ -6193,11 +6193,11 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
     private val _isAdaptiveColor = MutableStateFlow(prefs.getBoolean("is_adaptive_color", true))
     val isAdaptiveColor: StateFlow<Boolean> = _isAdaptiveColor
 
-    private val _flipperFontEnabled = MutableStateFlow(prefs.getBoolean("flipper_font_enabled", false))
+    private val _flipperFontEnabled = MutableStateFlow(prefs.getBoolean("flipper_font_enabled", true))
     val flipperFontEnabled: StateFlow<Boolean> = _flipperFontEnabled
     private val _flipperFontScale = MutableStateFlow(prefs.getFloat("flipper_font_scale", 1.08f))
     val flipperFontScale: StateFlow<Float> = _flipperFontScale
-    private val _uiScale = MutableStateFlow(prefs.getFloat("ui_scale", 0.9f).coerceIn(0.8f, 1.2f))
+    private val _uiScale = MutableStateFlow(prefs.getFloat("ui_scale", 1.0f).coerceIn(0.8f, 1.2f))
     val uiScale: StateFlow<Float> = _uiScale
     private val _liquidGlassEnabled = MutableStateFlow(false)
     val liquidGlassEnabled: StateFlow<Boolean> = _liquidGlassEnabled
