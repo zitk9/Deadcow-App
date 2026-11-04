@@ -3472,7 +3472,7 @@ object IrStormRepository {
     fun pickShutdownButton(buttons: List<IrButton>): IrButton? {
         for (btn in buttons) {
             val label = btn.name?.lowercase() ?: continue
-            if (label.contains("power") || label.contains("выкл") || label.contains("off")) {
+            if (label.contains("power") || label.contains("off") || label.contains("arret") || label.contains("arrêt") || label.contains("eteindre") || label.contains("выкл")) {
                 return btn
             }
         }
@@ -3501,7 +3501,7 @@ object IrStormRepository {
 
     private fun isPowerFamily(name: String): Boolean {
         val lower = name.lowercase()
-        return lower.contains("power") || lower.contains("off") || lower.contains("on") || lower.contains("выкл") || lower.contains("вкл")
+        return lower.contains("power") || lower.contains("off") || lower.contains("on") || lower.contains("arret") || lower.contains("arrêt") || lower.contains("marche") || lower.contains("выкл") || lower.contains("вкл")
     }
 
     fun buildCommandsForCategory(context: Context, categoryKey: String): List<Pair<String, IrButton>> {
@@ -3966,7 +3966,7 @@ fun IRJammerScreen(navController: NavController? = null) {
                                             withContext(Dispatchers.Main) {
                                                 sentCommands = index + 1
                                                 statusMessage = context.getString(R.string.ir_jammer_sending_signals) +
-                                                    " · цикл $cycle"
+                                                    " · cycle $cycle"
                                             }
                                             delay(8)
                                         }

@@ -258,7 +258,7 @@ jobs:
             - **Mise à jour automatique** : L'application Deadcow détecte et installe automatiquement cette mise à jour au lancement.
             - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
             - **Mascotte** : Vache Deadcow (Animations 128x64, Level Up, Portraits Passeport, NFC/RFID/IR/BLE).
-            - **Correctifs & Nouveautés (v1.11)** :
+            - **Correctifs & Nouveautés (v1.13)** :
               * **Classement Cyber Réel & Paliers** : Suppression intégrale des faux profils bots ; détail transparent des points gagnés par activité (BLE, BadUSB, NFC, IR, NRF, Wi-Fi) et découverte des pairs décentralisés.
               * **Chat Bluetooth BLE fiabilisé** : Correction du dépassement de paquet (31 octets) avec scan response, persistance locale des messages et support Android 13+.
               * **Débridage Trottinettes jusqu'à 100 km/h** : Calcul dynamique du checksum Ninebot, presets Boost 45 km/h et Max 100 km/h, avec curseur interactif 15-100 km/h et télémétrie de batterie.

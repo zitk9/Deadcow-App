@@ -147,7 +147,7 @@ object PluginManager {
 
     fun sharePlugin(context: Context, pluginId: String): Result<Unit> {
         return runCatching {
-            val entry = loaded[pluginId] ?: error("Плагин не найден")
+            val entry = loaded[pluginId] ?: error("Plugin introuvable")
             val shareDir = File(appContext.cacheDir, "shared_plugins").apply { mkdirs() }
             val file = File(shareDir, "${entry.manifest.id}.dolphyplugin")
             file.writeText(entry.sourceCode, Charsets.UTF_8)
@@ -171,7 +171,7 @@ object PluginManager {
             val accepted = fileName.endsWith(".dolphyplugin", true) ||
                 uri.path?.endsWith(".dolphyplugin", true) == true ||
                 mime.equals("application/x-dolphy-plugin", true)
-            if (!accepted) return Result.failure(IllegalArgumentException("Поддерживаются только файлы .dolphyplugin"))
+            if (!accepted) return Result.failure(IllegalArgumentException("Fichiers .dolphyplugin uniquement"))
             val bytes = appContext.contentResolver.openInputStream(uri)?.use { input ->
                 val output = ByteArrayOutputStream()
                 val buffer = ByteArray(8192)
@@ -181,14 +181,14 @@ object PluginManager {
                     if (read < 0) break
                     total += read
                     if (total > MAX_PLUGIN_SOURCE_BYTES) {
-                        return Result.failure(IllegalArgumentException("Файл плагина слишком большой"))
+                        return Result.failure(IllegalArgumentException("Fichier de plugin trop volumineux"))
                     }
                     output.write(buffer, 0, read)
                 }
                 output.toByteArray()
-            } ?: return Result.failure(IllegalStateException("Не удалось прочитать файл"))
+            } ?: return Result.failure(IllegalStateException("Impossible de lire le fichier"))
             val raw = bytes.toString(Charsets.UTF_8)
-            if (raw.isBlank()) return Result.failure(IllegalArgumentException("Пустой файл"))
+            if (raw.isBlank()) return Result.failure(IllegalArgumentException("Fichier vide"))
             val fallbackId = fileName.substringBeforeLast('.')
                 .replace(Regex("[^A-Za-z0-9_-]"), "_")
                 .lowercase()
@@ -255,9 +255,9 @@ object PluginManager {
         return sessions[pluginId]?.renderScreen(screenId)
             ?: UiNode.Column(
                 listOf(
-                    UiNode.Text("Плагин не установлен", "headlineSmall"),
+                    UiNode.Text("Plugin non installé", "headlineSmall"),
                     UiNode.Spacer(8f),
-                    UiNode.Text("id=$pluginId — импортируйте .dolphyplugin через Управление плагинами", "bodyMedium"),
+                    UiNode.Text("id=$pluginId — importez le fichier .dolphyplugin via la Gestion des plugins", "bodyMedium"),
                 ),
                 padding = 16f,
                 spacing = 8f,
@@ -280,11 +280,11 @@ object PluginManager {
                         val read = input.read(buffer)
                         if (read < 0) break
                         total += read
-                        if (total > MAX_PLUGIN_SOURCE_BYTES) throw IllegalArgumentException("Файл плагина слишком большой")
+                        if (total > MAX_PLUGIN_SOURCE_BYTES) throw IllegalArgumentException("Fichier de plugin trop volumineux")
                         output.write(buffer, 0, read)
                     }
                 }
-            } ?: return Result.failure(IllegalStateException("Не удалось прочитать файл"))
+            } ?: return Result.failure(IllegalStateException("Impossible de lire le fichier"))
             val result = installFromFile(tmp)
             tmp.delete()
             result
@@ -295,10 +295,10 @@ object PluginManager {
     }
 
     fun installFromFile(sourceFile: File): Result<PluginManifest> {
-        if (!sourceFile.exists()) return Result.failure(IllegalArgumentException("Файл не найден"))
+        if (!sourceFile.exists()) return Result.failure(IllegalArgumentException("Fichier introuvable"))
         return try {
             val raw = sourceFile.readText(Charsets.UTF_8)
-            if (raw.isBlank()) return Result.failure(IllegalArgumentException("Пустой файл"))
+            if (raw.isBlank()) return Result.failure(IllegalArgumentException("Fichier vide"))
             val fallbackId = sourceFile.nameWithoutExtension
                 .replace(Regex("[^A-Za-z0-9_-]"), "_")
                 .lowercase()
@@ -335,7 +335,7 @@ object PluginManager {
         saveMeta(manifest, enabled = shouldEnable, runtime = runtime, pinned = wasPinned)
 
         if (!saved.exists() || saved.length() == 0L) {
-            return Result.failure(IllegalStateException("Не удалось сохранить плагин на диск"))
+            return Result.failure(IllegalStateException("Impossible d'enregistrer le plugin sur le stockage"))
         }
 
         if (!shouldEnable) {
@@ -349,7 +349,7 @@ object PluginManager {
             updateMetaEnabled(manifest.id, false)
             loaded[manifest.id] = LoadedPlugin(manifest, saved, raw, enabled = false, runtime = runtime, pinned = wasPinned)
             publish()
-            return Result.failure(IllegalStateException("Не установлены или отключены библиотеки: ${missingDependencies.joinToString()}"))
+            return Result.failure(IllegalStateException("Dépendances manquantes ou désactivées : ${missingDependencies.joinToString()}"))
         }
 
         val session = try {
@@ -365,7 +365,7 @@ object PluginManager {
             publish()
             return Result.failure(
                 IllegalStateException(
-                    "Плагин сохранён, но не запустился: ${t.javaClass.simpleName}: ${t.message}",
+                    "Plugin enregistré, mais le lancement a échoué : ${t.javaClass.simpleName}: ${t.message}",
                     t,
                 ),
             )

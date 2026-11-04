@@ -64,7 +64,7 @@ object NfcTagAnalyzer {
         } else if(techSimple.contains("IsoDep")) {
             Triple("NFC Type 4 Tag", false, null)
         } else {
-            Triple("Метка", false, null)
+            Triple("Badge NFC", false, null)
         }
 
         val (passwordSupported, passwordEnabled) = if(ntag != null) {
@@ -78,15 +78,15 @@ object NfcTagAnalyzer {
             if(ntag != null) {
                 append("NTAG: ${ntag.name}")
             } else {
-                append("Тип метки: неизвестно")
+                append("Type de badge : inconnu")
             }
 
             if(isReadOnly == true) append(" • Read-only")
             if(passwordSupported == true) {
                 when(passwordEnabled) {
-                    true -> append(" • Password: включено")
-                    false -> append(" • Password: выключено")
-                    null -> append(" • Password: неизвестно")
+                    true -> append(" • Mot de passe : activé")
+                    false -> append(" • Mot de passe : désactivé")
+                    null -> append(" • Mot de passe : inconnu")
                 }
             }
             if(emvDetected) append(" • EMV")
@@ -187,16 +187,16 @@ object NfcTagAnalyzer {
                 val paymentSystem = detectPaymentSystem(aids, appLabels)
 
                 return buildString {
-                    appendLine("Тип: EMV Contactless")
-                    appendLine("Стандарт: ISO 14443-4")
-                    appendLine("Поддержка APDU: Да")
-                    appendLine("Платежная система: ${paymentSystem ?: "Не определена"}")
-                    appendLine("Приложений на карте: ${aids.size}")
-                    appendLine("AID: ${if(aids.isNotEmpty()) aids.joinToString(", ") else "—"}")
-                    append("PPSE: 2PAY.SYS.DDF01")
+                    appendLine("Type : EMV Sans-contact")
+                    appendLine("Standard : ISO 14443-4")
+                    appendLine("Support APDU : Oui")
+                    appendLine("Réseau de paiement : ${paymentSystem ?: "Non déterminé"}")
+                    appendLine("Applications sur la carte : ${aids.size}")
+                    appendLine("AID : ${if(aids.isNotEmpty()) aids.joinToString(", ") else "—"}")
+                    append("PPSE : 2PAY.SYS.DDF01")
                     if(appLabels.isNotEmpty()) {
                         appendLine()
-                        append("Метка приложения: ${appLabels.joinToString(", ")}")
+                        append("Nom de l'application : ${appLabels.joinToString(", ")}")
                     }
                 }
             }

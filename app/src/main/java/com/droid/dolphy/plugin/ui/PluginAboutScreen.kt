@@ -57,7 +57,7 @@ fun PluginAboutScreen(navController: NavController) {
                         accent = accent,
                     )
                 }
-                item { SectionTitle("Минимальный плагин") }
+                item { SectionTitle("Plugin minimal") }
                 item {
                     CodeBlock(
                         """
@@ -93,12 +93,12 @@ fun PluginAboutScreen(navController: NavController) {
                         """.trimIndent(),
                     )
                 }
-                item { SectionTitle("Полный доступ") }
+                item { SectionTitle("Accès complet") }
                 item {
                     GuideCard(
                         icon = Icons.Default.Terminal,
-                        title = "Android, Root и Shizuku",
-                        body = "api.getContext(), api.getApplicationContext(), api.getClassLoader(), api.getAndroid() и api.getDevice() возвращают реальные Java-объекты Deadcow. Команды доступны через api.shellExec(), api.rootExec(), api.shizukuExec() и api.smartExec().",
+                        title = "Android, Root et Shizuku",
+                        body = "api.getContext(), api.getApplicationContext(), api.getClassLoader(), api.getAndroid() et api.getDevice() retournent les objets Java réels de Deadcow. Les commandes système sont exécutables via api.shellExec(), api.rootExec(), api.shizukuExec() et api.smartExec().",
                         accent = accent,
                     )
                 }
@@ -117,29 +117,29 @@ fun PluginAboutScreen(navController: NavController) {
                         """.trimIndent(),
                     )
                 }
-                item { SectionTitle("Радиоинтерфейсы") }
+                item { SectionTitle("Interfaces Radio") }
                 item {
                     GuideCard(
                         icon = Icons.Default.Bluetooth,
-                        title = "Bluetooth и BLE",
-                        body = "Через api.getAndroid() доступны advertising, GATT client/server, RFCOMM, bonding и сведения об адаптере. api.getDevice() предоставляет BLE scan, возможности оборудования и системные операции.",
+                        title = "Bluetooth et BLE",
+                        body = "Via api.getAndroid() : advertising, clients/serveurs GATT, RFCOMM, appairage et état de l'adaptateur. api.getDevice() fournit le scan BLE, les fonctionnalités matérielles et les opérations système.",
                         accent = accent,
                     )
                 }
                 item {
                     GuideCard(
                         icon = Icons.Default.Wifi,
-                        title = "Wi-Fi и сеть",
-                        body = "Доступны результаты Wi-Fi-сканирования, интерфейсы, DHCP, каналы, NSD, сокеты, HTTP и прямой доступ к Android WifiManager. Root и Shizuku позволяют использовать системные сетевые инструменты устройства.",
+                        title = "Wi-Fi et Réseau",
+                        body = "Résultats de scans Wi-Fi, interfaces, baux DHCP, canaux, NSD, sockets, HTTP et accès direct à Android WifiManager. Root et Shizuku permettent d'utiliser les utilitaires réseau natifs de l'OS.",
                         accent = accent,
                     )
                 }
-                item { SectionTitle("Вмешательство в приложение") }
+                item { SectionTitle("Interception & Hooks") }
                 item {
                     GuideCard(
                         icon = Icons.Default.Code,
-                        title = "Экраны, действия и сервисы",
-                        body = "hook_screen() добавляет слой, FAB или полностью заменяет штатный экран. hook_action() перехватывает именованные операции и может изменить данные, обработать или отменить действие. provide_service() подключает новую реализацию системной возможности с приоритетом и штатным fallback.",
+                        title = "Écrans, actions et services",
+                        body = "hook_screen() ajoute une surcouche, un bouton FAB ou remplace un écran officiel. hook_action() intercepte les opérations nommées. provide_service() injecte une implémentation de service système avec priorité et repli automatique.",
                         accent = accent,
                     )
                 }
@@ -175,12 +175,12 @@ fun PluginAboutScreen(navController: NavController) {
                 item {
                     GuideCard(
                         icon = Icons.Default.Security,
-                        title = "Режимы экранных хуков",
-                        body = "replace заменяет экран, overlay рисует свободный слой поверх него, top и bottom добавляют Material 3-панель, fab добавляет компактное плавающее действие. Маски маршрутов поддерживают *, например ir_* или other/*.",
+                        title = "Modes de hooks d'écrans",
+                        body = "replace remplace l'écran, overlay dessine par-dessus, top et bottom ajoutent une barre Material 3, fab ajoute une action flottante. Les masques de routes acceptent le joker *, par ex. ir_* ou other/*.",
                         accent = accent,
                     )
                 }
-                item { SectionTitle("Состояние и настройки") }
+                item { SectionTitle("État et Paramètres") }
                 item {
                     CodeBlock(
                         """
@@ -197,8 +197,8 @@ fun PluginAboutScreen(navController: NavController) {
                 item {
                     GuideCard(
                         icon = Icons.Default.Security,
-                        title = "Доверенная модель",
-                        body = "Python-плагин выполняется внутри процесса Deadcow и может получить разрешения приложения, внутренние данные, Root и Shizuku. Устанавливайте только код, который вы прочитали или которому полностью доверяете.",
+                        title = "Modèle de sécurité de confiance",
+                        body = "Les plugins Python s'exécutent au sein du processus Deadcow et disposent des permissions de l'application, des données internes, du Root et de Shizuku. N'installez que du code audité ou en qui vous avez totale confiance.",
                         accent = accent,
                     )
                 }

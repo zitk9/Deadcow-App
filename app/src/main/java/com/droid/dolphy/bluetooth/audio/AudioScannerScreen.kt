@@ -643,7 +643,7 @@ fun RecordingsList(context: Context, accentColor: Color) {
                                     type = "audio/*"
                                     putExtra(Intent.EXTRA_STREAM, uri)
                                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                }, "Поделиться"))
+                                }, "Partager"))
                             }) { Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(20.dp)) }
 
                             DolphyIconButton(onClick = {

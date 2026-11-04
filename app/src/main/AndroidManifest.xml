@@ -164,7 +164,7 @@
             android:name=".hid.HidKeyboardActivity"
             android:exported="false"
             android:launchMode="singleTop"
-            android:label="HID клавиатура"
+            android:label="Clavier HID"
             android:theme="@style/Theme.Dolphy" />
 
         <service
