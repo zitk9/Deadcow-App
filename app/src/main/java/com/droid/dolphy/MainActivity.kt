@@ -558,6 +558,7 @@ class MainActivity : ComponentActivity() {
 
         val openedPluginUri = pluginUriFromIntent(intent)
         if (openedPluginUri == null) requestPermissions()
+        handleIncomingApk(intent)
         nfcViewModel.handleNfcIntent(intent)
         pendingNavRoute.value = intent.getStringExtra(EXTRA_NAV_ROUTE)
         pendingPluginUri.value = openedPluginUri
@@ -641,9 +642,47 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        handleIncomingApk(intent)
         nfcViewModel.handleNfcIntent(intent)
         pendingNavRoute.value = intent.getStringExtra(EXTRA_NAV_ROUTE)
         pluginUriFromIntent(intent)?.let { pendingPluginUri.value = it }
+    }
+
+    private fun handleIncomingApk(intent: Intent?) {
+        if (intent?.action != Intent.ACTION_VIEW) return
+        val uri = intent.data ?: return
+        val name = runCatching {
+            contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                val index = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                if (index >= 0 && cursor.moveToFirst()) cursor.getString(index) else null
+            }
+        }.getOrNull()
+        val mime = intent.type ?: runCatching { contentResolver.getType(uri) }.getOrNull()
+        val isApk = name?.endsWith(".apk", true) == true ||
+            uri.path?.endsWith(".apk", true) == true ||
+            mime.equals("application/vnd.android.package-archive", true)
+        if (!isApk) return
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val cacheFile = java.io.File(cacheDir, "updates/downloaded_app.apk").apply {
+                parentFile?.mkdirs()
+                if (exists()) delete()
+            }
+            val copied = runCatching {
+                contentResolver.openInputStream(uri)?.use { input ->
+                    cacheFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                cacheFile.exists() && cacheFile.length() > 10_000L
+            }.getOrDefault(false)
+
+            if (copied) {
+                withContext(Dispatchers.Main) {
+                    AutoUpdater.launchPackageInstaller(this@MainActivity, cacheFile)
+                }
+            }
+        }
     }
 
     private fun pluginUriFromIntent(intent: Intent): String? {

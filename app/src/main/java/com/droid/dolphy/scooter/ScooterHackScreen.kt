@@ -322,7 +322,44 @@ private fun ScooterDeviceCard(
                     ActionChip(icon = Icons.Filled.BatteryStd, label = "Éco 15k", accent = accent) {
                         onSendPayload(ScooterProtocol.COMMAND_ECO_SPEED_15, "Mode Éco 15km/h")
                     }
+                    ActionChip(icon = Icons.Filled.Bolt, label = "Boost 45k", accent = accent) {
+                        onSendPayload(ScooterProtocol.buildSpeedCommand(45), "Boost 45km/h")
+                    }
+                    ActionChip(icon = Icons.Filled.ElectricScooter, label = "Max 100k", accent = accent) {
+                        onSendPayload(ScooterProtocol.buildSpeedCommand(100), "Débridage 100km/h")
+                    }
                 }
+
+                var customSpeed by remember { mutableFloatStateOf(35f) }
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Vitesse cible : ${customSpeed.toInt()} km/h (jusqu'à 100)",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = accent
+                    )
+                    androidx.compose.material3.TextButton(
+                        onClick = {
+                            val sp = customSpeed.toInt()
+                            onSendPayload(ScooterProtocol.buildSpeedCommand(sp), "Vitesse $sp km/h")
+                        },
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text("Appliquer (${customSpeed.toInt()}k)", fontWeight = FontWeight.Bold)
+                    }
+                }
+                androidx.compose.material3.Slider(
+                    value = customSpeed,
+                    onValueChange = { customSpeed = it },
+                    valueRange = 15f..100f,
+                    steps = 16,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+                )
 
                 Spacer(Modifier.height(8.dp))
                 Text(

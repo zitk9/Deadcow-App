@@ -1,5 +1,6 @@
 package com.droid.dolphy
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -8,17 +9,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import org.json.JSONArray
+import org.json.JSONObject
 
 enum class DeadcowRankTier(
     val title: String,
@@ -42,10 +48,14 @@ data class LeaderboardEntry(
     val level: Int,
     val score: Long,
     val tier: DeadcowRankTier,
-    val isCurrentUser: Boolean = false
+    val isCurrentUser: Boolean = false,
+    val detail: String = ""
 )
 
 object DeadcowRankSystem {
+
+    private const val PREFS_NAME = "deadcow_peers_rank"
+    private const val KEY_PEERS = "discovered_peers_json"
 
     fun calculateScore(state: DolphyState): Long {
         return (state.icounter.toLong() * 10L) +
@@ -74,53 +84,95 @@ object DeadcowRankSystem {
         return ((score - current.minScore).toFloat() / range).coerceIn(0f, 1f)
     }
 
-    fun getCommunityLeaderboard(state: DolphyState): Pair<List<LeaderboardEntry>, Int> {
+    fun recordDiscoveredPeer(context: Context, peerName: String, peerScore: Long, peerLevel: Int) {
+        if (peerName.isBlank()) return
+        try {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val jsonStr = prefs.getString(KEY_PEERS, "[]") ?: "[]"
+            val array = JSONArray(jsonStr)
+            var found = false
+            for (i in 0 until array.length()) {
+                val obj = array.getJSONObject(i)
+                if (obj.getString("name").equals(peerName, ignoreCase = true)) {
+                    obj.put("score", maxOf(obj.getLong("score"), peerScore))
+                    obj.put("level", maxOf(obj.getInt("level"), peerLevel))
+                    obj.put("timestamp", System.currentTimeMillis())
+                    found = true
+                    break
+                }
+            }
+            if (!found) {
+                val obj = JSONObject().apply {
+                    put("name", peerName)
+                    put("score", peerScore)
+                    put("level", peerLevel)
+                    put("timestamp", System.currentTimeMillis())
+                }
+                array.put(obj)
+            }
+            prefs.edit().putString(KEY_PEERS, array.toString()).apply()
+        } catch (_: Exception) {}
+    }
+
+    fun getDiscoveredPeers(context: Context): List<LeaderboardEntry> {
+        val result = mutableListOf<LeaderboardEntry>()
+        try {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val jsonStr = prefs.getString(KEY_PEERS, "[]") ?: "[]"
+            val array = JSONArray(jsonStr)
+            for (i in 0 until array.length()) {
+                val obj = array.getJSONObject(i)
+                val score = obj.optLong("score", 0L)
+                val lvl = obj.optInt("level", 1)
+                val name = obj.optString("name", "Pair Inconnu")
+                result.add(
+                    LeaderboardEntry(
+                        rank = 0,
+                        name = name,
+                        level = lvl,
+                        score = score,
+                        tier = getTier(score),
+                        isCurrentUser = false,
+                        detail = "Pair découvert"
+                    )
+                )
+            }
+        } catch (_: Exception) {}
+        return result
+    }
+
+    fun getCommunityLeaderboard(state: DolphyState, context: Context? = null): Pair<List<LeaderboardEntry>, Int> {
         val userScore = calculateScore(state)
         val userName = state.dolphinName.ifBlank { "Deadcow-User" }
         val userLevel = state.level
         val userTier = getTier(userScore)
 
-        val benchmarkPeers = listOf(
-            Triple("Apex-Bovine-01", 42, 68_400L),
-            Triple("Cyber-Bull-99", 35, 49_200L),
-            Triple("Shadow-Heifer", 28, 31_500L),
-            Triple("Matrix-Moo", 22, 22_100L),
-            Triple("Dead-Vaquero", 18, 14_800L),
-            Triple("Stealth-Cow", 14, 9_500L),
-            Triple("Frequency-Bull", 9, 5_800L),
-            Triple("Radio-Calf", 6, 2_900L),
-            Triple("Wave-Scout", 4, 1_200L),
-            Triple("Neophyte-Moo", 2, 450L)
-        )
-
-        val all = mutableListOf<LeaderboardEntry>()
         val userEntry = LeaderboardEntry(
             rank = 1,
             name = "$userName (Vous)",
             level = userLevel,
             score = userScore,
             tier = userTier,
-            isCurrentUser = true
+            isCurrentUser = true,
+            detail = "Votre compte"
         )
 
-        var userAdded = false
-        val sortedList = mutableListOf<LeaderboardEntry>()
-
-        val rawList = benchmarkPeers.map { (name, lvl, pts) ->
-            LeaderboardEntry(0, name, lvl, pts, getTier(pts), false)
-        }.toMutableList()
-
-        rawList.add(userEntry)
-        rawList.sortByDescending { it.score }
-
-        var userRank = 1
-        rawList.forEachIndexed { index, item ->
-            val rank = index + 1
-            if (item.isCurrentUser) userRank = rank
-            sortedList.add(item.copy(rank = rank))
+        val allPeers = mutableListOf<LeaderboardEntry>()
+        if (context != null) {
+            allPeers.addAll(getDiscoveredPeers(context))
         }
 
-        return sortedList.take(10) to userRank
+        allPeers.add(userEntry)
+        allPeers.sortByDescending { it.score }
+
+        var userRank = 1
+        val rankedList = allPeers.mapIndexed { index, entry ->
+            val rank = index + 1
+            if (entry.isCurrentUser) userRank = rank
+            entry.copy(rank = rank)
+        }
+
+        return rankedList to userRank
     }
 }
 
@@ -129,11 +181,25 @@ fun DeadcowLeaderboardDialog(
     dolphyState: DolphyState,
     onDismiss: () -> Unit
 ) {
-    val totalScore = DeadcowRankSystem.calculateScore(dolphyState)
-    val currentTier = DeadcowRankSystem.getTier(totalScore)
-    val nextTier = DeadcowRankSystem.getNextTier(totalScore)
-    val progress = DeadcowRankSystem.getProgressToNextTier(totalScore)
-    val (leaderboard, userRank) = DeadcowRankSystem.getCommunityLeaderboard(dolphyState)
+    val context = LocalContext.current
+    var selectedTab by remember { mutableStateOf(0) } // 0 = Stats réelles, 1 = Pairs & Classement, 2 = Paliers
+    var refreshTrigger by remember { mutableStateOf(0) }
+
+    val totalScore = remember(dolphyState, refreshTrigger) {
+        DeadcowRankSystem.calculateScore(dolphyState)
+    }
+    val currentTier = remember(totalScore) {
+        DeadcowRankSystem.getTier(totalScore)
+    }
+    val nextTier = remember(totalScore) {
+        DeadcowRankSystem.getNextTier(totalScore)
+    }
+    val progress = remember(totalScore) {
+        DeadcowRankSystem.getProgressToNextTier(totalScore)
+    }
+    val (leaderboard, userRank) = remember(dolphyState, refreshTrigger) {
+        DeadcowRankSystem.getCommunityLeaderboard(dolphyState, context)
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -142,12 +208,12 @@ fun DeadcowLeaderboardDialog(
             tonalElevation = 6.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 12.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(18.dp)
             ) {
                 // Header
                 Row(
@@ -181,12 +247,17 @@ fun DeadcowLeaderboardDialog(
                         }
                     }
 
-                    IconButton(onClick = onDismiss) {
-                        Icon(Icons.Default.Close, contentDescription = "Fermer")
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { refreshTrigger++ }) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Actualiser")
+                        }
+                        IconButton(onClick = onDismiss) {
+                            Icon(Icons.Default.Close, contentDescription = "Fermer")
+                        }
                     }
                 }
 
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(10.dp))
 
                 // Score card
                 Surface(
@@ -194,14 +265,14 @@ fun DeadcowLeaderboardDialog(
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Points Cyber : $totalScore pts",
+                                text = "Score Cyber Réel : $totalScore pts",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -245,88 +316,235 @@ fun DeadcowLeaderboardDialog(
                     }
                 }
 
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(10.dp))
 
-                Text(
-                    text = "🏆 Top 10 Cyber Bovins :",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
+                // Navigation Tabs
+                TabRow(
+                    selectedTabIndex = selectedTab,
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    divider = {}
+                ) {
+                    Tab(
+                        selected = selectedTab == 0,
+                        onClick = { selectedTab = 0 },
+                        text = { Text("Stats Réelles", style = MaterialTheme.typography.labelMedium) }
+                    )
+                    Tab(
+                        selected = selectedTab == 1,
+                        onClick = { selectedTab = 1 },
+                        text = { Text("Pairs (${leaderboard.size})", style = MaterialTheme.typography.labelMedium) }
+                    )
+                    Tab(
+                        selected = selectedTab == 2,
+                        onClick = { selectedTab = 2 },
+                        text = { Text("Paliers", style = MaterialTheme.typography.labelMedium) }
+                    )
+                }
 
                 Spacer(Modifier.height(8.dp))
 
-                // Leaderboard list
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f, fill = false)
-                        .heightIn(max = 280.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    items(leaderboard) { entry ->
-                        val isUser = entry.isCurrentUser
-                        val bg = if (isUser) {
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-                        }
-                        val borderMod = if (isUser) {
-                            Modifier.border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
-                        } else Modifier
-
-                        Row(
+                // Tab Content
+                when (selectedTab) {
+                    0 -> {
+                        // Real stats breakdown
+                        LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .then(borderMod)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(bg)
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .weight(1f, fill = false)
+                                .heightIn(max = 260.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f)
+                            item {
+                                StatDetailRow("Activité & XP générale", "${dolphyState.icounter} actions", "+${dolphyState.icounter * 10L} pts")
+                            }
+                            item {
+                                StatDetailRow("Paquets BLE émis", "${dolphyState.blePacketsSent} paquets", "+${dolphyState.blePacketsSent / 4L} pts")
+                            }
+                            item {
+                                StatDetailRow("Scripts BadUSB / HID exécutés", "${dolphyState.badHidRunCount} runs", "+${dolphyState.badHidRunCount * 25L} pts")
+                            }
+                            item {
+                                StatDetailRow("Lectures de tags NFC", "${dolphyState.nfcReadCount} lectures", "+${dolphyState.nfcReadCount * 15L} pts")
+                            }
+                            item {
+                                StatDetailRow("Émulations de tags NFC", "${dolphyState.nfcEmulateCount} émulations", "+${dolphyState.nfcEmulateCount * 20L} pts")
+                            }
+                            item {
+                                StatDetailRow("Signaux Infrarouge émis", "${dolphyState.irSendCount} signaux", "+${dolphyState.irSendCount * 10L} pts")
+                            }
+                            item {
+                                StatDetailRow("Appareils radio NRF découverts", "${dolphyState.nrfDevicesFound} appareils", "+${dolphyState.nrfDevicesFound * 5L} pts")
+                            }
+                            item {
+                                StatDetailRow("Audits Wi-Fi validés", "${dolphyState.wifiBruteSuccessCount} succès", "+${dolphyState.wifiBruteSuccessCount * 50L} pts")
+                            }
+                        }
+                    }
+                    1 -> {
+                        // Discovered peers + user
+                        if (leaderboard.size <= 1) {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
                             ) {
-                                Text(
-                                    text = when (entry.rank) {
-                                        1 -> "🥇"
-                                        2 -> "🥈"
-                                        3 -> "🥉"
-                                        else -> "#${entry.rank}"
-                                    },
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.width(32.dp)
-                                )
-                                Spacer(Modifier.width(6.dp))
-                                Column {
-                                    Text(
-                                        text = entry.name,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = if (isUser) FontWeight.Bold else FontWeight.Medium,
-                                        color = if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                                        maxLines = 1
+                                Row(
+                                    modifier = Modifier.padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.Info,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
                                     )
+                                    Spacer(Modifier.width(8.dp))
                                     Text(
-                                        text = "Niv. ${entry.level} · ${entry.tier.title}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = entry.tier.color
+                                        text = "Classement décentralisé 100% réel. Aucun faux bot ! Les autres utilisateurs Deadcow détectés via BLE ou Chat apparaîtront ici.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
+                        }
 
-                            Text(
-                                text = "${entry.score} pts",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f, fill = false)
+                                .heightIn(max = 240.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            items(leaderboard) { entry ->
+                                val isUser = entry.isCurrentUser
+                                val bg = if (isUser) {
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                                }
+                                val borderMod = if (isUser) {
+                                    Modifier.border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
+                                } else Modifier
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .then(borderMod)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(bg)
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(
+                                            text = when (entry.rank) {
+                                                1 -> "🥇"
+                                                2 -> "🥈"
+                                                3 -> "🥉"
+                                                else -> "#${entry.rank}"
+                                            },
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.width(32.dp)
+                                        )
+                                        Spacer(Modifier.width(6.dp))
+                                        Column {
+                                            Text(
+                                                text = entry.name,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = if (isUser) FontWeight.Bold else FontWeight.Medium,
+                                                color = if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                                maxLines = 1
+                                            )
+                                            Text(
+                                                text = "Niv. ${entry.level} · ${entry.tier.title}",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = entry.tier.color
+                                            )
+                                        }
+                                    }
+
+                                    Text(
+                                        text = "${entry.score} pts",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    2 -> {
+                        // Tiers list
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f, fill = false)
+                                .heightIn(max = 240.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            items(DeadcowRankTier.values().toList()) { tier ->
+                                val unlocked = totalScore >= tier.minScore
+                                val bg = if (unlocked) {
+                                    tier.color.copy(alpha = 0.12f)
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                                }
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(bg)
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(
+                                            text = tier.badge,
+                                            fontSize = 20.sp,
+                                            modifier = Modifier.width(32.dp)
+                                        )
+                                        Spacer(Modifier.width(6.dp))
+                                        Column {
+                                            Text(
+                                                text = tier.title,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (unlocked) tier.color else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                text = tier.description,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+
+                                    Text(
+                                        text = if (unlocked) "DÉBLOQUÉ" else "${tier.minScore} pts",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (unlocked) tier.color else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
                         }
                     }
                 }
 
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(12.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -341,5 +559,37 @@ fun DeadcowLeaderboardDialog(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun StatDetailRow(label: String, countText: String, ptsText: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f))
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = countText,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Text(
+            text = ptsText,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }

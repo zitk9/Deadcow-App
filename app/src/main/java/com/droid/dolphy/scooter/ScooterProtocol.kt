@@ -17,6 +17,7 @@ object ScooterProtocol {
     val COMMAND_LIGHTS_TOGGLE = byteArrayOf(0x55, 0xAA.toByte(), 0x03, 0x20, 0x01, 0x7D, 0x02, 0x5C.toByte(), 0xFF.toByte())
     val COMMAND_SPORT_SPEED_30 = byteArrayOf(0x55, 0xAA.toByte(), 0x04, 0x20, 0x01, 0x7C, 0x1E, 0x00, 0x40.toByte(), 0xFF.toByte())
     val COMMAND_ECO_SPEED_15 = byteArrayOf(0x55, 0xAA.toByte(), 0x04, 0x20, 0x01, 0x7C, 0x0F, 0x00, 0x4F.toByte(), 0xFF.toByte())
+    val COMMAND_SPEED_100 = buildSpeedCommand(100)
     val COMMAND_QUERY_STATUS = byteArrayOf(0x55, 0xAA.toByte(), 0x01, 0x20, 0x01, 0x1A, 0xC3.toByte(), 0xFF.toByte())
 
     // Payloads Firmware Tuning
@@ -25,4 +26,30 @@ object ScooterProtocol {
     val PAYLOAD_GEN_1 = byteArrayOf(0x5A, 0xA5.toByte(), 0x00, 0x4B, 0x48, 0x94.toByte(), 0xE3.toByte(), 0x3A, 0x91.toByte(), 0xE0.toByte(), 0x32, 0x7E, 0xC2.toByte())
     val PAYLOAD_GEN_2 = byteArrayOf(0x5A, 0xA5.toByte(), 0x00, 0x4B, 0x48, 0x94.toByte(), 0xE3.toByte(), 0x3A, 0x91.toByte(), 0xE0.toByte(), 0x43, 0x3E, 0xC2.toByte())
     val PAYLOAD_GEN_3 = byteArrayOf(0x5A, 0xA5.toByte(), 0x00, 0x4B, 0x48, 0x94.toByte(), 0xE3.toByte(), 0x3A, 0x91.toByte(), 0xE0.toByte(), 0x42, 0x7E, 0xC4.toByte())
+
+    fun buildSpeedCommand(speedKmh: Int): ByteArray {
+        val clamped = speedKmh.coerceIn(10, 100)
+        val len = 0x04
+        val target = 0x20
+        val source = 0x01
+        val cmd = 0x7C
+        val spLow = clamped and 0xFF
+        val spHigh = (clamped shr 8) and 0xFF
+        val sum = len + target + source + cmd + spLow + spHigh
+        val checksum = (0xFFFF - sum) and 0xFFFF
+        val csLow = checksum and 0xFF
+        val csHigh = (checksum shr 8) and 0xFF
+        return byteArrayOf(
+            0x55,
+            0xAA.toByte(),
+            len.toByte(),
+            target.toByte(),
+            source.toByte(),
+            cmd.toByte(),
+            spLow.toByte(),
+            spHigh.toByte(),
+            csLow.toByte(),
+            csHigh.toByte()
+        )
+    }
 }

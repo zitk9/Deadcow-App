@@ -151,7 +151,7 @@ fun NrfDeviceCard(
                 ) {
 
                     DetailRow(
-                        label = "MAC адрес",
+                        label = "Adresse MAC",
                         value = device.address,
                         icon = Icons.Filled.ContentCopy,
                         valueColor = Color.White
@@ -159,14 +159,14 @@ fun NrfDeviceCard(
 
 
                     DetailRow(
-                        label = "Тип устройства",
+                        label = "Type d'appareil",
                         value = getDeviceTypeLabel(device.type),
                         valueColor = Color.White
                     )
 
 
                     DetailRow(
-                        label = "Сила сигнала",
+                        label = "Puissance du signal",
                         value = "${device.rssi} dBm (${getSignalStrength(device.rssi)})",
                         valueColor = Color.White
                     )
@@ -174,7 +174,7 @@ fun NrfDeviceCard(
 
                     if (device.manufacturerName != null) {
                         DetailRow(
-                            label = "Производитель",
+                            label = "Constructeur",
                             value = device.manufacturerName,
                             valueColor = Color.White
                         )
@@ -201,7 +201,7 @@ fun NrfDeviceCard(
                             )
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Уровень батареи",
+                                    text = "Niveau de batterie",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF4CAF50)
@@ -219,7 +219,7 @@ fun NrfDeviceCard(
                     if (device.hasHID || device.hasAudio || device.hasBattery) {
                         Column {
                             Text(
-                                text = "Возможности",
+                                text = "Capacités détectées",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -236,7 +236,7 @@ fun NrfDeviceCard(
                                         color = Color(0xFF2196F3).copy(alpha = 0.2f)
                                     ) {
                                         Text(
-                                            text = "Клавиатура",
+                                            text = "Clavier HID",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = Color(0xFF2196F3),
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -249,7 +249,7 @@ fun NrfDeviceCard(
                                         color = Color(0xFF9C27B0).copy(alpha = 0.2f)
                                     ) {
                                         Text(
-                                            text = "Аудио",
+                                            text = "Audio",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = Color(0xFF9C27B0),
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -262,7 +262,7 @@ fun NrfDeviceCard(
                                         color = Color(0xFF4CAF50).copy(alpha = 0.2f)
                                     ) {
                                         Text(
-                                            text = "Батарея",
+                                            text = "Batterie",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = Color(0xFF4CAF50),
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -277,7 +277,7 @@ fun NrfDeviceCard(
                     if (device.gattServices.isNotEmpty()) {
                         Column {
                             Text(
-                                text = "GATT Сервисы (${device.gattServices.size})",
+                                text = "Services GATT (${device.gattServices.size})",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -306,7 +306,7 @@ fun NrfDeviceCard(
                                     )
                                     if (service.characteristics.isNotEmpty()) {
                                         Text(
-                                            text = "${service.characteristics.size} характеристик",
+                                            text = "${service.characteristics.size} caractéristiques",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = colorScheme.primary,
                                             modifier = Modifier.padding(top = 2.dp)
@@ -316,7 +316,7 @@ fun NrfDeviceCard(
                             }
                             if (device.gattServices.size > 5) {
                                 Text(
-                                    text = "+${device.gattServices.size - 5} ещё сервисов",
+                                    text = "+${device.gattServices.size - 5} autres services",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = colorScheme.primary,
                                     modifier = Modifier.padding(start = 8.dp, top = 4.dp)
@@ -329,7 +329,7 @@ fun NrfDeviceCard(
                     if (device.serviceUuids.isNotEmpty() && device.gattServices.isEmpty()) {
                         Column {
                             Text(
-                                text = "Рекламируемые сервисы (${device.serviceUuids.size})",
+                                text = "Services annoncés (${device.serviceUuids.size})",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -351,7 +351,7 @@ fun NrfDeviceCard(
                             }
                             if (device.serviceUuids.size > 3) {
                                 Text(
-                                    text = "+${device.serviceUuids.size - 3} ещё",
+                                    text = "+${device.serviceUuids.size - 3} autres",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = colorScheme.primary,
                                     modifier = Modifier.padding(start = 8.dp, top = 4.dp)
@@ -381,13 +381,13 @@ fun NrfDeviceCard(
                             )
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Уязвимо",
+                                    text = "Vulnérabilité potentielle",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFFFF9800)
                                 )
                                 Text(
-                                    text = device.vulnerabilityType?.name ?: "Неизвестно",
+                                    text = device.vulnerabilityType?.name ?: "Standard",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = Color(0xFFFF9800)
                                 )

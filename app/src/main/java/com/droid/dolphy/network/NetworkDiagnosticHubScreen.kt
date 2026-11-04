@@ -172,7 +172,7 @@ private data class HubLanHost(
     val isSelf: Boolean = false,
 )
 
-private const val STOCK_GROUP_NAME = "Стоковые пароли"
+private const val STOCK_GROUP_NAME = "Mots de passe par défaut"
 
 @Serializable
 private data class PasswordGroupDto(
@@ -433,14 +433,14 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
         val isHostTarget = !targetIp.isNullOrBlank()
         val isRouterMode = !isHostTarget || primaryIp == gateway
         if (isHostTarget && !isRouterMode) {
-            appendLog("Подготовка L3/L4 flood → $primaryIp")
-            appendLog("Режим: устройство + DNS/NAT роутера")
+            appendLog("Préparation test de débit & saturation L3/L4 → $primaryIp")
+            appendLog("Mode : appareil cible + DNS/NAT passerelle")
         } else {
             appendLog(context.getString(R.string.network_hub_log_prepare))
-            appendLog("Режим: роутер — DNS-резолвер + NAT + канал")
+            appendLog("Mode : routeur — résolveur DNS + table NAT + bande passante")
         }
         if (selectedTargetLabel.isNotBlank()) {
-            appendLog("Цель: $selectedTargetLabel")
+            appendLog("Cible : $selectedTargetLabel")
         }
         if (dhcpDns.isNotEmpty()) {
             appendLog("DHCP DNS: ${dhcpDns.joinToString()}")
@@ -456,7 +456,7 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                 .apply { acquire() }
         }.getOrNull()
         if (wakeLock != null || wifiLock != null) {
-            appendLog("Удержание радио: WakeLock/WifiLock активны")
+            appendLog("Maintien radio : WakeLock/WifiLock haute performance actifs")
         }
 
         val job = scope.launch(Dispatchers.IO) {
@@ -465,7 +465,7 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
             val primaryAddr = runCatching { InetAddress.getByName(primaryIp) }.getOrNull()
             if (primaryAddr == null) {
                 withContext(Dispatchers.Main) {
-                    appendLog("Не удалось резолвить $primaryIp")
+                    appendLog("Impossible de résoudre $primaryIp")
                 }
                 return@launch
             }
@@ -495,21 +495,23 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
             val externalPorts = intArrayOf(53, 80, 443, 8080, 8443, 123, 853)
 
             val bandwidthUrls = listOf(
-                "http://speedtest.tele2.net/10MB.zip",
-                "http://speedtest.tele2.net/1MB.zip",
-                "http://ipv4.download.thinkbroadband.com/5MB.zip",
-                "http://ipv4.download.thinkbroadband.com/10MB.zip",
-                "http://proof.ovh.net/files/1Mb.dat",
+                "http://proof.ovh.net/files/100Mb.dat",
                 "http://proof.ovh.net/files/10Mb.dat",
+                "https://speed.cloudflare.com/__down?bytes=50000000",
+                "https://speed.cloudflare.com/__down?bytes=100000000",
+                "http://speedtest.tele2.net/100MB.zip",
+                "http://ipv4.download.thinkbroadband.com/100MB.zip",
+                "http://speedtest.tele2.net/10MB.zip",
+                "http://ipv4.download.thinkbroadband.com/10MB.zip"
             )
 
             withContext(Dispatchers.Main) {
                 appendLog(context.getString(R.string.network_hub_log_target, primaryIp))
-                appendLog("DNS targets: ${dnsList.joinToString { it.hostAddress ?: "?" }}")
+                appendLog("Cibles DNS : ${dnsList.joinToString { it.hostAddress ?: "?" }}")
                 if (isRouterMode) {
-                    appendLog("NAT exhaust → ${externalHosts.size} WAN hosts · bandwidth streams")
+                    appendLog("Saturation NAT → ${externalHosts.size} serveurs WAN · flux haut débit multi-Gbps")
                 }
-                appendLog("Half-open SYN × ${if (isRouterMode) 10 else 18} · SSDP/mDNS/SNMP рефлексия")
+                appendLog("Half-open SYN × ${if (isRouterMode) 12 else 20} · amplification SSDP / mDNS / SNMP")
             }
 
             val localUdpPorts = intArrayOf(53, 67, 68, 123, 1900, 5353, 161, 137, 138)
@@ -765,10 +767,10 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                 }
             }
 
-            val bwWorkers = (1..if (isRouterMode) 8 else 3).map { workerId ->
+            val bwWorkers = (1..if (isRouterMode) 16 else 8).map { workerId ->
                 launch {
                     val random = java.util.Random(workerId + 11000L)
-                    val buf = ByteArray(64 * 1024)
+                    val buf = ByteArray(128 * 1024)
                     while (isActive) {
                         val urlStr = bandwidthUrls[random.nextInt(bandwidthUrls.size)]
                         runCatching {
@@ -778,7 +780,7 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                                 instanceFollowRedirects = true
                                 useCaches = false
                                 requestMethod = "GET"
-                                setRequestProperty("User-Agent", "DolphyBW/$workerId")
+                                setRequestProperty("User-Agent", "DeadcowBW/$workerId")
                                 setRequestProperty("Connection", "close")
                                 setRequestProperty("Accept-Encoding", "identity")
                             }
@@ -817,9 +819,20 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                     lastPkts = pkts
                     lastBytes = bytes
                     lastTs = now
+                    val speedDisplay = if (mbps >= 1000.0) {
+                        "${"%.2f".format(Locale.US, mbps / 1000.0)} Gbps"
+                    } else {
+                        "${"%.1f".format(Locale.US, mbps)} Mbps"
+                    }
+                    val totalGb = bytes.toDouble() / (1024.0 * 1024.0 * 1024.0)
+                    val totalDisplay = if (totalGb >= 1.0) {
+                        "${"%.2f".format(Locale.US, totalGb)} GB"
+                    } else {
+                        "${"%.1f".format(Locale.US, bytes.toDouble() / (1024.0 * 1024.0))} MB"
+                    }
                     withContext(Dispatchers.Main) {
                         appendLog(
-                            "flood: $pkts ops · ${pps}/s · ${"%.1f".format(Locale.US, mbps)} Mbps",
+                            "Débit : $speedDisplay · $pps paquets/s · Total : $totalDisplay ($pkts ops)",
                         )
                     }
                 }
@@ -847,16 +860,16 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
             if (gateway != null) {
                 hosts[gateway] = HubLanHost(
                     ip = gateway,
-                    title = "Шлюз / роутер",
-                    subtitle = "DNS · DHCP · интернет",
+                    title = "Passerelle / Routeur",
+                    subtitle = "DNS · DHCP · Accès Internet",
                     isGateway = true,
                 )
             }
             if (self != null) {
                 hosts[self] = HubLanHost(
                     ip = self,
-                    title = "Это устройство",
-                    subtitle = "вы",
+                    title = "Cet appareil (Vous)",
+                    subtitle = "Adresse locale",
                     isSelf = true,
                 )
             }
@@ -937,7 +950,7 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                         ),
                 )
                 lanScanning = false
-                appendLog("Найдено устройств: ${lanHosts.size}")
+                appendLog("Appareils détectés sur le réseau : ${lanHosts.size}")
             }
         }
     }
@@ -1309,8 +1322,8 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                                 contentPadding = 0.dp
                             ) {
                                 SignalRow(
-                                    title = "DoS устройства",
-                                    description = "DoS конкретного устройства в сети",
+                                    title = "Stress test de l'appareil",
+                                    description = "Test de saturation d'un appareil spécifique sur le réseau",
                                     icon = Icons.Default.WifiOff,
                                     accentColor = Color(0xFFFF6D00),
                                     onClick = {
@@ -1369,12 +1382,12 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(
-                                text = "DoS устройства",
+                                text = "Stress test de l'appareil",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                             )
                             Text(
-                                text = "Выберите устройство в сети «${currentDialogNetwork.ssid}»",
+                                text = "Sélectionnez un appareil sur le réseau «${currentDialogNetwork.ssid}»",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -1385,14 +1398,14 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                                 ) {
                                     CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                                     Text(
-                                        "Сканирование сети… ${lanHosts.size}",
+                                        "Scan du réseau en cours… (${lanHosts.size})",
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.primary,
                                     )
                                 }
                             } else {
                                 Text(
-                                    "Найдено: ${lanHosts.size}",
+                                    "${lanHosts.size} appareil(s) détecté(s)",
                                     style = MaterialTheme.typography.labelLarge,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -1408,7 +1421,7 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                                 if (lanHosts.isEmpty() && !lanScanning) {
                                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                         Text(
-                                            "Устройства не найдены.\nПодключитесь к этой Wi‑Fi сети.",
+                                            "Aucun appareil détecté.\nVérifiez votre connexion au réseau Wi-Fi.",
                                             textAlign = TextAlign.Center,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
@@ -1492,7 +1505,7 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                                     enabled = !lanScanning,
                                     modifier = Modifier.weight(1f),
                                 ) {
-                                    Text("Обновить")
+                                    Text("Actualiser")
                                 }
                             }
                         }

@@ -204,11 +204,31 @@ class ScooterGattClient(
     private fun markReadyAndConnected() {
         if (ready.compareAndSet(false, true)) {
             main.post { listener.onConnected() }
+            // Query battery & telemetry status immediately
+            main.postDelayed({
+                send(ScooterProtocol.COMMAND_QUERY_STATUS, "Statut", silent = true)
+            }, 300)
         }
     }
 
     private fun onNotify(chunk: ByteArray) {
-        rxBuffer.clear()
+        if (chunk.size < 6) return
+        try {
+            for (i in 0 until chunk.size - 4) {
+                if ((chunk[i].toInt() and 0xFF) == 0x55 && (chunk[i + 1].toInt() and 0xFF) == 0xAA) {
+                    val len = chunk[i + 2].toInt() and 0xFF
+                    if (i + 3 + len <= chunk.size && i + 5 < chunk.size) {
+                        val cmd = chunk[i + 5].toInt() and 0xFF
+                        if (cmd == 0x1A && i + 6 < chunk.size) {
+                            val battery = chunk[i + 6].toInt() and 0xFF
+                            if (battery in 0..100) {
+                                main.post { listener.onBattery(battery) }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (_: Exception) { }
     }
 
     companion object {

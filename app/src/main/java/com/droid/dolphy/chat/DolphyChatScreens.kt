@@ -63,11 +63,13 @@ private val DOLPHY_CHARACTERISTIC_UUID = UUID.fromString("00001102-0000-1000-800
 object GlobalChatData {
     private const val PREFS_NAME = "dolphy_chat_prefs"
     private const val KEY_USER_NAME = "user_name"
+    private const val KEY_HISTORY = "chat_history_json"
 
     private lateinit var prefs: SharedPreferences
 
     fun init(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        loadMessages()
     }
 
     fun saveUserName(name: String) {
@@ -82,6 +84,45 @@ object GlobalChatData {
         return prefs.contains(KEY_USER_NAME)
     }
 
+    fun addMessage(msg: GlobalMessage) {
+        globalMessages.add(msg)
+        saveMessages()
+    }
+
+    private fun saveMessages() {
+        if (!::prefs.isInitialized) return
+        runCatching {
+            val arr = org.json.JSONArray()
+            globalMessages.takeLast(100).forEach { m ->
+                val o = org.json.JSONObject()
+                    .put("id", m.id)
+                    .put("user", m.userName)
+                    .put("msg", m.message)
+                    .put("time", m.timestamp)
+                arr.put(o)
+            }
+            prefs.edit().putString(KEY_HISTORY, arr.toString()).apply()
+        }
+    }
+
+    private fun loadMessages() {
+        if (!::prefs.isInitialized || globalMessages.isNotEmpty()) return
+        val raw = prefs.getString(KEY_HISTORY, null) ?: return
+        runCatching {
+            val arr = org.json.JSONArray(raw)
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                globalMessages.add(
+                    GlobalMessage(
+                        id = o.optString("id", UUID.randomUUID().toString()),
+                        userName = o.optString("user", "Anonyme"),
+                        message = o.optString("msg", ""),
+                        timestamp = o.optLong("time", System.currentTimeMillis())
+                    )
+                )
+            }
+        }
+    }
 
     val globalMessages = mutableStateListOf<GlobalMessage>()
 }
@@ -155,12 +196,12 @@ class DolphyChatManager(private val context: Context) {
                         val fromName = parts[0]
                         val messageText = parts[1]
 
-
                         val globalMessage = GlobalMessage(
                             userName = fromName,
                             message = messageText
                         )
-                        GlobalChatData.globalMessages.add(globalMessage)
+                        GlobalChatData.addMessage(globalMessage)
+                        com.droid.dolphy.DeadcowRankSystem.recordDiscoveredPeer(context, fromName, 1500L, 2)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -202,31 +243,31 @@ class DolphyChatManager(private val context: Context) {
         if (advertiser == null || bluetoothAdapter == null) return false
 
         currentUser.value = userName
-
-
         GlobalChatData.saveUserName(userName)
-
-
         startGattServer()
 
         val settings = AdvertiseSettings.Builder()
-            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
             .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
             .setConnectable(true)
             .setTimeout(0)
-            .setConnectable(true)
             .build()
 
-        val serviceData = "DOLPHY:$userName".toByteArray(StandardCharsets.UTF_8)
+        val safeName = userName.take(12)
+        val serviceData = "DC:$safeName".toByteArray(StandardCharsets.UTF_8)
 
-        val data = AdvertiseData.Builder()
+        val advertiseData = AdvertiseData.Builder()
             .setIncludeDeviceName(false)
             .addServiceUuid(DOLPHY_CHAT_UUID)
+            .build()
+
+        val scanResponseData = AdvertiseData.Builder()
+            .setIncludeDeviceName(false)
             .addServiceData(DOLPHY_CHAT_UUID, serviceData)
             .build()
 
         try {
-            advertiser?.startAdvertising(settings, data, advertisingCallback)
+            advertiser?.startAdvertising(settings, advertiseData, scanResponseData, advertisingCallback)
             isAdvertising.value = true
             return true
         } catch (e: Exception) {
@@ -284,20 +325,16 @@ class DolphyChatManager(private val context: Context) {
                     val serviceUuids = scanRecord.serviceUuids
 
 
+                    val rawStr = serviceData?.let { String(it, StandardCharsets.UTF_8) }.orEmpty()
                     val isDolphyDevice = serviceUuids?.contains(DOLPHY_CHAT_UUID) == true ||
-                        (serviceData != null && String(serviceData, StandardCharsets.UTF_8).startsWith("DOLPHY:"))
+                        rawStr.startsWith("DOLPHY:") || rawStr.startsWith("DC:")
 
                     if (isDolphyDevice) {
-                        val userName = if (serviceData != null) {
-                            try {
-                                String(serviceData, StandardCharsets.UTF_8).removePrefix("DOLPHY:")
-                            } catch (e: Exception) {
-                                "Unknown"
-                            }
-                        } else {
-                            result.device.name ?: "Unknown"
-                        }
-
+                        val userName = when {
+                            rawStr.startsWith("DC:") -> rawStr.removePrefix("DC:")
+                            rawStr.startsWith("DOLPHY:") -> rawStr.removePrefix("DOLPHY:")
+                            else -> result.device.name ?: "Deadcow-Peer"
+                        }.ifBlank { "Deadcow-Peer" }
 
                         if (userName != currentUser.value) {
                             val user = ChatUser(
@@ -306,12 +343,12 @@ class DolphyChatManager(private val context: Context) {
                                 address = result.device.address
                             )
 
-
                             val existingIndex = discoveredUsers.indexOfFirst { it.id == user.id }
                             if (existingIndex >= 0) {
                                 discoveredUsers[existingIndex] = user.copy(lastSeen = System.currentTimeMillis())
                             } else {
                                 discoveredUsers.add(user)
+                                com.droid.dolphy.DeadcowRankSystem.recordDiscoveredPeer(context, user.name, 1000L, 1)
                             }
                         }
                     }
@@ -346,25 +383,18 @@ class DolphyChatManager(private val context: Context) {
 
     fun sendMessage(message: String): Boolean {
         try {
-            val userName = currentUser.value ?: return false
-
-
+            val userName = currentUser.value ?: "Moi"
             val globalMessage = GlobalMessage(
                 userName = userName,
                 message = message
             )
-            GlobalChatData.globalMessages.add(globalMessage)
-
+            GlobalChatData.addMessage(globalMessage)
 
             if (discoveredUsers.isEmpty()) {
-
                 return true
             }
 
-
             val simpleMessage = "$userName:$message"
-
-
             discoveredUsers.forEach { user ->
                 sendQuickMessage(user, simpleMessage)
             }
@@ -400,48 +430,51 @@ class DolphyChatManager(private val context: Context) {
 
     private fun sendQuickMessage(user: ChatUser, message: String) {
         try {
-            val device = bluetoothAdapter?.getRemoteDevice(user.address)
-            if (device != null) {
-
-                device.connectGatt(context, false, object : BluetoothGattCallback() {
-                    override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
-                        if (newState == BluetoothProfile.STATE_CONNECTED) {
-
-                            gatt?.discoverServices()
-                        } else {
-
-                            gatt?.disconnect()
-                            gatt?.close()
-                        }
-                    }
-
-                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-                        if (status == BluetoothGatt.GATT_SUCCESS) {
-                            val service = gatt?.getService(DOLPHY_SERVICE_UUID)
-                            val characteristic = service?.getCharacteristic(DOLPHY_CHARACTERISTIC_UUID)
-
-                            if (characteristic != null) {
-
-                                val messageData = message.toByteArray(StandardCharsets.UTF_8)
-
-                                if (messageData.size <= 20) {
-
-                                    characteristic.value = messageData
-                                    gatt.writeCharacteristic(characteristic)
-                                } else {
-
-                                    sendChunkedMessage(gatt, characteristic, messageData)
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-
+            val device = bluetoothAdapter?.getRemoteDevice(user.address) ?: return
+            val gattCallback = object : BluetoothGattCallback() {
+                override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        gatt?.requestMtu(128)
+                        gatt?.discoverServices()
+                    } else {
                         gatt?.disconnect()
                         gatt?.close()
                     }
-                })
+                }
+
+                override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        val service = gatt?.getService(DOLPHY_SERVICE_UUID)
+                        val characteristic = service?.getCharacteristic(DOLPHY_CHARACTERISTIC_UUID)
+                        if (characteristic != null) {
+                            val messageData = message.toByteArray(StandardCharsets.UTF_8)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                gatt.writeCharacteristic(
+                                    characteristic,
+                                    messageData,
+                                    BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+                                )
+                            } else {
+                                @Suppress("DEPRECATION")
+                                characteristic.value = messageData
+                                @Suppress("DEPRECATION")
+                                gatt.writeCharacteristic(characteristic)
+                            }
+                        }
+                    }
+                }
+
+                override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+                    gatt?.disconnect()
+                    gatt?.close()
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
+            } else {
+                @Suppress("DEPRECATION")
+                device.connectGatt(context, false, gattCallback)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -513,7 +546,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
             DolphyChatManager(context)
         } catch (e: Exception) {
             hasError = true
-            errorMessage = "Ошибка инициализации: ${e.message}"
+            errorMessage = "Erreur d'initialisation : ${e.message}"
             null
         }
     }
@@ -528,7 +561,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
             bluetoothAdapter != null
         } catch (e: Exception) {
             hasError = true
-            errorMessage = "Ошибка Bluetooth: ${e.message}"
+            errorMessage = "Erreur Bluetooth : ${e.message}"
             false
         }
     }
@@ -553,7 +586,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Произошла ошибка",
+                    text = "Une erreur est survenue",
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold,
@@ -580,7 +613,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Bluetooth недоступен",
+                    text = "Bluetooth indisponible",
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold,
@@ -590,7 +623,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Для работы Dolphy Chat необходим Bluetooth",
+                    text = "Le Bluetooth est requis pour utiliser Deadcow Chat",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center
@@ -618,7 +651,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
 
 
                 Text(
-                    text = "Чат по BLE, дистанция 10-30 метров",
+                    text = "Chat direct par BLE (portée 15-30 mètres)",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center
@@ -632,7 +665,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
                 OutlinedTextField(
                     value = userName,
                     onValueChange = { userName = it },
-                    label = { Text("Введите имя") },
+                    label = { Text("Entrez votre pseudo") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = TextFieldDefaults.colors(
@@ -662,7 +695,7 @@ fun DolphyChatWelcomeScreen(navController: NavController) {
                     enabled = userName.isNotBlank()
                 ) {
                     Text(
-                        text = "Далее",
+                        text = "Continuer",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Medium
                     )
@@ -720,31 +753,31 @@ fun DolphyChatMainScreen(userName: String, navController: NavController) {
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Поиск устройств...",
+                            text = "Recherche d'utilisateurs Deadcow...",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Реклама включена",
+                            text = "Diffusion BLE active",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
                     } else if (isAdvertising.value) {
                         Text(
-                            text = "Реклама включена",
+                            text = "Diffusion BLE active",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Ожидание сканирования...",
+                            text = "En attente du scan...",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
                     } else {
                         Text(
-                            text = "Инициализация...",
+                            text = "Initialisation BLE...",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
@@ -768,7 +801,7 @@ fun DolphyChatMainScreen(userName: String, navController: NavController) {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Пользователи не найдены\nУбедитесь что у них запущен Dolphy Chat",
+                                text = "Aucun utilisateur trouvé\nAssurez-vous qu'une autre application Deadcow est active à proximité",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                                 textAlign = TextAlign.Center
@@ -842,7 +875,7 @@ fun ChatUserCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Доступен для чата",
+                    text = "Disponible pour discuter",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -909,7 +942,7 @@ fun DolphyChatConversationScreen(
                 OutlinedTextField(
                     value = messageText,
                     onValueChange = { messageText = it },
-                    placeholder = { Text("Введите сообщение") },
+                    placeholder = { Text("Tapez un message...") },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(24.dp),
                     colors = TextFieldDefaults.colors(
@@ -923,7 +956,6 @@ fun DolphyChatConversationScreen(
                 DolphyIconButton(
                     onClick = {
                         if (messageText.isNotBlank()) {
-
                             messages.add(messageText)
                             messageText = ""
                         }
@@ -936,7 +968,7 @@ fun DolphyChatConversationScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Отправить",
+                        contentDescription = "Envoyer",
                         tint = Color.White
                     )
                 }

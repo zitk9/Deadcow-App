@@ -272,9 +272,16 @@ class NrfScannerViewModel : ViewModel() {
             else -> VulnerabilityType.NONE
         }
 
-        val deviceType = classifyDeviceType(device, serviceUuids, manufacturerId, device.name)
-        val manufacturerName = manufacturerId?.let { getManufacturerName(it) }
+        val advertisedName = scanRecord?.deviceName?.takeIf { it.isNotBlank() }
+        val systemName = device.name?.takeIf { it.isNotBlank() && !it.equals("Unknown", ignoreCase = true) }
+        val companyVendor = manufacturerId?.let { getManufacturerName(it) }
+        val macVendor = context?.let { ctx ->
+            com.droid.dolphy.ble.smarthome.BleVendorDb.getVendorLabel(ctx, device.address).takeIf { it != "Unknown" }
+        }
+        val resolvedVendor = companyVendor ?: macVendor
 
+        val deviceType = classifyDeviceType(device, serviceUuids, manufacturerId, advertisedName ?: systemName)
+        val manufacturerName = resolvedVendor
 
         val hasHID = serviceUuids.any { it.contains("1812", ignoreCase = true) }
         val hasAudio = serviceUuids.any {
@@ -284,6 +291,20 @@ class NrfScannerViewModel : ViewModel() {
         }
         val hasBattery = serviceUuids.any { it.contains("180f", ignoreCase = true) }
 
+        val resolvedName = advertisedName
+            ?: systemName
+            ?: if (resolvedVendor != null) {
+                val categorySuffix = when {
+                    hasAudio -> "Audio"
+                    hasHID -> "Clavier/Souris"
+                    isFastPair -> "Fast Pair"
+                    else -> "BLE"
+                }
+                "$resolvedVendor ($categorySuffix)"
+            } else {
+                "Périphérique BLE (${device.address.takeLast(5)})"
+            }
+
         val existingDevice = deviceMap[device.address]
         if (existingDevice == null) {
             context?.let { ctx -> com.droid.dolphy.trackNrfDevices(ctx, 1) }
@@ -291,7 +312,7 @@ class NrfScannerViewModel : ViewModel() {
 
         val nrfDevice = NrfDevice(
             address = device.address,
-            name = device.name ?: "Unknown",
+            name = resolvedName,
             type = deviceType,
             rssi = rssi,
             txPower = scanRecord?.txPowerLevel,
@@ -335,9 +356,17 @@ class NrfScannerViewModel : ViewModel() {
                                     val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE).toInt()
 
                                     device?.let {
+                                        val sysName = it.name?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
+                                        val macVendor = context?.let { ctx ->
+                                            com.droid.dolphy.ble.smarthome.BleVendorDb.getVendorLabel(ctx, it.address).takeIf { v -> v != "Unknown" }
+                                        }
+                                        val resolvedClassicName = sysName
+                                            ?: if (macVendor != null) "$macVendor (Bluetooth)"
+                                            else "Appareil Bluetooth (${it.address.takeLast(5)})"
+
                                         val nrfDevice = NrfDevice(
                                             address = it.address,
-                                            name = it.name ?: "Unknown",
+                                            name = resolvedClassicName,
                                             type = DeviceType.CLASSIC_DEVICE,
                                             rssi = rssi,
                                             deviceClass = it.bluetoothClass?.deviceClass,
@@ -345,6 +374,7 @@ class NrfScannerViewModel : ViewModel() {
                                             vulnerabilityType = VulnerabilityType.NONE,
                                             lastSeen = System.currentTimeMillis(),
                                             scanCount = (deviceMap[it.address]?.scanCount ?: 0) + 1,
+                                            manufacturerName = macVendor,
                                             deviceTypeClass = "Classic"
                                         )
 

@@ -438,7 +438,7 @@ object AutoUpdater {
     }
 
     private fun downloadApk(context: Context, release: DeadcowReleaseInfo): File? {
-        val updateDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir, "updates").apply { mkdirs() }
+        val updateDir = File(context.cacheDir, "updates").apply { mkdirs() }
         val targetFile = File(updateDir, "Deadcow-v${release.versionName}-b${release.versionCode}.apk")
         if (targetFile.exists()) targetFile.delete()
 
@@ -536,12 +536,20 @@ object AutoUpdater {
 
     fun launchPackageInstaller(context: Context, apkFile: File) {
         runCatching {
+            val safeFile = if (apkFile.parentFile?.startsWith(context.cacheDir) == true) {
+                apkFile
+            } else {
+                val cacheDir = File(context.cacheDir, "updates").apply { mkdirs() }
+                val dest = File(cacheDir, apkFile.name)
+                runCatching { apkFile.copyTo(dest, overwrite = true) }.getOrDefault(apkFile)
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
                 !context.packageManager.canRequestPackageInstalls()
             ) {
                 Toast.makeText(
                     context,
-                    "Autorisez l'installation de mises à jour pour Deadcow",
+                    "Autorisez l'installation d'applications pour Deadcow",
                     Toast.LENGTH_LONG
                 ).show()
                 val permIntent = Intent(
@@ -557,12 +565,20 @@ object AutoUpdater {
             val apkUri = FileProvider.getUriForFile(
                 context,
                 "${context.packageName}.provider",
-                apkFile
+                safeFile
             )
             val installIntent = Intent(Intent.ACTION_VIEW).apply {
                 setDataAndType(apkUri, "application/vnd.android.package-archive")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            val resInfoList = context.packageManager.queryIntentActivities(
+                installIntent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
+            for (resolveInfo in resInfoList) {
+                val pkg = resolveInfo.activityInfo.packageName
+                context.grantUriPermission(pkg, apkUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             context.startActivity(installIntent)
         }.onFailure { e ->

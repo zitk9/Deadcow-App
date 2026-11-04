@@ -75,22 +75,12 @@ data class DeviceInfo(
     val softwareRevision: String? = null
 )
 
-fun getManufacturerName(manufacturerId: Int): String? = when (manufacturerId) {
-    0x004C -> "Apple"
-    0x0075 -> "Samsung"
-    0x0006 -> "Microsoft"
-    0x038F -> "Xiaomi"
-    0x0157 -> "Xiaomi"
-    0x0837 -> "Vivo"
-    0xfe2c -> "Google"
-    0x0059 -> "Sony"
-    0x0105 -> "JBL"
-    0x00E0 -> "Google"
-    0x0087 -> "Garmin"
-    0x0131 -> "Bose"
-    0x0220 -> "Beats"
-    else -> null
-}
+fun getManufacturerName(manufacturerId: Int): String? =
+    com.droid.dolphy.ble.smarthome.BleVendorDb.getCompanyIdentifierName(manufacturerId)
+        ?: when (manufacturerId) {
+            0xfe2c -> "Google"
+            else -> null
+        }
 
 fun classifyDeviceType(
     bluetoothDevice: BluetoothDevice?,

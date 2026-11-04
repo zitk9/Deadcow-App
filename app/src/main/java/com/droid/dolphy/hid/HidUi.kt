@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Mouse
+import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.SkipNext
@@ -266,15 +267,83 @@ private fun MobileProfileScreen(
     sensitivityScroll: Float = 0.4f
 ) {
     val scope = rememberCoroutineScope()
+    var directText by remember { mutableStateOf("") }
+    var activeMode by remember { mutableStateOf(0) }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = directText,
+                onValueChange = { directText = it },
+                placeholder = { Text("Texte à taper direct sur l'appareil...", style = MaterialTheme.typography.bodySmall) },
+                modifier = Modifier.weight(1f),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    if (directText.isNotBlank()) {
+                        val toSend = directText
+                        directText = ""
+                        scope.launch {
+                            DuckyUtils.typeText(hidConnection, toSend)
+                        }
+                    }
+                },
+                enabled = directText.isNotBlank(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Taper")
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 2.dp),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+        ) {
+            Button(
+                onClick = { activeMode = 0 },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (activeMode == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (activeMode == 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
+            ) {
+                Icon(Icons.Default.Mouse, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(6.dp))
+                Text("Pavé tactile")
+            }
+            Button(
+                onClick = { activeMode = 1 },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (activeMode == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (activeMode == 1) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
+            ) {
+                Icon(Icons.Default.Keyboard, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(6.dp))
+                Text("Clavier")
+            }
+        }
+
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
+            if (activeMode == 0) {
                 Touchpad(
                     hidConnection = hidConnection,
                     togglePlum = { },
@@ -282,9 +351,28 @@ private fun MobileProfileScreen(
                     sensitivityMove = sensitivityMove,
                     sensitivityScroll = sensitivityScroll
                 )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Keyboard(
+                        hidConnection = hidConnection,
+                        togglePlum = { },
+                        settingsPlum = { },
+                        capsLock = false,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .verticalScroll(rememberScrollState())
+                    )
+                }
+            }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),

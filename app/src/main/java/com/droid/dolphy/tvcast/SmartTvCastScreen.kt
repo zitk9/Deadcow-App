@@ -182,17 +182,16 @@ fun SmartTvCastScreen(navController: NavController) {
     var isScanning by remember { mutableStateOf(false) }
 
     val nsdManager = remember { context.getSystemService(Context.NSD_SERVICE) as? NsdManager }
-    var discoveryListener by remember { mutableStateOf<NsdManager.DiscoveryListener?>(null) }
+    val activeListeners = remember { mutableListOf<NsdManager.DiscoveryListener>() }
 
     fun getLocalIpAddress(): String {
         return try {
-            val interfaces = NetworkInterface.getNetworkInterfaces()
-            while (interfaces.hasMoreElements()) {
-                val networkInterface = interfaces.nextElement()
-                val addresses = networkInterface.inetAddresses
-                while (addresses.hasMoreElements()) {
-                    val address = addresses.nextElement()
-                    if (!address.isLoopbackAddress && address.hostAddress?.contains(":") != true) {
+            val interfaces = NetworkInterface.getNetworkInterfaces().asSequence().toList()
+            val wlan = interfaces.firstOrNull { it.isUp && !it.isLoopback && (it.name.startsWith("wlan") || it.name.startsWith("eth")) }
+            val ordered = listOfNotNull(wlan) + interfaces.filter { it != wlan && it.isUp && !it.isLoopback }
+            for (iface in ordered) {
+                for (address in iface.inetAddresses) {
+                    if (!address.isLoopbackAddress && !address.isLinkLocalAddress && address.hostAddress?.contains(":") != true) {
                         return address.hostAddress ?: "0.0.0.0"
                     }
                 }
@@ -211,17 +210,117 @@ fun SmartTvCastScreen(navController: NavController) {
     }
 
     fun startServer(videoFile: File) {
-        try {
-            stopServer()
-            val newServer = VideoHttpServer(videoFile, 8080)
-            newServer.start()
-            server = newServer
+        stopServer()
+        val candidatePorts = listOf(8080, 8081, 8088, 8888, 9090)
+        var chosenPort = 8080
+        var startedServer: VideoHttpServer? = null
+
+        for (port in candidatePorts) {
+            try {
+                val newServer = VideoHttpServer(videoFile, port)
+                newServer.start()
+                startedServer = newServer
+                chosenPort = port
+                break
+            } catch (e: Exception) {
+                Log.w("SmartTvCast", "Port $port unavailable: ${e.message}")
+            }
+        }
+
+        if (startedServer != null) {
+            server = startedServer
             val ip = getLocalIpAddress()
-            serverUrl = "http://$ip:8080/video"
+            serverUrl = "http://$ip:$chosenPort/video"
             isPlaying = true
-            Log.i("SmartTvCast", "Server up: $serverUrl  (html http://$ip:8080/play)")
-        } catch (e: Exception) {
-            Log.e("SmartTvCast", "Failed to start server", e)
+            Log.i("SmartTvCast", "Server up: $serverUrl  (html http://$ip:$chosenPort/play)")
+        } else {
+            Log.e("SmartTvCast", "Failed to start HTTP server on candidate ports")
+        }
+    }
+
+    fun startSsdpDiscovery() {
+        scope.launch(Dispatchers.IO) {
+            try {
+                val group = java.net.InetAddress.getByName("239.255.255.250")
+                val port = 1900
+                val searchMsg = "M-SEARCH * HTTP/1.1\r\n" +
+                    "HOST: 239.255.255.250:1900\r\n" +
+                    "MAN: \"ssdp:discover\"\r\n" +
+                    "MX: 3\r\n" +
+                    "ST: ssdp:all\r\n\r\n"
+                val sendData = searchMsg.toByteArray(Charsets.UTF_8)
+
+                java.net.DatagramSocket().use { socket ->
+                    socket.soTimeout = 3000
+                    val packet = java.net.DatagramPacket(sendData, sendData.size, group, port)
+                    socket.send(packet)
+
+                    val buffer = ByteArray(4096)
+                    val recvPacket = java.net.DatagramPacket(buffer, buffer.size)
+                    val startTime = System.currentTimeMillis()
+
+                    while (System.currentTimeMillis() - startTime < 4000) {
+                        try {
+                            socket.receive(recvPacket)
+                            val resp = String(recvPacket.data, 0, recvPacket.length, Charsets.UTF_8)
+                            val hostIp = recvPacket.address.hostAddress ?: continue
+                            if (hostIp == getLocalIpAddress()) continue
+
+                            var locationUrl: String? = null
+                            var serverHeader: String? = null
+                            var stHeader: String? = null
+                            for (line in resp.lines()) {
+                                val trimmed = line.trim()
+                                val lower = trimmed.lowercase()
+                                if (lower.startsWith("location:")) {
+                                    locationUrl = trimmed.substring(9).trim()
+                                } else if (lower.startsWith("server:")) {
+                                    serverHeader = trimmed.substring(7).trim()
+                                } else if (lower.startsWith("st:")) {
+                                    stHeader = trimmed.substring(3).trim()
+                                }
+                            }
+
+                            val devName = when {
+                                !serverHeader.isNullOrBlank() -> serverHeader.substringBefore("/")
+                                !stHeader.isNullOrBlank() && stHeader.contains(":") -> stHeader.substringAfterLast(":")
+                                else -> "Smart TV ($hostIp)"
+                            }
+
+                            val devPort = try {
+                                if (locationUrl != null) java.net.URL(locationUrl).port.takeIf { it > 0 } ?: 8080 else 8080
+                            } catch (_: Exception) { 8080 }
+
+                            val devType = when {
+                                resp.contains("dial", ignoreCase = true) -> CastType.DIAL
+                                resp.contains("google", ignoreCase = true) -> CastType.GOOGLE_CAST
+                                else -> CastType.DLNA
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                if (devices.none { it.host == hostIp }) {
+                                    devices.add(
+                                        CastDevice(
+                                            name = devName,
+                                            host = hostIp,
+                                            port = devPort,
+                                            type = devType,
+                                            serviceInfo = null
+                                        )
+                                    )
+                                    Log.d("SmartTvCast", "SSDP device found: $devName @ $hostIp:$devPort ($devType)")
+                                }
+                            }
+                        } catch (_: java.net.SocketTimeoutException) {
+                            break
+                        } catch (e: Exception) {
+                            Log.w("SmartTvCast", "SSDP parse error: ${e.message}")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w("SmartTvCast", "SSDP discovery error: ${e.message}")
+            }
         }
     }
 
@@ -229,91 +328,98 @@ fun SmartTvCastScreen(navController: NavController) {
         if (isScanning) return
         isScanning = true
 
-        val listener = object : NsdManager.DiscoveryListener {
-            override fun onDiscoveryStarted(serviceType: String) {
-                Log.d("SmartTvCast", "Discovery started: $serviceType")
-            }
+        val serviceTypes = listOf("_googlecast._tcp", "_dial._tcp")
+        val ndm = nsdManager
 
-            override fun onDiscoveryStopped(serviceType: String) {
-                Log.d("SmartTvCast", "Discovery stopped: $serviceType")
-            }
-
-            override fun onServiceFound(serviceInfo: NsdServiceInfo) {
-                Log.d("SmartTvCast", "Service found: ${serviceInfo.serviceName}")
-
-                val type = when {
-                    serviceInfo.serviceType.contains("_googlecast") -> CastType.CHROMECAST
-                    serviceInfo.serviceType.contains("_dial") -> CastType.DIAL
-                    serviceInfo.serviceType.contains("_dlna") -> CastType.DLNA
-                    serviceInfo.serviceType.contains("_upnp") -> CastType.UPNP
-                    else -> CastType.UNKNOWN
-                }
-
-
-                nsdManager?.resolveService(serviceInfo, object : NsdManager.ResolveListener {
-                    override fun onResolveFailed(si: NsdServiceInfo?, errorCode: Int) {
-                        Log.w("SmartTvCast", "Resolve failed: ${si?.serviceName} error=$errorCode")
+        if (ndm != null) {
+            for (serviceType in serviceTypes) {
+                val listener = object : NsdManager.DiscoveryListener {
+                    override fun onDiscoveryStarted(st: String) {
+                        Log.d("SmartTvCast", "Discovery started: $st")
                     }
-                    override fun onServiceResolved(si: NsdServiceInfo) {
-                        val host = si.host?.hostAddress ?: return
-                        val device = CastDevice(
-                            name = si.serviceName,
-                            host = host,
-                            port = si.port,
-                            type = type,
-                            serviceInfo = si
-                        )
-                        if (devices.none { it.host == device.host && it.name == device.name }) {
-                            devices.add(device)
-                            Log.d("SmartTvCast", "Resolved device: ${device.name} @ ${device.host}:${device.port}")
+
+                    override fun onDiscoveryStopped(st: String) {
+                        Log.d("SmartTvCast", "Discovery stopped: $st")
+                    }
+
+                    override fun onServiceFound(serviceInfo: NsdServiceInfo) {
+                        Log.d("SmartTvCast", "Service found: ${serviceInfo.serviceName} (${serviceInfo.serviceType})")
+
+                        val type = when {
+                            serviceInfo.serviceType.contains("_googlecast") -> CastType.CHROMECAST
+                            serviceInfo.serviceType.contains("_dial") -> CastType.DIAL
+                            serviceInfo.serviceType.contains("_dlna") -> CastType.DLNA
+                            serviceInfo.serviceType.contains("_upnp") -> CastType.UPNP
+                            else -> CastType.UNKNOWN
+                        }
+
+                        try {
+                            ndm.resolveService(serviceInfo, object : NsdManager.ResolveListener {
+                                override fun onResolveFailed(si: NsdServiceInfo?, errorCode: Int) {
+                                    Log.w("SmartTvCast", "Resolve failed: ${si?.serviceName} error=$errorCode")
+                                }
+                                override fun onServiceResolved(si: NsdServiceInfo) {
+                                    val host = si.host?.hostAddress ?: return
+                                    val device = CastDevice(
+                                        name = si.serviceName,
+                                        host = host,
+                                        port = si.port,
+                                        type = type,
+                                        serviceInfo = si
+                                    )
+                                    scope.launch(Dispatchers.Main) {
+                                        if (devices.none { it.host == device.host && it.name == device.name }) {
+                                            devices.add(device)
+                                            Log.d("SmartTvCast", "Resolved device: ${device.name} @ ${device.host}:${device.port}")
+                                        }
+                                    }
+                                }
+                            })
+                        } catch (e: Exception) {
+                            Log.w("SmartTvCast", "Error resolving ${serviceInfo.serviceName}: ${e.message}")
                         }
                     }
-                })
-            }
 
-            override fun onServiceLost(serviceInfo: NsdServiceInfo) {
-                Log.d("SmartTvCast", "Service lost: ${serviceInfo.serviceName}")
-                devices.removeAll { it.serviceInfo == serviceInfo }
-            }
+                    override fun onServiceLost(serviceInfo: NsdServiceInfo) {
+                        Log.d("SmartTvCast", "Service lost: ${serviceInfo.serviceName}")
+                        scope.launch(Dispatchers.Main) {
+                            devices.removeAll { it.serviceInfo == serviceInfo }
+                        }
+                    }
 
-            override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-                Log.e("SmartTvCast", "Discovery start failed: $errorCode")
-                isScanning = false
-            }
+                    override fun onStartDiscoveryFailed(st: String, errorCode: Int) {
+                        Log.e("SmartTvCast", "Discovery start failed for $st: $errorCode")
+                    }
 
-            override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
-                Log.e("SmartTvCast", "Discovery stop failed: $errorCode")
-                isScanning = false
-            }
-        }
+                    override fun onStopDiscoveryFailed(st: String, errorCode: Int) {
+                        Log.e("SmartTvCast", "Discovery stop failed for $st: $errorCode")
+                    }
+                }
 
-        discoveryListener = listener
-
-        nsdManager?.let { ndm ->
-            try {
-                ndm.discoverServices("_googlecast._tcp", NsdManager.PROTOCOL_DNS_SD, listener)
-            } catch (e: Exception) {
-                Log.e("SmartTvCast", "Failed to discover _googlecast", e)
-            }
-
-            try {
-                ndm.discoverServices("_dial._tcp", NsdManager.PROTOCOL_DNS_SD, listener)
-            } catch (e: Exception) {
-                Log.e("SmartTvCast", "Failed to discover _dial", e)
+                try {
+                    ndm.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, listener)
+                    activeListeners.add(listener)
+                } catch (e: Exception) {
+                    Log.e("SmartTvCast", "Failed to discover $serviceType", e)
+                }
             }
         }
+
+        startSsdpDiscovery()
     }
 
     fun stopDiscovery() {
-        nsdManager?.let { ndm ->
-            discoveryListener?.let {
+        val ndm = nsdManager
+        if (ndm != null) {
+            for (listener in activeListeners) {
                 try {
-                    ndm.stopServiceDiscovery(it)
+                    ndm.stopServiceDiscovery(listener)
                 } catch (e: Exception) {
-                    Log.e("SmartTvCast", "Failed to stop discovery", e)
+                    Log.w("SmartTvCast", "Failed to stop discovery listener: ${e.message}")
                 }
             }
         }
+        activeListeners.clear()
         isScanning = false
     }
 

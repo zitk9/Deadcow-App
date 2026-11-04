@@ -747,37 +747,90 @@ private fun PcIconControlButton(
 @SuppressLint("MissingPermission")
 @Composable
 private fun PcKeyboardSection(hidConnection: Connection, capsLock: Boolean) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val keyboardLong = maxHeight
-            val keyboardShort = maxWidth
-            val scale = keyboardLong / 855.dp
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    modifier = Modifier
-                        .requiredWidth(keyboardLong)
-                        .requiredHeight(keyboardShort)
-                        .graphicsLayer {
-                            rotationZ = 90f
-                            transformOrigin = TransformOrigin.Center
-                            clip = false
+    val scope = rememberCoroutineScope()
+    var directText by remember { mutableStateOf("") }
+    var rotateSideways by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = directText,
+                onValueChange = { directText = it },
+                placeholder = { Text("Texte à taper direct sur PC...", style = MaterialTheme.typography.bodySmall) },
+                modifier = Modifier.weight(1f),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    if (directText.isNotBlank()) {
+                        val toSend = directText
+                        directText = ""
+                        scope.launch {
+                            DuckyUtils.typeText(hidConnection, toSend)
                         }
+                    }
+                },
+                enabled = directText.isNotBlank(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Taper")
+            }
+            Spacer(Modifier.width(4.dp))
+            IconButton(onClick = { rotateSideways = !rotateSideways }) {
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = "Pivoter 90°",
+                    tint = if (rotateSideways) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val keyboardLong = if (rotateSideways) maxHeight else maxWidth
+                val keyboardShort = if (rotateSideways) maxWidth else maxHeight
+                val scale = (keyboardLong / 855.dp).coerceIn(0.4f, 1.2f)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Keyboard(
-                        hidConnection = hidConnection,
-                        togglePlum = { },
-                        settingsPlum = { },
-                        capsLock = capsLock,
-                        scale = scale,
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .verticalScroll(rememberScrollState())
-                    )
+                            .requiredWidth(keyboardLong)
+                            .requiredHeight(keyboardShort)
+                            .then(
+                                if (rotateSideways) {
+                                    Modifier.graphicsLayer {
+                                        rotationZ = 90f
+                                        transformOrigin = TransformOrigin.Center
+                                        clip = false
+                                    }
+                                } else Modifier
+                            )
+                    ) {
+                        Keyboard(
+                            hidConnection = hidConnection,
+                            togglePlum = { },
+                            settingsPlum = { },
+                            capsLock = capsLock,
+                            scale = scale,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .verticalScroll(rememberScrollState())
+                        )
+                    }
                 }
             }
         }
