@@ -344,7 +344,7 @@ fun OtherScreen(navController: NavController, spamViewModel: SpamViewModel) {
                                             }
                                         }
                                 ) {
-                                    M3SegmentedListSectionHeader(title = section)
+                                    M3SegmentedListSectionHeader(title = formatSectionTitle(section))
                                 }
                             }
 
@@ -590,7 +590,7 @@ fun OtherScreen(navController: NavController, spamViewModel: SpamViewModel) {
                                             }
                                         }
                                 ) {
-                                    M3SegmentedListSectionHeader(title = section)
+                                    M3SegmentedListSectionHeader(title = formatSectionTitle(section))
                                 }
                             }
 
@@ -705,7 +705,7 @@ fun OtherScreen(navController: NavController, spamViewModel: SpamViewModel) {
                                         }
                                     }
                             ) {
-                                M3SegmentedListSectionHeader(title = section)
+                                M3SegmentedListSectionHeader(title = formatSectionTitle(section))
                             }
                         }
                         items(
@@ -813,7 +813,7 @@ fun OtherScreen(navController: NavController, spamViewModel: SpamViewModel) {
                                         }
                                     }
                             ) {
-                                M3SegmentedListSectionHeader(title = section)
+                                M3SegmentedListSectionHeader(title = formatSectionTitle(section))
                             }
                         }
                         items(
@@ -1239,5 +1239,15 @@ private fun RenderTileCard(
                 )
             }
         }
+    }
+}
+
+private fun formatSectionTitle(raw: String): String {
+    return when (raw.trim().uppercase(java.util.Locale.ROOT)) {
+        "INFRARED", "IR" -> "Infrarouge"
+        "BLUETOOTH", "BT" -> "Bluetooth"
+        "OTHER", "MISC", "ПРОЧЕЕ", "AUTRE", "DIVERS" -> "Autres outils"
+        "PLUGINS", "ПЛАГИНЫ" -> "Plugins"
+        else -> raw
     }
 }

@@ -32,23 +32,21 @@ data class PluginPreview(
 object OtherSections {
     const val INFRARED = "INFRARED"
     const val BLUETOOTH = "BLUETOOTH"
-    const val OTHER = "ПРОЧЕЕ"
-    const val PLUGINS = "ПЛАГИНЫ"
+    const val OTHER = "OTHER"
+    const val PLUGINS = "PLUGINS"
 
-    val BUILTIN: Set<String> = setOf(INFRARED, BLUETOOTH, OTHER, PLUGINS)
-
-
-
+    val BUILTIN: Set<String> = setOf(INFRARED, BLUETOOTH, OTHER, PLUGINS, "ПРОЧЕЕ", "ПЛАГИНЫ")
 
     fun normalize(raw: String?): String {
         if (raw.isNullOrBlank()) return PLUGINS
         val t = raw.trim()
         return when (t.lowercase()) {
-            "infrared", "ir", "инфракрас", "инфракрасный", "инфракрасные" -> INFRARED
+            "infrared", "ir", "infrarouge", "инфракрас", "инфракрасный", "инфракрасные" -> INFRARED
             "bluetooth", "bt", "ble", "блютуз", "bluetooths" -> BLUETOOTH
-            "other", "misc", "прочее", "network", "сеть" -> OTHER
+            "other", "misc", "autre", "autres", "divers", "прочее", "network", "сеть" -> OTHER
             "plugins", "plugin", "плагины", "плагин" -> PLUGINS
-
+            "прочее" -> OTHER
+            "плагины" -> PLUGINS
             else -> t
         }
     }

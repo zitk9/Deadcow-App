@@ -212,10 +212,11 @@ object NfcTagAnalyzer {
         val aidUpper = aids.map { it.uppercase(Locale.US) }
         if(aidUpper.any { it.startsWith("A000000003") }) return "Visa"
         if(aidUpper.any { it.startsWith("A000000004") }) return "Mastercard"
+        if(aidUpper.any { it.startsWith("A000000042") }) return "Carte Bancaire (CB)"
         if(aidUpper.any { it.startsWith("A000000025") }) return "American Express"
         if(aidUpper.any { it.startsWith("A000000065") }) return "JCB"
         if(aidUpper.any { it.startsWith("A000000333") }) return "UnionPay"
-        if(aidUpper.any { it.startsWith("A000000658") }) return "Мир"
+        if(aidUpper.any { it.startsWith("A000000658") }) return "Mir"
         if(aidUpper.any { it.startsWith("A000000524") }) return "RuPay"
         if(aidUpper.any { it.startsWith("A000000152") }) return "Discover"
 
@@ -223,10 +224,11 @@ object NfcTagAnalyzer {
         return when {
             "VISA" in labelText -> "Visa"
             "MASTERCARD" in labelText || "MAESTRO" in labelText -> "Mastercard"
+            "CB" in labelText || "CARTE BANCAIRE" in labelText -> "Carte Bancaire (CB)"
             "AMEX" in labelText || "AMERICAN EXPRESS" in labelText -> "American Express"
             "JCB" in labelText -> "JCB"
             "UNIONPAY" in labelText -> "UnionPay"
-            "MIR" in labelText || "МИР" in labelText -> "Мир"
+            "MIR" in labelText || "МИР" in labelText -> "Mir"
             "RUPAY" in labelText -> "RuPay"
             "DISCOVER" in labelText -> "Discover"
             else -> null

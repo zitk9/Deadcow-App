@@ -258,16 +258,18 @@ jobs:
             - **Mise à jour automatique** : L'application Deadcow détecte et installe automatiquement cette mise à jour au lancement.
             - **Langue par défaut** : Français (Support complet Français, Anglais, Russe).
             - **Mascotte** : Vache Deadcow (Animations 128x64, Level Up, Portraits Passeport, NFC/RFID/IR/BLE).
-            - **Correctifs & Nouveautés (v1.13)** :
+            - **Correctifs & Nouveautés (v1.15)** :
               * **Classement Cyber Réel & Paliers** : Suppression intégrale des faux profils bots ; détail transparent des points gagnés par activité (BLE, BadUSB, NFC, IR, NRF, Wi-Fi) et découverte des pairs décentralisés.
               * **Chat Bluetooth BLE fiabilisé** : Correction du dépassement de paquet (31 octets) avec scan response, persistance locale des messages et support Android 13+.
               * **Débridage Trottinettes jusqu'à 100 km/h** : Calcul dynamique du checksum Ninebot, presets Boost 45 km/h et Max 100 km/h, avec curseur interactif 15-100 km/h et télémétrie de batterie.
               * **Débit Réseau en Gbps** : Affichage automatique en Gbps (> 1000 Mbps) et Go transférés, avec 16 flux de test très haut débit (serveurs Cloudflare et OVH).
-              * **Installation / Mise à jour APK Deadcow Tool** : Correction Scoped Storage Android 11-15 via cache-path FileProvider, résolution des erreurs d'installation et support d'ouverture d'APK direct.
+              * **Installation / Mise à jour APK Deadcow Tool** : Correction Scoped Storage Android 11-15 via cache-path FileProvider, résolution des erreurs d'installation et support d'ouverture d'APK direct avec requêtes de paquets dans le Manifest.
               * **CamWatch & Recherche de Caméras** : Traduction intégrale en français de tous les journaux et erreurs, sélection prioritaire wlan0 et flux MJPEG/RTSP/Snapshots.
               * **Scanner Bluetooth précis (Fin des Unknown)** : Correction du parseur OUI de 50 000 constructeurs, intégration des identifiants Bluetooth SIG et cascade de nommage détaillée.
               * **Smart Cast TV** : Résolution du plantage NsdManager (écouteurs distincts par service), découverte SSDP/DLNA/UPnP pour télés Samsung, LG, Sony, Roku, sélection IP Wi-Fi et repli de port dynamique.
               * **Clavier Bluetooth HID** : Mode portrait droit naturel sans distorsion 90°, bouton de rotation optionnel, champ de saisie directe au clavier virtuel et alternance Pavé tactile/Clavier sur mobile.
+              * **Détection NFC Enrichie & Cartes CB** : Détection des Cartes Bancaires françaises (CB), Visa, Mastercard, Amex, et normalisation Mir.
+              * **Localisation & Ergonomie du Menu** : En-têtes du menu d'outils traduits en français (Infrarouge, Bluetooth, Autres outils, Plugins).
             - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
           files: |
             Deadcow-release.apk
