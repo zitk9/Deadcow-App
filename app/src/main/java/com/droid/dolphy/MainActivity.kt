@@ -6101,8 +6101,15 @@ fun DeviceSelectionButton(viewModel: SpamViewModel, selectedDevice: BluetoothDev
         )
     }
 
+    val selectedButtonText = if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        stringResource(R.string.hid_pair_permission_required)
+    } else {
+        selectedDevice?.let { BluetoothDeviceResolver.resolve(it, context = context).name.uppercase() }
+            ?: stringResource(R.string.hid_select_device_upper)
+    }
+
     GradientButton(
-        text = if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) stringResource(R.string.hid_pair_permission_required) else selectedDevice?.name?.uppercase() ?: stringResource(R.string.hid_select_device_upper),
+        text = selectedButtonText,
         onClick = {
             vibrate(context)
             viewModel.startDeviceScan(); showDeviceDialog = true
@@ -6118,11 +6125,16 @@ fun DeviceSelectionButton(viewModel: SpamViewModel, selectedDevice: BluetoothDev
 fun DeviceItem(device: BluetoothDevice, onDeviceSelected: (BluetoothDevice) -> Unit) {
     val context = LocalContext.current
     val hasPermission = ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+    val resolved = BluetoothDeviceResolver.resolve(device, context = context)
 
-    val icon = when (if (hasPermission) device.bluetoothClass?.majorDeviceClass else null) {
-        BluetoothClass.Device.Major.PHONE -> Icons.Filled.PhoneAndroid
-        BluetoothClass.Device.Major.COMPUTER -> Icons.Filled.Computer
-        BluetoothClass.Device.Major.AUDIO_VIDEO -> Icons.Filled.Headset
+    val icon = when {
+        resolved.category == "Audio" -> Icons.Filled.Headset
+        resolved.category == "Téléphone" -> Icons.Filled.PhoneAndroid
+        resolved.category == "Ordinateur" -> Icons.Filled.Computer
+        resolved.category == "Clavier/Souris" -> Icons.Filled.Keyboard
+        if (hasPermission) device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.PHONE -> Icons.Filled.PhoneAndroid
+        if (hasPermission) device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.COMPUTER -> Icons.Filled.Computer
+        if (hasPermission) device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO -> Icons.Filled.Headset
         else -> Icons.Filled.Bluetooth
     }
 
@@ -6130,7 +6142,7 @@ fun DeviceItem(device: BluetoothDevice, onDeviceSelected: (BluetoothDevice) -> U
         BluetoothDevice.DEVICE_TYPE_CLASSIC -> "Classic"
         BluetoothDevice.DEVICE_TYPE_LE -> "BLE"
         BluetoothDevice.DEVICE_TYPE_DUAL -> "Dual"
-        else -> "Unknown"
+        else -> resolved.category
     }
 
     Row(
@@ -6147,14 +6159,28 @@ fun DeviceItem(device: BluetoothDevice, onDeviceSelected: (BluetoothDevice) -> U
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (!hasPermission) "No permission" else (device.name ?: "Unknown device"),
+                text = if (!hasPermission) "No permission" else resolved.name,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+            val subtitle = buildString {
+                append(device.address)
+                if (!resolved.manufacturer.isNullOrBlank() && !resolved.name.contains(resolved.manufacturer, ignoreCase = true)) {
+                    append(" • ")
+                    append(resolved.manufacturer)
+                }
+                append(" • ")
+                append(deviceTypeText)
+            }
             Text(
-                text = "${device.address} • $deviceTypeText",
+                text = subtitle,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -6803,7 +6829,15 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
                         @Suppress("DEPRECATION")
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     }
+                    val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
+                    val btClass = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS, BluetoothClass::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS)
+                    }
                     device?.let { foundDevice ->
+                        BluetoothDeviceResolver.registerClassicDevice(foundDevice, extraName, btClass, context)
                         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) return
                         if (!_discoveredDevices.value.any { it.address == foundDevice.address }) {
                             _discoveredDevices.value += foundDevice
@@ -6820,6 +6854,7 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
     private val bleScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             result.device?.let { scannedDevice ->
+                BluetoothDeviceResolver.registerScanResult(result, application)
                 if (ActivityCompat.checkSelfPermission(application, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) return
                 if (!_discoveredDevices.value.any { it.address == scannedDevice.address }) {
                     _discoveredDevices.value += scannedDevice
@@ -6830,6 +6865,7 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
         override fun onBatchScanResults(results: List<ScanResult>) {
             results.forEach { result ->
                 result.device?.let { scannedDevice ->
+                    BluetoothDeviceResolver.registerScanResult(result, application)
                     if (ActivityCompat.checkSelfPermission(application, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) return@forEach
                     if (!_discoveredDevices.value.any { it.address == scannedDevice.address }) {
                         _discoveredDevices.value += scannedDevice

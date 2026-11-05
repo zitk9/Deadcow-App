@@ -21,8 +21,8 @@ android {
         applicationId = "com.droid.deadcow"
         minSdk = 26
         targetSdk = 36
-        versionCode = 45
-        versionName = "1.17"
+        versionCode = 46
+        versionName = "1.18"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -36,25 +36,41 @@ android {
     }
 
 
+    signingConfigs {
+        create("release") {
+            val ksFile = file("deadcow-release.jks")
+            if (ksFile.exists()) {
+                storeFile = ksFile
+                storePassword = "deadcow"
+                keyAlias = "deadcow"
+                keyPassword = "deadcow"
+            } else {
+                val debugConfig = signingConfigs.getByName("debug")
+                storeFile = debugConfig.storeFile
+                storePassword = debugConfig.storePassword
+                keyAlias = debugConfig.keyAlias
+                keyPassword = debugConfig.keyPassword
+            }
+        }
+    }
+
     buildTypes {
         debug {
-
             isMinifyEnabled = false
             isShrinkResources = false
             isDebuggable = true
-
+            signingConfig = signingConfigs.getByName("release")
         }
         release {
             isCrunchPngs = false
             isMinifyEnabled = true
             isShrinkResources = true
             isProfileable = false
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
 
             ndk {
                 debugSymbolLevel = "none"

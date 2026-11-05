@@ -1,5 +1,6 @@
 package com.droid.dolphy.bluetooth.audio
 
+import com.droid.dolphy.BluetoothDeviceResolver
 import com.droid.dolphy.DolphyIconButton
 
 import android.Manifest
@@ -77,8 +78,8 @@ data class ScannerDeviceUi(
     val name: String,
     val address: String,
     val rssi: Int,
-
     val hasFastPair: Boolean = false,
+    val manufacturer: String? = null,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,18 +127,9 @@ fun AudioScannerScreen(navController: NavController) {
         }
     }
 
-    fun addOrUpdateDevice(
-        device: BluetoothDevice,
-        rssi: Int,
-        btClass: BluetoothClass? = null,
-        hasFastPair: Boolean = false,
-    ) {
-        val name = try { device.name } catch (_: SecurityException) { null } ?: "Unknown Device"
-        val majorClass = btClass?.majorDeviceClass ?: BluetoothClass.Device.Major.UNCATEGORIZED
-
-        val n = name.lowercase()
-        val isAudio = majorClass == BluetoothClass.Device.Major.AUDIO_VIDEO ||
-            n.contains("buds") || n.contains("airpods") || n.contains("head") ||
+    fun isLikelyAudioName(name: String): Boolean {
+        val n = name.lowercase(java.util.Locale.ROOT)
+        return n.contains("buds") || n.contains("airpods") || n.contains("head") ||
             n.contains("ear") || n.contains("audio") || n.contains("speaker") ||
             n.contains("sony") || n.contains("jbl") || n.contains("beat") ||
             n.contains("marshall") || n.contains("bose") || n.contains("sennheiser") ||
@@ -147,21 +139,44 @@ fun AudioScannerScreen(navController: NavController) {
             n.contains("nothing") || n.contains("earfun") || n.contains("qcy") ||
             n.contains("tozo") || n.contains("skullcandy") || n.contains("jabra") ||
             n.contains("wh-") || n.contains("wf-") || n.contains("linkbuds")
+    }
+
+    fun addOrUpdateDevice(
+        device: BluetoothDevice,
+        rssi: Int,
+        btClass: BluetoothClass? = null,
+        hasFastPair: Boolean = false,
+        scanRecord: ScanRecord? = null,
+        extraName: String? = null,
+    ) {
+        val resolved = BluetoothDeviceResolver.resolve(
+            device = device,
+            scanRecord = scanRecord,
+            extraName = extraName,
+            btClass = btClass,
+            context = context
+        )
+
+        val majorClass = btClass?.majorDeviceClass ?: BluetoothClass.Device.Major.UNCATEGORIZED
+        val isAudio = majorClass == BluetoothClass.Device.Major.AUDIO_VIDEO ||
+            resolved.category.contains("Audio", ignoreCase = true) ||
+            isLikelyAudioName(resolved.name) ||
+            isLikelyAudioName(extraName.orEmpty())
 
         if (isAudio || hasFastPair) {
             val prev = devices[device.address]
             val displayName = when {
-                name.isNotBlank() && name != "Unknown Device" -> name
-                hasFastPair || prev?.hasFastPair == true -> prev?.name?.takeIf {
-                    it.isNotBlank() && it != "Unknown Device"
-                } ?: "Fast Pair audio"
-                else -> prev?.name ?: "Unknown Audio"
+                resolved.isUserNamed -> resolved.name
+                prev != null && !BluetoothDeviceResolver.isGenericUnknown(prev.name) -> prev.name
+                else -> resolved.name
             }
+            val mfg = resolved.manufacturer ?: prev?.manufacturer
             devices[device.address] = ScannerDeviceUi(
                 name = displayName,
                 address = device.address,
                 rssi = if (rssi == Int.MIN_VALUE) (prev?.rssi ?: rssi) else rssi,
                 hasFastPair = (prev?.hasFastPair == true) || hasFastPair,
+                manufacturer = mfg,
             )
             if (!connectionStates.containsKey(device.address)) {
                 connectionStates[device.address] = ConnectionStatus.IDLE
@@ -172,10 +187,13 @@ fun AudioScannerScreen(navController: NavController) {
     val bleCallback = remember {
         object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
+                BluetoothDeviceResolver.registerScanResult(result, context)
                 addOrUpdateDevice(
-                    result.device,
-                    result.rssi,
+                    device = result.device,
+                    rssi = result.rssi,
                     hasFastPair = result.hasGoogleFastPair(),
+                    scanRecord = result.scanRecord,
+                    extraName = result.scanRecord?.deviceName
                 )
             }
         }
@@ -198,8 +216,17 @@ fun AudioScannerScreen(navController: NavController) {
                             @Suppress("DEPRECATION")
                             intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS)
                         }
+                        val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
                         val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE).toInt()
-                        if (device != null) addOrUpdateDevice(device, rssi, btClass)
+                        if (device != null) {
+                            BluetoothDeviceResolver.registerClassicDevice(device, extraName, btClass, context)
+                            addOrUpdateDevice(
+                                device = device,
+                                rssi = rssi,
+                                btClass = btClass,
+                                extraName = extraName
+                            )
+                        }
                     }
                     BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED -> {
                         val state = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, BluetoothProfile.STATE_DISCONNECTED)
@@ -708,8 +735,13 @@ fun AudioDeviceRow(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                val sub = if (!device.manufacturer.isNullOrBlank() && !device.name.contains(device.manufacturer, ignoreCase = true)) {
+                    "${device.address} • ${device.manufacturer}"
+                } else {
+                    device.address
+                }
                 Text(
-                    device.address,
+                    sub,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

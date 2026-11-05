@@ -12,6 +12,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.BackHandler
+import android.bluetooth.BluetoothClass
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -41,7 +42,7 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class JammerDevice(val name: String, val address: String)
+data class JammerDevice(val name: String, val address: String, val manufacturer: String? = null)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,8 +104,15 @@ fun BluetoothJammerScanScreen(onBack: () -> Unit, accentColor: Color) {
                             } else {
                                 @Suppress("DEPRECATION") intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                             }
+                            val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
+                            val btClass = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS, BluetoothClass::class.java)
+                            } else {
+                                @Suppress("DEPRECATION") intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS)
+                            }
                             device?.let {
-                                val info = JammerDevice(it.name ?: "Unknown", it.address)
+                                val resolved = BluetoothDeviceResolver.resolveClassic(it, extraName, btClass, ctx)
+                                val info = JammerDevice(resolved.name, it.address, resolved.manufacturer)
                                 if (devices.none { d -> d.address == info.address }) {
                                     devices = devices + info
                                 }
@@ -182,7 +190,12 @@ fun BluetoothJammerScanScreen(onBack: () -> Unit, accentColor: Color) {
                                 Spacer(Modifier.width(16.dp))
                                 Column {
                                     Text(device.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Text(device.address, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    val subtitle = if (!device.manufacturer.isNullOrBlank() && !device.name.contains(device.manufacturer, ignoreCase = true)) {
+                                        "${device.address} • ${device.manufacturer}"
+                                    } else {
+                                        device.address
+                                    }
+                                    Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }

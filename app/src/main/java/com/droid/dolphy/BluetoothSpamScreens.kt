@@ -135,8 +135,8 @@ fun BondSpamScreen(
                                 ) {
                                     items(devices) { device ->
                                         val isSelected = selectedDevice?.address == device.address
-                                        val deviceName = runCatching { device.name }.getOrNull()?.takeIf { it.isNotBlank() }
-                                            ?: "Unknown Device"
+                                        val resolved = BluetoothDeviceResolver.resolve(device, context = context)
+                                        val deviceName = resolved.name
 
                                         Card(
                                             onClick = {
@@ -176,8 +176,13 @@ fun BondSpamScreen(
                                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                                         color = MaterialTheme.colorScheme.onSurface
                                                     )
+                                                    val subtitle = if (!resolved.manufacturer.isNullOrBlank() && !deviceName.contains(resolved.manufacturer, ignoreCase = true)) {
+                                                        "${device.address} • ${resolved.manufacturer}"
+                                                    } else {
+                                                        device.address
+                                                    }
                                                     Text(
-                                                        text = device.address,
+                                                        text = subtitle,
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -220,8 +225,7 @@ fun BondSpamScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                val targetName = runCatching { selectedDevice?.name }.getOrNull()?.takeIf { it.isNotBlank() }
-                                    ?: selectedDevice?.address
+                                val targetName = selectedDevice?.let { BluetoothDeviceResolver.resolve(it, context = context).name }
                                 val targetText = if (targetName != null) {
                                     "${stringResource(R.string.bond_spam_target)} $targetName"
                                 } else {

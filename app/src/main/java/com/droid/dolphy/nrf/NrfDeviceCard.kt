@@ -92,6 +92,20 @@ fun NrfDeviceCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        if (!device.manufacturerName.isNullOrBlank() && (device.name == null || !device.name.contains(device.manufacturerName, ignoreCase = true))) {
+                            Text(
+                                text = device.manufacturerName,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1
+                            )
+                            Text(
+                                text = "•",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = colorScheme.onSurfaceVariant
+                            )
+                        }
                         Text(
                             text = getDeviceTypeLabel(device.type),
                             style = MaterialTheme.typography.labelSmall,

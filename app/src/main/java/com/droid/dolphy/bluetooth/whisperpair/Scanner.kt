@@ -52,9 +52,11 @@ class Scanner(
 
         val serviceData = scanRecord.getServiceData(FAST_PAIR_SERVICE_UUID)
 
+        val advertisedName = scanRecord.deviceName ?: device.name
+
         if (serviceData != null) {
             val fastPairDevice = parseFastPairAdvertisement(
-                name = device.name,
+                name = advertisedName,
                 address = device.address,
                 data = serviceData,
                 rssi = result.rssi,
@@ -63,7 +65,7 @@ class Scanner(
             onDeviceFound(fastPairDevice)
         } else if (scanAllDevices) {
             val genericDevice = FastPairDevice(
-                name = device.name,
+                name = advertisedName,
                 address = device.address,
                 isPairingMode = false,
                 hasAccountKeyFilter = false,

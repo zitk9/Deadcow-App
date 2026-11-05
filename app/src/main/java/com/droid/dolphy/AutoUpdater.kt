@@ -581,6 +581,15 @@ object AutoUpdater {
                 val pkg = resolveInfo.activityInfo.packageName
                 context.grantUriPermission(pkg, apkUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
+            val commonPackageInstallers = listOf(
+                "com.google.android.packageinstaller",
+                "com.android.packageinstaller",
+                "com.samsung.android.packageinstaller",
+                "com.miui.packageinstaller"
+            )
+            for (pkg in commonPackageInstallers) {
+                runCatching { context.grantUriPermission(pkg, apkUri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+            }
             context.startActivity(installIntent)
         }.onFailure { e ->
             Log.e(TAG, "Failed to launch package installer", e)

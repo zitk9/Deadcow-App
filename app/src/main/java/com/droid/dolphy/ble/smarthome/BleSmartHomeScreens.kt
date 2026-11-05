@@ -137,10 +137,10 @@ fun BleSmartHomeScanScreen(navController: NavController) {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 val device = result.device ?: return
                 val addr = device.address ?: return
-                val name = result.scanRecord?.deviceName ?: device.name ?: "BLE device"
-                val vendor = BleVendorDb.getVendorLabel(context, addr)
+                val resolved = com.droid.dolphy.BluetoothDeviceResolver.resolve(device, result.scanRecord, context = context)
+                val vendor = resolved.manufacturer ?: BleVendorDb.getVendorLabel(context, addr)
                 val rssi = result.rssi
-                items = (items.filterNot { it.address == addr } + SmartHomeScanItem(addr, name, vendor, rssi))
+                items = (items.filterNot { it.address == addr } + SmartHomeScanItem(addr, resolved.name, vendor, rssi))
                     .sortedByDescending { it.rssi }
                     .take(64)
             }
@@ -262,11 +262,29 @@ fun BleSmartHomeScanScreen(navController: NavController) {
                         items = items,
                         modifier = Modifier.fillMaxWidth(),
                     ) { index, count, item ->
+                        val hasRealName = !com.droid.dolphy.BluetoothDeviceResolver.isGenericUnknown(item.name)
+                        val title = if (hasRealName) {
+                            item.name
+                        } else if (item.vendor != "Unknown" && item.vendor.isNotBlank()) {
+                            "${item.vendor} (Lumière)"
+                        } else {
+                            "Lumière intelligente (${if (item.address.length >= 5) item.address.takeLast(5) else "BLE"})"
+                        }
+                        val supportingText = buildString {
+                            if (item.vendor != "Unknown" && item.vendor.isNotBlank() && !title.contains(item.vendor, ignoreCase = true)) {
+                                append(item.vendor)
+                                append(" • ")
+                            }
+                            append(item.address)
+                            append(" • ")
+                            append(item.rssi)
+                            append(" dBm")
+                        }
                         M3SegmentedListItem(
                             index = index,
                             count = count,
-                            headline = item.vendor.takeIf { it != "Unknown" } ?: "Smart Light",
-                            supporting = "${item.address} • ${item.rssi} dBm",
+                            headline = title,
+                            supporting = supportingText,
                             leadingIcon = Icons.Default.Lightbulb,
                             leadingIconTint = accent,
                             onClick = {

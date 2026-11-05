@@ -36,13 +36,18 @@ class ScooterHackViewModel(app: Application) : AndroidViewModel(app) {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             if (!isHardScooterMatch(result)) return
             val address = result.device.address ?: return
-            val name = result.device.name
-                ?: result.scanRecord?.deviceName
-                ?: "Scooter"
+            val resolved = com.droid.dolphy.BluetoothDeviceResolver.resolve(result.device, result.scanRecord)
+            val name = if (resolved.isUserNamed) {
+                resolved.name
+            } else if (!resolved.manufacturer.isNullOrBlank()) {
+                "${resolved.manufacturer} Scooter"
+            } else {
+                "Trottinette (${if (address.length >= 5) address.takeLast(5) else "BLE"})"
+            }
             val rssi = result.rssi
             val existing = deviceMap[address]
             deviceMap[address] = (existing ?: ScooterDevice(address, name, rssi)).copy(
-                name = if (name.isNotBlank()) name else existing?.name ?: "Scooter",
+                name = name,
                 rssi = rssi,
                 isConnected = existing?.isConnected == true || _connectedAddress.value == address,
                 isConnecting = existing?.isConnecting == true,

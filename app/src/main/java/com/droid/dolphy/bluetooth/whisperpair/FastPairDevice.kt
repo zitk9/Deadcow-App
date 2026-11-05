@@ -12,10 +12,24 @@ data class FastPairDevice(
     val isFastPair: Boolean = true
 ) {
     val displayName: String
-        get() = name ?: KnownDevices.getDeviceName(modelId) ?: if (isFastPair) "Unknown Fast Pair Device" else "BLE Device"
+        get() {
+            if (!name.isNullOrBlank() && !name.equals("Unknown", ignoreCase = true) && !name.equals("Appareil inconnu", ignoreCase = true)) {
+                return name
+            }
+            val modelName = KnownDevices.getDeviceName(modelId)
+            if (!modelName.isNullOrBlank()) {
+                return modelName
+            }
+            val mfg = manufacturer
+            if (!mfg.isNullOrBlank()) {
+                return "$mfg (${if (isFastPair) "Fast Pair" else "BLE"})"
+            }
+            return if (isFastPair) "Appareil Fast Pair" else "Appareil BLE"
+        }
 
     val manufacturer: String?
         get() = KnownDevices.getManufacturer(modelId)
+            ?: com.droid.dolphy.ble.smarthome.BleVendorDb.getVendorLabel(null, address).takeIf { it != "Unknown" }
 
     val isKnownVulnerable: Boolean
         get() = KnownDevices.isKnownVulnerable(modelId)

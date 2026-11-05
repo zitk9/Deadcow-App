@@ -609,6 +609,7 @@ fun DeviceItem(
     modifier: Modifier = Modifier,
     onClick: (BluetoothDevice) -> Unit = {}
 ) {
+    val resolved = BluetoothDeviceResolver.resolve(device)
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -616,10 +617,23 @@ fun DeviceItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = device.name ?: device.address,
-            modifier = Modifier.weight(1f)
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = resolved.name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            val sub = if (!resolved.manufacturer.isNullOrBlank() && !resolved.name.contains(resolved.manufacturer, ignoreCase = true)) {
+                "${device.address} • ${resolved.manufacturer}"
+            } else {
+                device.address
+            }
+            Text(
+                text = sub,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 

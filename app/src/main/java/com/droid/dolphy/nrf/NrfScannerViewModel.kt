@@ -251,7 +251,11 @@ class NrfScannerViewModel : ViewModel() {
 
         val serviceUuids = scanRecord?.serviceUuids?.map { it.toString() } ?: emptyList()
         val manufacturerData = scanRecord?.manufacturerSpecificData
-        val manufacturerId = manufacturerData?.keyAt(0)
+        val manufacturerId = if (manufacturerData != null && manufacturerData.size() > 0) {
+            (0 until manufacturerData.size()).map { manufacturerData.keyAt(it) }
+                .firstOrNull { BleVendorDb.getCompanyIdentifierName(it) != null }
+                ?: manufacturerData.keyAt(0)
+        } else null
 
         val isFastPair = serviceUuids.contains("0000fe2c-0000-1000-8000-00805f9b34fb")
         val isWhisperPair = serviceUuids.any { it.contains("fe2c", ignoreCase = true) }
@@ -356,7 +360,9 @@ class NrfScannerViewModel : ViewModel() {
                                     val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE).toInt()
 
                                     device?.let {
-                                        val sysName = it.name?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
+                                        val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
+                                        val sysName = extraName?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
+                                            ?: it.name?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
                                         val macVendor = context?.let { ctx ->
                                             com.droid.dolphy.ble.smarthome.BleVendorDb.getVendorLabel(ctx, it.address).takeIf { v -> v != "Unknown" }
                                         }

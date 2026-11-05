@@ -82,9 +82,9 @@ import com.droid.dolphy.R
 
 private enum class Screen { Scanner, Paired, Recordings, Tws }
 
-private data class TwsTarget(val name: String?, val address: String, val rssi: Int) {
+private data class TwsTarget(val name: String?, val address: String, val rssi: Int, val manufacturer: String? = null) {
     val displayName: String
-        get() = name ?: "Appareil inconnu"
+        get() = name ?: manufacturer?.let { "$it (TWS)" } ?: "Appareil Bluetooth"
 }
 
 data class AudioConnectionState(
@@ -450,6 +450,9 @@ private fun ScannerTab(
                             }
                         }
                         Text(device.address, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                        if (!device.manufacturer.isNullOrBlank() && !device.displayName.contains(device.manufacturer, ignoreCase = true)) {
+                            Text("Marque : ${device.manufacturer}", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                        }
                         Text("RSSI: ${device.rssi}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         Text(stringResource(R.string.whisperpair_connecting_ru) + ": ${device.status}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         exploitResults[device.address]?.let {
@@ -500,6 +503,9 @@ private fun PairedTab(
                         Column(Modifier.fillMaxWidth().padding(12.dp)) {
                             Text(device.displayName, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)
                             Text(device.address, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                        if (!device.manufacturer.isNullOrBlank() && !device.displayName.contains(device.manufacturer, ignoreCase = true)) {
+                            Text("Marque : ${device.manufacturer}", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                        }
                             audioStates[device.address]?.message?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp) }
                             exploitResults[device.address]?.let { Text(it, color = MaterialTheme.colorScheme.primary, fontSize = 12.sp) }
                         }
@@ -578,7 +584,9 @@ private fun TwsTab(
                                 device?.let {
                                     if (devices.none { d -> d.address == it.address }) {
                                         val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE).toInt()
-                                        devices.add(TwsTarget(it.name, it.address, rssi))
+                                        val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
+                                        val resolved = com.droid.dolphy.BluetoothDeviceResolver.resolveClassic(it, extraName, null, ctx)
+                                        devices.add(TwsTarget(resolved.name, it.address, rssi, resolved.manufacturer))
                                     }
                                 }
                             }
@@ -693,6 +701,9 @@ private fun TwsTab(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(device.address, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                        if (!device.manufacturer.isNullOrBlank() && !device.displayName.contains(device.manufacturer, ignoreCase = true)) {
+                            Text("Marque : ${device.manufacturer}", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                        }
                         if (device.rssi != Short.MIN_VALUE.toInt()) {
                             Text("RSSI: ${device.rssi}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         }

@@ -1,5 +1,6 @@
 package com.droid.dolphy.bluetooth.audio
 
+import com.droid.dolphy.BluetoothDeviceResolver
 import com.droid.dolphy.DolphyIconButton
 
 import android.Manifest
@@ -95,7 +96,8 @@ data class StressDeviceUi(
     val name: String,
     val address: String,
     val rssi: Int,
-    val source: String = "SCAN"
+    val source: String = "SCAN",
+    val manufacturer: String? = null
 )
 
 object BluetoothStressBus {
@@ -377,13 +379,27 @@ fun BtAudioStressScanScreen(navController: NavController) {
             n.contains("ear") || n.contains("audio") || n.contains("speaker")
     }
 
-    fun addOrUpdateDevice(device: BluetoothDevice, rssi: Int, source: String) {
-        val name = try {
-            device.name
-        } catch (_: SecurityException) {
-            null
-        } ?: "Unknown audio"
+    fun addOrUpdateDevice(
+        device: BluetoothDevice,
+        rssi: Int,
+        source: String,
+        advertisedName: String? = null,
+        scanRecord: ScanRecord? = null,
+        btClass: BluetoothClass? = null
+    ) {
+        val resolved = BluetoothDeviceResolver.resolve(
+            device = device,
+            scanRecord = scanRecord,
+            extraName = advertisedName,
+            btClass = btClass,
+            context = context
+        )
         val old = devices[device.address]
+        val displayName = when {
+            resolved.isUserNamed -> resolved.name
+            old != null && !BluetoothDeviceResolver.isGenericUnknown(old.name) -> old.name
+            else -> resolved.name
+        }
         val nextRssi = if (rssi == Int.MIN_VALUE) (old?.rssi ?: Int.MIN_VALUE) else rssi
         val mergedSource = when {
             old == null -> source
@@ -391,11 +407,13 @@ fun BtAudioStressScanScreen(navController: NavController) {
             old.source.contains(source) -> old.source
             else -> "${old.source}+${source}"
         }
+        val mfg = resolved.manufacturer ?: old?.manufacturer
         devices[device.address] = StressDeviceUi(
-            name = if (name.isBlank()) "Unknown audio" else name,
+            name = displayName,
             address = device.address,
             rssi = nextRssi,
-            source = mergedSource
+            source = mergedSource,
+            manufacturer = mfg
         )
     }
 
@@ -403,16 +421,25 @@ fun BtAudioStressScanScreen(navController: NavController) {
         object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 val d = result.device ?: return
-                val name = try {
-                    d.name ?: result.scanRecord?.deviceName
-                } catch (_: SecurityException) {
-                    result.scanRecord?.deviceName
-                }.orEmpty()
-                val probablyAudio = isLikelyAudioName(name) ||
+                BluetoothDeviceResolver.registerScanResult(result, context)
+                val resolved = BluetoothDeviceResolver.resolve(
+                    device = d,
+                    scanRecord = result.scanRecord,
+                    extraName = result.scanRecord?.deviceName,
+                    context = context
+                )
+                val probablyAudio = isLikelyAudioName(resolved.name) ||
+                    resolved.category.contains("Audio", ignoreCase = true) ||
                     d.type == BluetoothDevice.DEVICE_TYPE_LE ||
                     d.type == BluetoothDevice.DEVICE_TYPE_DUAL
                 if (probablyAudio) {
-                    addOrUpdateDevice(d, result.rssi, "BLE")
+                    addOrUpdateDevice(
+                        device = d,
+                        rssi = result.rssi,
+                        source = "BLE",
+                        advertisedName = result.scanRecord?.deviceName,
+                        scanRecord = result.scanRecord
+                    )
                 }
             }
         }
@@ -472,10 +499,20 @@ fun BtAudioStressScanScreen(navController: NavController) {
                                 @Suppress("DEPRECATION")
                                 intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS)
                             }
+                        val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
                         val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE).toInt()
                         val major = btClass?.majorDeviceClass
-                        if (major == BluetoothClass.Device.Major.AUDIO_VIDEO && device != null) {
-                            addOrUpdateDevice(device, rssi, "CLASSIC")
+                        if (device != null) {
+                            BluetoothDeviceResolver.registerClassicDevice(device, extraName, btClass, ctx)
+                            if (major == BluetoothClass.Device.Major.AUDIO_VIDEO) {
+                                addOrUpdateDevice(
+                                    device = device,
+                                    rssi = rssi,
+                                    source = "CLASSIC",
+                                    advertisedName = extraName,
+                                    btClass = btClass
+                                )
+                            }
                         }
                     }
                     BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
@@ -602,6 +639,9 @@ fun BtAudioStressScanScreen(navController: NavController) {
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text("MAC: ${device.address}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    if (!device.manufacturer.isNullOrBlank() && !device.name.contains(device.manufacturer, ignoreCase = true)) {
+                                        Text("Marque : ${device.manufacturer}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                                    }
                                     Text(
                                         if (device.rssi == Int.MIN_VALUE) "RSSI: n/a" else "RSSI: ${device.rssi}",
                                         style = MaterialTheme.typography.bodySmall,

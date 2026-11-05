@@ -7,6 +7,7 @@
 /my key/
 *.jks
 *.keystore
+!app/deadcow-release.jks
 *.pk8
 *.pem
 .cxx/
