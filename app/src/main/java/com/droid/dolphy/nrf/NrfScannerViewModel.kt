@@ -16,6 +16,7 @@ import android.content.IntentFilter
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.droid.dolphy.ble.smarthome.BleVendorDb
 import com.droid.dolphy.bluetooth.whisperpair.FastPairDevice
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

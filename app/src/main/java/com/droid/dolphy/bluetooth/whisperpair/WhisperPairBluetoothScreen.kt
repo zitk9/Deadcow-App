@@ -450,8 +450,9 @@ private fun ScannerTab(
                             }
                         }
                         Text(device.address, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-                        if (!device.manufacturer.isNullOrBlank() && !device.displayName.contains(device.manufacturer, ignoreCase = true)) {
-                            Text("Marque : ${device.manufacturer}", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                        val mfg = device.manufacturer
+                        if (!mfg.isNullOrBlank() && !device.displayName.contains(mfg, ignoreCase = true)) {
+                            Text("Marque : $mfg", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
                         }
                         Text("RSSI: ${device.rssi}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         Text(stringResource(R.string.whisperpair_connecting_ru) + ": ${device.status}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -503,8 +504,9 @@ private fun PairedTab(
                         Column(Modifier.fillMaxWidth().padding(12.dp)) {
                             Text(device.displayName, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)
                             Text(device.address, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-                        if (!device.manufacturer.isNullOrBlank() && !device.displayName.contains(device.manufacturer, ignoreCase = true)) {
-                            Text("Marque : ${device.manufacturer}", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                        val mfg = device.manufacturer
+                        if (!mfg.isNullOrBlank() && !device.displayName.contains(mfg, ignoreCase = true)) {
+                            Text("Marque : $mfg", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
                         }
                             audioStates[device.address]?.message?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp) }
                             exploitResults[device.address]?.let { Text(it, color = MaterialTheme.colorScheme.primary, fontSize = 12.sp) }
@@ -701,8 +703,9 @@ private fun TwsTab(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(device.address, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-                        if (!device.manufacturer.isNullOrBlank() && !device.displayName.contains(device.manufacturer, ignoreCase = true)) {
-                            Text("Marque : ${device.manufacturer}", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                        val mfg = device.manufacturer
+                        if (!mfg.isNullOrBlank() && !device.displayName.contains(mfg, ignoreCase = true)) {
+                            Text("Marque : $mfg", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
                         }
                         if (device.rssi != Short.MIN_VALUE.toInt()) {
                             Text("RSSI: ${device.rssi}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)

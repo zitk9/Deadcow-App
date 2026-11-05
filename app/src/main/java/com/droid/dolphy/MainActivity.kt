@@ -48,6 +48,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -6132,9 +6133,9 @@ fun DeviceItem(device: BluetoothDevice, onDeviceSelected: (BluetoothDevice) -> U
         resolved.category == "Téléphone" -> Icons.Filled.PhoneAndroid
         resolved.category == "Ordinateur" -> Icons.Filled.Computer
         resolved.category == "Clavier/Souris" -> Icons.Filled.Keyboard
-        if (hasPermission) device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.PHONE -> Icons.Filled.PhoneAndroid
-        if (hasPermission) device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.COMPUTER -> Icons.Filled.Computer
-        if (hasPermission) device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO -> Icons.Filled.Headset
+        hasPermission && device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.PHONE -> Icons.Filled.PhoneAndroid
+        hasPermission && device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.COMPUTER -> Icons.Filled.Computer
+        hasPermission && device.bluetoothClass?.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO -> Icons.Filled.Headset
         else -> Icons.Filled.Bluetooth
     }
 
