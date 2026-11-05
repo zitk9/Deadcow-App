@@ -102,6 +102,7 @@ fun functionDestinationSections(): List<Pair<String, List<FunctionDestination>>>
             FunctionDestination(Icons.Outlined.Nfc, nfcTitle, nfcDesc, "other/nfc_tools", OtherSections.OTHER),
             FunctionDestination(Icons.Default.QrCodeScanner, qrTitle, qrDesc, "other/qr_tools", OtherSections.OTHER),
             FunctionDestination(Icons.Filled.WifiOff, "WI-FI Attacks", netHubDesc, "other/network_diagnostic_hub", OtherSections.OTHER),
+            FunctionDestination(Icons.Default.WifiTethering, "Générateur Wi-Fi & Hotspot", "Générateur de réseaux Wi-Fi (Rickroll, Trolls, Aléatoire) & Point d'accès Hotspot", "other/wifi_generator", OtherSections.OTHER),
             FunctionDestination(Icons.Default.Cast, tvCastTitle, tvCastDesc, "other/smarttv_cast", OtherSections.OTHER),
             FunctionDestination(Icons.Default.Router, lanTitle, lanDesc, "other/lan_scanner", OtherSections.OTHER),
         ) + plugins(OtherSections.OTHER)

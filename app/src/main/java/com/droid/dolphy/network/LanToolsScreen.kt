@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Router
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material.icons.filled.WifiTethering
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -106,6 +107,12 @@ fun LanToolsScreen(navController: NavController) {
             stringResource(R.string.wifi_print_title),
             stringResource(R.string.wifi_print_hero_desc),
             "other/wifi_print",
+        ),
+        LanToolEntry(
+            Icons.Default.WifiTethering,
+            "Générateur Wi-Fi & Hotspot",
+            "Génération de réseaux Wi-Fi (Rickroll, Trolls, Aléatoire) & Point d'accès Hotspot connectable",
+            "other/wifi_generator",
         ),
     )
     MaterialBackground(accentColor = accent) {

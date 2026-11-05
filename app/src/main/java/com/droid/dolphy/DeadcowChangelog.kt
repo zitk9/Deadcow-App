@@ -32,15 +32,15 @@ object DeadcowChangelog {
 
     val ENTRIES = listOf(
         ChangelogEntry(
-            version = "v1.19",
+            version = "v1.20",
             date = "Novembre 2026",
             isCurrent = true,
             items = listOf(
+                "📶 Nouveau module Générateur Wi-Fi & Hotspot : Génération instantanée de réseaux (paroles complètes de Rickroll, phrases trolls & geeks, aléatoire ou personnalisé), lancement d'un vrai Point d'accès local Android avec QR code instantané pour permettre aux autres appareils de s'y connecter, et export pour ESP32 / Flipper Zero.",
                 "🔍 Identification Bluetooth avancée : Fin des appareils 'Unknown' ! Affichage automatique des vrais noms utilisateur (paquets BLE et inquiry classique) ou de la marque et catégorie détaillée (Apple, Samsung, Sony, JBL, Bose, Xiaomi, Google, Logitech, etc.).",
                 "🏢 Base constructeurs enrichie : Plus de 60 identifiants Bluetooth SIG et 40 000+ préfixes MAC OUI pour identifier précisément chaque marque et modèle.",
                 "🔑 Mises à jour fluides sans réinstallation : Configuration d'une clé de signature release pérenne et sécurisation des autorisations de l'installeur de packages (fin de l'erreur INSTALL_FAILED_UPDATE_INCOMPATIBLE).",
-                "🎧 Scanner audio & Smart Home BLE : Affichage clair du fabricant et sous-titres enrichis sur l'ensemble des modules Bluetooth de l'application.",
-                "🛠️ Correctifs de build & compilation : Ajustement des syntaxes smart-cast, typages et imports sur les scanners BLE et l'interface principale."
+                "🎧 Scanner audio & Smart Home BLE : Affichage clair du fabricant et sous-titres enrichis sur l'ensemble des modules Bluetooth de l'application."
             )
         ),
         ChangelogEntry(
