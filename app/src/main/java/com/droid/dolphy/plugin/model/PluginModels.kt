@@ -34,6 +34,13 @@ object OtherSections {
     const val BLUETOOTH = "BLUETOOTH"
     const val OTHER = "OTHER"
     const val PLUGINS = "PLUGINS"
+<<<<<<< HEAD
+=======
+
+    val BUILTIN: Set<String> = setOf(INFRARED, BLUETOOTH, OTHER, PLUGINS)
+
+
+>>>>>>> upstream/main
 
     val BUILTIN: Set<String> = setOf(INFRARED, BLUETOOTH, OTHER, PLUGINS, "ПРОЧЕЕ", "ПЛАГИНЫ")
 

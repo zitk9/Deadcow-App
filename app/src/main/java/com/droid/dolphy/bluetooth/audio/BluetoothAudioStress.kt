@@ -138,6 +138,7 @@ object BluetoothStressBus {
     }
 }
 
+@android.annotation.SuppressLint("MissingPermission")
 class BluetoothStressService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var l2capJob: Job? = null
@@ -242,7 +243,11 @@ class BluetoothStressService : Service() {
                     continue
                 }
                 try {
-                    val socket = device.createL2capChannel(0x1001)
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                        l2capDisabledForSession = true
+                        continue
+                    }
+                    val socket = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) device.createL2capChannel(0x1001) else error("L2CAP requires Android 10")
                     socket.connect()
                     socket.close()
                     logBurst("L2CAP connect+close")
@@ -422,6 +427,7 @@ fun BtAudioStressScanScreen(navController: NavController) {
         object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 val d = result.device ?: return
+<<<<<<< HEAD
                 BluetoothDeviceResolver.registerScanResult(result, context)
                 val resolved = BluetoothDeviceResolver.resolve(
                     device = d,
@@ -433,6 +439,16 @@ fun BtAudioStressScanScreen(navController: NavController) {
                     resolved.category.contains("Audio", ignoreCase = true) ||
                     d.type == BluetoothDevice.DEVICE_TYPE_LE ||
                     d.type == BluetoothDevice.DEVICE_TYPE_DUAL
+=======
+                val name = try {
+                    d.name ?: result.scanRecord?.deviceName
+                } catch (_: SecurityException) {
+                    result.scanRecord?.deviceName
+                }.orEmpty()
+                val probablyAudio = isLikelyAudioName(name) ||
+                    (try { d.type } catch (_: SecurityException) { BluetoothDevice.DEVICE_TYPE_UNKNOWN }) == BluetoothDevice.DEVICE_TYPE_LE ||
+                    (try { d.type } catch (_: SecurityException) { BluetoothDevice.DEVICE_TYPE_UNKNOWN }) == BluetoothDevice.DEVICE_TYPE_DUAL
+>>>>>>> upstream/main
                 if (probablyAudio) {
                     addOrUpdateDevice(
                         device = d,
@@ -456,7 +472,7 @@ fun BtAudioStressScanScreen(navController: NavController) {
             scanning = true
             return
         }
-        scanning = adapter.startDiscovery()
+        scanning = try { adapter.startDiscovery() } catch (_: SecurityException) { false }
         try {
             val settings = ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -518,7 +534,7 @@ fun BtAudioStressScanScreen(navController: NavController) {
                     }
                     BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                         if (adapter?.isEnabled == true && keepScanning) {
-                            scanning = adapter.startDiscovery()
+                            scanning = try { adapter.startDiscovery() } catch (_: SecurityException) { false }
                         }
                     }
                 }
@@ -812,4 +828,3 @@ fun BtAudioStressRunScreen(
         }
     }
 }
-

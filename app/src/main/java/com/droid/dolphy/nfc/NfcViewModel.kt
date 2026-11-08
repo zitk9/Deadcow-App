@@ -10,7 +10,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.droid.dolphy.RootUtils
 import com.droid.dolphy.trackNfcRead
 import com.droid.dolphy.nfc.db.NfcDatabase
 import com.droid.dolphy.nfc.db.NfcScanEntity
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -54,6 +52,7 @@ class NfcViewModel(private val app: Application) : AndroidViewModel(app) {
     val writeOutcome: StateFlow<NfcWriteOutcome> = _writeOutcome.asStateFlow()
 
 
+<<<<<<< HEAD
     private val _masterKeyRunning = MutableStateFlow(false)
     val masterKeyRunning = _masterKeyRunning.asStateFlow()
 
@@ -134,6 +133,8 @@ class NfcViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
 
+=======
+>>>>>>> upstream/main
     private var lastWriteForRetry: NdefMessage? = null
 
     fun scanDetails(id: Long): Flow<NfcScanEntity?> = dao.observeById(id)
@@ -171,6 +172,7 @@ class NfcViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
     fun handleNfcIntent(intent: Intent) {
+        if (intent.action !in setOf(NfcAdapter.ACTION_TAG_DISCOVERED, NfcAdapter.ACTION_TECH_DISCOVERED, NfcAdapter.ACTION_NDEF_DISCOVERED)) return
         extractTag(intent)?.let { tag ->
             try {
                 com.droid.dolphy.plugin.PluginManager.dispatchNfcTag(tag)
@@ -211,9 +213,6 @@ class NfcViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
     private suspend fun ingestReadIntent(intent: Intent) {
-        if (RootNfcHelper.hasRoot()) {
-            withContext(Dispatchers.IO) { RootNfcHelper.prepareForRead(app) }
-        }
         val analyzed = NfcTagAnalyzer.analyzeIntent(intent) ?: return
         vibrateNfcSuccess(app)
         val id = dao.insert(analyzed)
@@ -240,4 +239,3 @@ class NfcViewModelFactory(private val application: Application) : ViewModelProvi
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

@@ -182,7 +182,11 @@ sealed class UiNode {
         val title: String,
         val message: String,
         val confirmText: String = "OK",
+<<<<<<< HEAD
         val dismissText: String = "Annuler",
+=======
+        val dismissText: String = "Cancel",
+>>>>>>> upstream/main
         val onConfirmId: String? = null,
         val onDismissId: String? = null,
 

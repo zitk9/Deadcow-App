@@ -67,15 +67,6 @@ import com.kyant.backdrop.catalog.components.LiquidBottomTabs
 import com.kyant.backdrop.catalog.components.LiquidButton
 import kotlin.math.sin
 
-
-
-
-
-
-
-
-
-
 @Deprecated("Use MaterialCard for Material Design 3")
 @Composable
 fun VolumetricCard(
@@ -164,9 +155,6 @@ fun VolumetricCard(
         content()
     }
 }
-
-
-
 
 @Composable
 fun VolumetricButton(
@@ -303,14 +291,6 @@ fun VolumetricButton(
     }
 }
 
-
-
-
-
-
-
-
-
 @Composable
 fun GradientBackground(
     modifier: Modifier = Modifier,
@@ -356,9 +336,6 @@ fun GradientBackground(
         content()
     }
 }
-
-
-
 
 @Composable
 fun AnimatedGradientBackground(
@@ -416,13 +393,6 @@ fun AnimatedGradientBackground(
     }
 }
 
-
-
-
-
-
-
-
 @Composable
 fun GlowingIcon(
     modifier: Modifier = Modifier,
@@ -456,9 +426,6 @@ fun GlowingIcon(
         content()
     }
 }
-
-
-
 
 @Composable
 fun GlowBox(
@@ -501,13 +468,6 @@ fun GlowBox(
         content()
     }
 }
-
-
-
-
-
-
-
 
 @Composable
 fun ParticleEffect(
@@ -552,13 +512,6 @@ private data class DesignParticle(
     val delay: Int
 )
 
-
-
-
-
-
-
-
 @Composable
 fun VolumetricText(
     text: String,
@@ -577,15 +530,6 @@ fun VolumetricText(
         )
     )
 }
-
-
-
-
-
-
-
-
-
 
 @Composable
 fun SettingsItem(
@@ -617,6 +561,7 @@ fun DeviceItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+<<<<<<< HEAD
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = resolved.name,
@@ -634,19 +579,14 @@ fun DeviceItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+=======
+        Text(
+            text = (try { device.name } catch (_: SecurityException) { null }) ?: device.address,
+            modifier = Modifier.weight(1f)
+        )
+>>>>>>> upstream/main
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 @Composable
 fun VolumetricTabRow(
@@ -707,15 +647,6 @@ fun VolumetricTabRow(
     }
 }
 
-
-
-
-
-
-
-
-
-
 @Composable
 fun MaterialCard(
     modifier: Modifier = Modifier,
@@ -725,6 +656,7 @@ fun MaterialCard(
     containerType: String = "surface",
     contentPadding: Dp = 16.dp,
     shape: Shape? = null,
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
@@ -737,26 +669,37 @@ fun MaterialCard(
         "highest" -> colorScheme.surfaceContainerHighest
         else -> colorScheme.surfaceContainerHigh
     }
+    val colors = CardDefaults.cardColors(containerColor = containerColor)
+    val cardElevation = CardDefaults.cardElevation(defaultElevation = elevation)
 
-    Card(
-        modifier = modifier,
-        shape = resolvedShape,
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = elevation
-        )
-    ) {
-        Box(modifier = Modifier.padding(contentPadding)) {
-            content()
+    if (onClick != null) {
+        val (interaction, scale) = rememberPressShrink(pressedScale = 0.97f)
+        val (_, morphShape) = rememberPressRoundedShape(cornerRadius = 40.dp, source = interaction)
+        Card(
+            onClick = onClick,
+            modifier = modifier.scale(scale),
+            shape = if (shape == null) morphShape else resolvedShape,
+            colors = colors,
+            elevation = cardElevation,
+            interactionSource = interaction,
+        ) {
+            Box(modifier = Modifier.padding(contentPadding)) {
+                content()
+            }
+        }
+    } else {
+        Card(
+            modifier = modifier,
+            shape = resolvedShape,
+            colors = colors,
+            elevation = cardElevation,
+        ) {
+            Box(modifier = Modifier.padding(contentPadding)) {
+                content()
+            }
         }
     }
 }
-
-
-
-
 
 @Composable
 fun MaterialCardWithBorder(
@@ -776,9 +719,6 @@ fun MaterialCardWithBorder(
         content = content,
     )
 }
-
-
-
 
 @Composable
 fun AccentButton(
@@ -814,6 +754,59 @@ fun AccentButton(
 
 
 @Composable
+fun rememberPressShrink(
+    pressedScale: Float = 0.94f,
+    source: MutableInteractionSource = remember { MutableInteractionSource() },
+): Pair<MutableInteractionSource, Float> {
+    val pressed by source.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) pressedScale else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "pressShrink"
+    )
+    return source to scale
+}
+
+@Composable
+fun rememberPressRoundedShape(
+    topStart: Dp,
+    topEnd: Dp,
+    bottomEnd: Dp,
+    bottomStart: Dp,
+    pressedRadius: Dp = 100.dp,
+    source: MutableInteractionSource = remember { MutableInteractionSource() },
+): Pair<MutableInteractionSource, Shape> {
+    val pressed by source.collectIsPressedAsState()
+    val progress by animateFloatAsState(
+        targetValue = if (pressed) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "pressRoundedShape"
+    )
+    fun morph(base: Dp): Dp = (base + (pressedRadius - base) * progress).coerceAtLeast(0.dp)
+    val shape = RoundedCornerShape(
+        topStart = morph(topStart),
+        topEnd = morph(topEnd),
+        bottomEnd = morph(bottomEnd),
+        bottomStart = morph(bottomStart),
+    )
+    return source to shape
+}
+
+@Composable
+fun rememberPressRoundedShape(
+    cornerRadius: Dp,
+    pressedRadius: Dp = 100.dp,
+    source: MutableInteractionSource = remember { MutableInteractionSource() },
+): Pair<MutableInteractionSource, Shape> =
+    rememberPressRoundedShape(cornerRadius, cornerRadius, cornerRadius, cornerRadius, pressedRadius, source)
+
+@Composable
 fun MaterialButton(
     text: String,
     onClick: () -> Unit,
@@ -823,11 +816,14 @@ fun MaterialButton(
     isActive: Boolean = false
 ) {
     val colorScheme = MaterialTheme.colorScheme
+    val (interaction, scale) = rememberPressShrink()
+    val (_, pressedShape) = rememberPressRoundedShape(cornerRadius = 40.dp, source = interaction)
     AccentButton(
         onClick = onClick,
-        modifier = modifier.height(56.dp),
+        modifier = modifier.height(56.dp).scale(scale),
         enabled = enabled,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = pressedShape,
+        interactionSource = interaction,
         colors = ButtonDefaults.buttonColors(
             containerColor = colorScheme.primaryFixed,
             contentColor = colorScheme.onPrimaryFixed,
@@ -841,9 +837,6 @@ fun MaterialButton(
     }
 }
 
-
-
-
 @Composable
 fun MaterialOutlinedButton(
     text: String,
@@ -852,11 +845,14 @@ fun MaterialOutlinedButton(
     accentColor: Color = Color.Unspecified,
     enabled: Boolean = true
 ) {
+    val (interaction, scale) = rememberPressShrink()
+    val (_, pressedShape) = rememberPressRoundedShape(cornerRadius = 40.dp, source = interaction)
     AccentButton(
         onClick = onClick,
-        modifier = modifier.height(56.dp),
+        modifier = modifier.height(56.dp).scale(scale),
         enabled = enabled,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = pressedShape,
+        interactionSource = interaction,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primaryFixed,
             contentColor = MaterialTheme.colorScheme.onPrimaryFixed,
@@ -869,11 +865,6 @@ fun MaterialOutlinedButton(
         )
         }
 }
-
-
-
-
-
 
 @Composable
 fun RootBadge(
@@ -936,9 +927,6 @@ fun MaterialBackground(
     }
 }
 
-
-
-
 @Composable
 fun MaterialBackgroundWithAccent(
     modifier: Modifier = Modifier,
@@ -963,9 +951,6 @@ fun MaterialBackgroundWithAccent(
         content()
     }
 }
-
-
-
 
 @Composable
 fun MaterialTabRow(
@@ -997,35 +982,21 @@ fun MaterialTabRow(
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @Composable
 fun MaterialSettingsItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit
 ) {
-    val colorScheme = MaterialTheme.colorScheme
-
+    val (interaction, pressScale) = rememberPressShrink(pressedScale = 0.985f)
     val clickModifier = if (onClick != null) {
-        Modifier.clickable(onClick = onClick)
+        Modifier
+            .scale(pressScale)
+            .clickable(
+                interactionSource = interaction,
+                indication = androidx.compose.foundation.LocalIndication.current,
+                onClick = onClick,
+            )
     } else {
         Modifier
     }
@@ -1039,10 +1010,6 @@ fun MaterialSettingsItem(
         content = content
     )
 }
-
-
-
-
 
 fun getSegmentedShape(
     index: Int,
@@ -1073,9 +1040,6 @@ val M3SegmentedListItemSpacing: Dp = 2.dp
 val M3SegmentedListOuterRadius: Dp = 24.dp
 val M3SegmentedListInnerRadius: Dp = 4.dp
 
-
-
-
 @Composable
 fun MaterialSwitch(
     checked: Boolean,
@@ -1099,9 +1063,6 @@ fun MaterialSwitch(
     )
 }
 
-
-
-
 @Composable
 fun MaterialTonalContainer(
     modifier: Modifier = Modifier,
@@ -1124,9 +1085,6 @@ fun MaterialTonalContainer(
         content = content
     )
 }
-
-
-
 
 @Composable
 fun MaterialOutlinedContainer(
@@ -1153,9 +1111,6 @@ fun MaterialOutlinedContainer(
     )
 }
 
-
-
-
 @Composable
 fun MaterialProfileCard(
     modifier: Modifier = Modifier,
@@ -1179,9 +1134,6 @@ fun MaterialProfileCard(
         )
     }
 }
-
-
-
 
 @Composable
 fun MaterialThemeSelectorCard(
@@ -1209,9 +1161,6 @@ fun MaterialThemeSelectorCard(
     }
 }
 
-
-
-
 @Composable
 fun MaterialDivider(
     modifier: Modifier = Modifier,
@@ -1226,9 +1175,6 @@ fun MaterialDivider(
             .background(colorScheme.outlineVariant)
     )
 }
-
-
-
 
 @Composable
 fun SignalRow(
@@ -1290,10 +1236,6 @@ fun SignalRow(
     }
 }
 
-
-
-
-
 @Composable
 fun ExpressiveSegmentedCardList(
     modifier: Modifier = Modifier,
@@ -1316,8 +1258,6 @@ fun ExpressiveSegmentedCardList(
         Column(modifier = Modifier.fillMaxWidth(), content = content)
     }
 }
-
-
 
 @Composable
 fun <T> M3SegmentedList(
@@ -1348,19 +1288,29 @@ fun M3SegmentedListItemContainer(
     onClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val shape = getSegmentedShape(
-        index = index,
-        count = count,
-        cornerRadius = M3SegmentedListOuterRadius,
-        innerRadius = M3SegmentedListInnerRadius,
-    )
     val colorScheme = MaterialTheme.colorScheme
     val containerColor = when {
         selected -> colorScheme.primaryFixed
         else -> colorScheme.surfaceContainerHigh
     }
+    val (interaction, pressScale) = rememberPressShrink(pressedScale = 0.97f)
+    val outer = M3SegmentedListOuterRadius
+    val inner = M3SegmentedListInnerRadius
+    val (_, pressedShape) = rememberPressRoundedShape(
+        topStart = if (index == 0 || count <= 1) outer else inner,
+        topEnd = if (index == 0 || count <= 1) outer else inner,
+        bottomEnd = if (index == count - 1 || count <= 1) outer else inner,
+        bottomStart = if (index == count - 1 || count <= 1) outer else inner,
+        pressedRadius = M3SegmentedListOuterRadius,
+        source = interaction,
+    )
     val clickableMod = if (onClick != null && enabled) {
-        Modifier.clickable(onClick = onClick)
+        Modifier.clickable(
+            interactionSource = interaction,
+            indication = null,
+
+            onClick = onClick,
+        )
     } else {
         Modifier
     }
@@ -1368,8 +1318,9 @@ fun M3SegmentedListItemContainer(
     Surface(
         modifier = modifier
             .fillMaxWidth()
+            .then(if (onClick != null && enabled) Modifier.scale(pressScale) else Modifier)
             .then(clickableMod),
-        shape = shape,
+        shape = pressedShape,
         color = containerColor,
         contentColor = if (selected) colorScheme.onPrimaryFixed else colorScheme.onSurface,
         tonalElevation = if (selected) 2.dp else 0.dp,
@@ -1531,9 +1482,6 @@ fun M3SegmentedSignalRow(
     )
 }
 
-
-
-
 @Composable
 fun ExpressiveSplitButton(
     primaryText: String,
@@ -1599,9 +1547,6 @@ fun ExpressiveSplitButton(
         }
     }
 }
-
-
-
 
 @Composable
 fun MaterialIconButton(
@@ -1899,8 +1844,6 @@ private fun FloatingToolbarItem(
     }
 }
 
-
-
 @Composable
 fun ExpressiveDialog(
     onDismissRequest: () -> Unit,
@@ -1928,10 +1871,3 @@ fun ExpressiveDialog(
         dismissButton = dismissButton
     )
 }
-
-
-
-
-
-
-

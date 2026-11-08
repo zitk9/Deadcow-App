@@ -30,8 +30,13 @@ object HexUtils {
             .removePrefix("0x")
             .removePrefix("0X")
 
+<<<<<<< HEAD
         require(clean.isNotEmpty()) { "Company code is required" }
         require(clean.matches(Regex("^[0-9a-fA-F]+$"))) { "Company code must be hex" }
+=======
+        require(clean.isNotEmpty()) { "Brand code is required" }
+        require(clean.matches(Regex("^[0-9a-fA-F]+$"))) { "Brand code must be hex" }
+>>>>>>> upstream/main
 
         return clean.toInt(16)
     }

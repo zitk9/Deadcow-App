@@ -32,22 +32,24 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     
+=======
+
+>>>>>>> upstream/main
     <uses-permission android:name="android.permission.TRANSMIT_IR" />
 
-    
+
     <uses-permission android:name="rikka.shizuku.permission.API_V23" />
     <uses-permission android:name="moe.shizuku.privileged.api.permission.BIND_SHIZUKU_SERVICE" />
 
-    
-    <uses-permission android:name="android.permission.TETHER_PRIVILEGED" />
+
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
     <queries>
         <package android:name="moe.shizuku.privileged.api" />
@@ -65,7 +67,7 @@
         <provider android:authorities="moe.shizuku.privileged.api" />
     </queries>
 
-    
+
     <uses-feature android:name="android.hardware.consumerir" android:required="false" />
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
@@ -91,6 +93,8 @@
         android:extractNativeLibs="true"
         android:theme="@style/Theme.Dolphy"
         tools:replace="android:extractNativeLibs">
+        <meta-data android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="com.droid.dolphy.tvcast.DolphyCastOptionsProvider" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -101,13 +105,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
+
             <intent-filter>
                 <action android:name="android.nfc.action.TAG_DISCOVERED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-            
+
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -116,7 +120,7 @@
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
 
-            
+
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -148,15 +152,27 @@
                 <data android:mimeType="application/vnd.wfa.wsc" />
             </intent-filter>
 
-            
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+<<<<<<< HEAD
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="application/octet-stream" />
+=======
+                <data android:scheme="content" android:host="*" />
+                <data android:mimeType="*/*" />
+>>>>>>> upstream/main
                 <data android:pathPattern=".*\\.dolphyplugin" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" android:sspPattern=".*\\.dolphyplugin" />
+                <data android:mimeType="*/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -167,12 +183,16 @@
                 <data android:mimeType="application/x-dolphy-plugin" />
             </intent-filter>
         </activity>
-        
+
         <activity
             android:name=".hid.HidKeyboardActivity"
             android:exported="false"
             android:launchMode="singleTop"
+<<<<<<< HEAD
             android:label="Clavier HID"
+=======
+            android:label="HID Keyboard"
+>>>>>>> upstream/main
             android:theme="@style/Theme.Dolphy" />
 
         <service
@@ -190,6 +210,7 @@
 
         <service
             android:name=".hid.KeyboardService"
+            android:foregroundServiceType="connectedDevice"
             android:exported="false"
             android:foregroundServiceType="connectedDevice"
             android:stopWithTask="false" />

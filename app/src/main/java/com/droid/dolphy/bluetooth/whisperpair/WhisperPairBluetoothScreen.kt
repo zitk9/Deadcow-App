@@ -84,7 +84,11 @@ private enum class Screen { Scanner, Paired, Recordings, Tws }
 
 private data class TwsTarget(val name: String?, val address: String, val rssi: Int, val manufacturer: String? = null) {
     val displayName: String
+<<<<<<< HEAD
         get() = name ?: manufacturer?.let { "$it (TWS)" } ?: "Appareil Bluetooth"
+=======
+        get() = name ?: "Unknown device"
+>>>>>>> upstream/main
 }
 
 data class AudioConnectionState(

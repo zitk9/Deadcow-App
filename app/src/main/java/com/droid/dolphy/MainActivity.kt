@@ -2,6 +2,8 @@
 
 package com.droid.dolphy
 
+import androidx.compose.ui.layout.onSizeChanged
+
 import android.Manifest
 import android.app.Activity
 import android.app.Application
@@ -20,7 +22,8 @@ import android.os.*
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
+import androidx.core.content.ContextCompat
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -55,13 +58,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -80,6 +89,7 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import kotlin.math.abs
 import kotlin.math.roundToInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
@@ -133,7 +143,6 @@ import com.kyant.backdrop.catalog.components.LiquidBottomTabs
 import com.kyant.backdrop.catalog.components.LiquidButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -193,7 +202,7 @@ data class AdvertisePreset(
     val intervalMs: Int
 )
 
-private fun AdvertisePreset.toPluginJson(): JSONObject {
+internal fun AdvertisePreset.toPluginJson(): JSONObject {
     return JSONObject()
         .put("id", id)
         .put("name", name)
@@ -203,7 +212,7 @@ private fun AdvertisePreset.toPluginJson(): JSONObject {
         .put("intervalMs", intervalMs)
 }
 
-private fun JSONObject.toAdvertisePreset(fallback: AdvertisePreset): AdvertisePreset {
+internal fun JSONObject.toAdvertisePreset(fallback: AdvertisePreset): AdvertisePreset {
     return fallback.copy(
         id = optLong("id", fallback.id),
         name = optString("name", fallback.name),
@@ -220,286 +229,7 @@ sealed class AdvertiseStartResult {
     data class Error(val message: String) : AdvertiseStartResult()
 }
 
-@Composable
-fun DolphyTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    accentColor: Color = OrangeAccent,
-    isAdaptiveColor: Boolean = false,
-    useFlipperFont: Boolean = true,
-    flipperFontScale: Float = 1.08f,
-    uiScale: Float = 1f,
-    animatedBackgroundEnabled: Boolean = false,
-    expressiveEnabled: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    val context = LocalContext.current
-
-    val expressiveScheme = if (isAdaptiveColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-    } else remember(accentColor, darkTheme) {
-        googleExpressiveColorScheme(accentColor, darkTheme)
-    }
-
-    val typography = if (expressiveEnabled) {
-        buildExpressiveTypography(useFlipperFont = useFlipperFont, fontScale = flipperFontScale)
-    } else {
-        buildAppTypography(useFlipperFont = useFlipperFont, fontScale = flipperFontScale)
-    }
-
-    val baseDensity = LocalDensity.current
-    val safeUiScale = uiScale.coerceIn(0.8f, 1.2f)
-    val scaledDensity = remember(baseDensity.density, baseDensity.fontScale, safeUiScale) {
-        Density(baseDensity.density * safeUiScale, baseDensity.fontScale)
-    }
-
-    androidx.compose.runtime.CompositionLocalProvider(
-        LocalExpressiveEnabled provides true,
-        LocalAnimatedBackgroundEnabled provides animatedBackgroundEnabled,
-        LocalDensity provides scaledDensity,
-    ) {
-        MaterialExpressiveTheme(
-            colorScheme = expressiveScheme,
-            typography = typography,
-            motionScheme = MotionScheme.expressive(),
-            content = content
-        )
-    }
-}
-
-private fun googleExpressiveColorScheme(seedColor: Color, darkTheme: Boolean): ColorScheme {
-    val scheme = SchemeTonalSpot(Hct.fromInt(seedColor.toArgb()), darkTheme, 0.0)
-    val colors = MaterialDynamicColors()
-    fun role(value: com.google.android.material.color.utilities.DynamicColor): Color =
-        Color(value.getArgb(scheme))
-
-    val base = if (darkTheme) darkColorScheme() else lightColorScheme()
-    return base.copy(
-        primary = role(colors.primary()),
-        onPrimary = role(colors.onPrimary()),
-        primaryContainer = role(colors.primaryContainer()),
-        onPrimaryContainer = role(colors.onPrimaryContainer()),
-        inversePrimary = role(colors.inversePrimary()),
-        secondary = role(colors.secondary()),
-        onSecondary = role(colors.onSecondary()),
-        secondaryContainer = role(colors.secondaryContainer()),
-        onSecondaryContainer = role(colors.onSecondaryContainer()),
-        tertiary = role(colors.tertiary()),
-        onTertiary = role(colors.onTertiary()),
-        tertiaryContainer = role(colors.tertiaryContainer()),
-        onTertiaryContainer = role(colors.onTertiaryContainer()),
-        background = role(colors.background()),
-        onBackground = role(colors.onBackground()),
-        surface = role(colors.surface()),
-        onSurface = role(colors.onSurface()),
-        surfaceVariant = role(colors.surfaceVariant()),
-        onSurfaceVariant = role(colors.onSurfaceVariant()),
-        surfaceTint = role(colors.surfaceTint()),
-        inverseSurface = role(colors.inverseSurface()),
-        inverseOnSurface = role(colors.inverseOnSurface()),
-        error = role(colors.error()),
-        onError = role(colors.onError()),
-        errorContainer = role(colors.errorContainer()),
-        onErrorContainer = role(colors.onErrorContainer()),
-        outline = role(colors.outline()),
-        outlineVariant = role(colors.outlineVariant()),
-        scrim = role(colors.scrim()),
-        surfaceBright = role(colors.surfaceBright()),
-        surfaceDim = role(colors.surfaceDim()),
-        surfaceContainer = role(colors.surfaceContainer()),
-        surfaceContainerHigh = role(colors.surfaceContainerHigh()),
-        surfaceContainerHighest = role(colors.surfaceContainerHighest()),
-        surfaceContainerLow = role(colors.surfaceContainerLow()),
-        surfaceContainerLowest = role(colors.surfaceContainerLowest()),
-        primaryFixed = role(colors.primaryFixed()),
-        primaryFixedDim = role(colors.primaryFixedDim()),
-        onPrimaryFixed = role(colors.onPrimaryFixed()),
-        onPrimaryFixedVariant = role(colors.onPrimaryFixedVariant()),
-        secondaryFixed = role(colors.secondaryFixed()),
-        secondaryFixedDim = role(colors.secondaryFixedDim()),
-        onSecondaryFixed = role(colors.onSecondaryFixed()),
-        onSecondaryFixedVariant = role(colors.onSecondaryFixedVariant()),
-        tertiaryFixed = role(colors.tertiaryFixed()),
-        tertiaryFixedDim = role(colors.tertiaryFixedDim()),
-        onTertiaryFixed = role(colors.onTertiaryFixed()),
-        onTertiaryFixedVariant = role(colors.onTertiaryFixedVariant()),
-    )
-}
-
-private data class TonalPalette(
-    val primaryContainer: Color,
-    val onPrimaryContainer: Color,
-    val primaryContainerLight: Color,
-    val onPrimaryContainerLight: Color,
-    val secondary: Color,
-    val secondaryContainer: Color,
-    val onSecondaryContainer: Color,
-    val secondaryContainerLight: Color,
-    val tertiary: Color,
-    val tertiaryContainer: Color,
-    val onTertiaryContainer: Color,
-    val tertiaryContainerLight: Color,
-    val surfaceVariant: Color,
-    val onSurfaceVariant: Color,
-    val surfaceVariantLight: Color,
-    val onSurfaceVariantLight: Color,
-    val surfaceContainerHighest: Color,
-    val surfaceContainerHighestLight: Color,
-    val outline: Color,
-    val outlineVariant: Color,
-    val outlineLight: Color,
-    val outlineVariantLight: Color,
-    val errorContainer: Color,
-    val inversePrimary: Color
-)
-
-private fun generateTonalPalette(accentColor: Color): TonalPalette {
-    val red = accentColor.red
-    val green = accentColor.green
-    val blue = accentColor.blue
-
-    val luminance = (0.299f * red + 0.587f * green + 0.114f * blue)
-
-    val maxColor = maxOf(red, green, blue)
-    val minColor = minOf(red, green, blue)
-    val saturation = if (maxColor > 0f) (maxColor - minColor) / maxColor else 0f
-
-    val hue = when {
-        maxColor == minColor -> 0f
-        maxColor == red -> 60f * (((green - blue) / (maxColor - minColor)) % 6f)
-        maxColor == green -> 60f * (((blue - red) / (maxColor - minColor)) + 2f)
-        else -> 60f * (((red - green) / (maxColor - minColor)) + 4f)
-    }
-
-    fun hslColor(h: Float, s: Float, l: Float, warmth: Float = 0.02f): Color {
-        val c = (1f - kotlin.math.abs(2f * l - 1f)) * s
-        val x = c * (1f - kotlin.math.abs((h / 60f) % 2f - 1f))
-        val m = l - c / 2f
-
-        val r: Float
-        val g: Float
-        val b: Float
-        when {
-            h < 60f -> { r = c; g = x; b = 0f }
-            h < 120f -> { r = x; g = c; b = 0f }
-            h < 180f -> { r = 0f; g = c; b = x }
-            h < 240f -> { r = 0f; g = x; b = c }
-            h < 300f -> { r = x; g = 0f; b = c }
-            else -> { r = c; g = 0f; b = x }
-        }
-
-        return Color(
-            red = (r + m + warmth).coerceIn(0f, 1f),
-            green = (g + m + warmth * 0.4f).coerceIn(0f, 1f),
-            blue = (b + m).coerceIn(0f, 1f),
-            alpha = 1f
-        )
-    }
-
-    fun Float.coerceFloat(min: Float, max: Float): Float = this.coerceIn(min, max)
-
-    val darkerVariant = hslColor(hue, saturation.coerceFloat(0.2f, 0.9f), (luminance * 0.5f).coerceFloat(0.08f, 0.35f))
-    val lighterVariant = hslColor(hue, (saturation * 0.5f).coerceFloat(0.15f, 0.4f), (luminance + 0.4f).coerceFloat(0.75f, 0.92f))
-    val surfaceVariantDark = hslColor(hue, (saturation * 0.4f).coerceFloat(0.1f, 0.35f), (luminance * 0.18f).coerceFloat(0.06f, 0.12f))
-    val surfaceVariantLight = hslColor(hue, (saturation * 0.15f).coerceFloat(0.04f, 0.12f), (luminance + 0.08f).coerceFloat(0.92f, 0.98f))
-
-    val surfaceContainerHighestDark = hslColor(hue, (saturation * 0.4f).coerceFloat(0.12f, 0.38f), (luminance * 0.22f).coerceFloat(0.08f, 0.15f))
-    val surfaceContainerHighestLight = hslColor(hue, (saturation * 0.12f).coerceFloat(0.06f, 0.15f), (luminance + 0.12f).coerceFloat(0.88f, 0.94f))
-
-    val complementaryHue = (hue + 180f) % 360f
-    val tertiary = hslColor(complementaryHue, (saturation * 0.95f).coerceFloat(0.6f, 1f), (luminance * 1.1f).coerceFloat(0.5f, 0.85f))
-
-    val secondaryHue = (hue + 60f) % 360f
-    val secondary = hslColor(secondaryHue, (saturation * 0.85f).coerceFloat(0.5f, 1f), (luminance * 0.85f).coerceFloat(0.4f, 0.75f))
-
-    val onPrimaryContainer = if (luminance > 0.5f) Color.Black else Color.White
-    val onPrimaryContainerLight = if (luminance > 0.7f) Color.Black else Color.White
-    val onSecondaryContainer = if (luminance > 0.5f) Color.Black else Color.White
-    val onTertiaryContainer = if (luminance > 0.5f) Color.Black else Color.White
-
-    val outlineDark = hslColor(hue, (saturation * 0.4f).coerceFloat(0.1f, 0.3f), (luminance * 0.4f).coerceFloat(0.2f, 0.35f))
-    val outlineLight = hslColor(hue, (saturation * 0.5f).coerceFloat(0.2f, 0.4f), (luminance * 0.7f).coerceFloat(0.5f, 0.6f))
-
-    val inversePrimary = hslColor((hue + 180f) % 360f, saturation, (1f - luminance * 0.5f).coerceFloat(0.4f, 0.8f))
-
-    return TonalPalette(
-        primaryContainer = darkerVariant,
-        onPrimaryContainer = onPrimaryContainer,
-        primaryContainerLight = lighterVariant,
-        onPrimaryContainerLight = onPrimaryContainerLight,
-        secondary = secondary,
-        secondaryContainer = hslColor(secondaryHue, (saturation * 0.5f).coerceFloat(0.2f, 0.4f), (luminance * 0.35f).coerceFloat(0.15f, 0.25f)),
-        onSecondaryContainer = onSecondaryContainer,
-        secondaryContainerLight = hslColor(secondaryHue, (saturation * 0.3f).coerceFloat(0.1f, 0.2f), (luminance + 0.15f).coerceFloat(0.85f, 0.95f)),
-        tertiary = tertiary,
-        tertiaryContainer = hslColor(complementaryHue, (saturation * 0.4f).coerceFloat(0.15f, 0.3f), (luminance * 0.3f).coerceFloat(0.12f, 0.2f)),
-        onTertiaryContainer = onTertiaryContainer,
-        tertiaryContainerLight = hslColor(complementaryHue, (saturation * 0.25f).coerceFloat(0.1f, 0.2f), (luminance + 0.2f).coerceFloat(0.88f, 0.96f)),
-        surfaceVariant = surfaceVariantDark,
-        onSurfaceVariant = hslColor(hue, (saturation * 0.2f).coerceFloat(0.05f, 0.15f), (luminance * 0.6f + 0.25f).coerceFloat(0.55f, 0.8f)),
-        surfaceVariantLight = surfaceVariantLight,
-        onSurfaceVariantLight = hslColor(hue, (saturation * 0.1f).coerceFloat(0.02f, 0.08f), (luminance * 0.3f + 0.3f).coerceFloat(0.45f, 0.6f)),
-        surfaceContainerHighest = surfaceContainerHighestDark,
-        surfaceContainerHighestLight = surfaceContainerHighestLight,
-        outline = outlineDark,
-        outlineVariant = outlineDark.copy(alpha = 0.5f),
-        outlineLight = outlineLight,
-        outlineVariantLight = outlineLight.copy(alpha = 0.5f),
-        errorContainer = hslColor(0f, (saturation * 0.5f).coerceFloat(0.2f, 0.4f), (luminance * 0.2f).coerceFloat(0.08f, 0.15f)),
-        inversePrimary = inversePrimary
-    )
-}
-
-private fun isLightColor(color: Color): Boolean {
-    val luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue)
-    return luminance > 0.5f
-}
-
-@Composable
-fun GridBackground(modifier: Modifier = Modifier) {
-    val colorScheme = MaterialTheme.colorScheme
-    Canvas(modifier = modifier.fillMaxSize()) {
-        val gridSize = 20f
-        var x = 0f
-        while (x <= size.width) {
-            drawLine(
-                color = colorScheme.primary.copy(alpha = 0.08f),
-                start = androidx.compose.ui.geometry.Offset(x, 0f),
-                end = androidx.compose.ui.geometry.Offset(x, size.height),
-                strokeWidth = 0.5f
-            )
-            x += gridSize
-        }
-        var y = 0f
-        while (y <= size.height) {
-            drawLine(
-                color = colorScheme.primary.copy(alpha = 0.08f),
-                start = androidx.compose.ui.geometry.Offset(0f, y),
-                end = androidx.compose.ui.geometry.Offset(size.width, y),
-                strokeWidth = 0.5f
-            )
-            y += gridSize
-        }
-    }
-}
-
-@Composable
-fun RetroContainer(
-    modifier: Modifier = Modifier,
-    borderWidth: Dp = 2.dp,
-    content: @Composable () -> Unit
-) {
-    val colorScheme = MaterialTheme.colorScheme
-    Box(
-        modifier = modifier
-            .border(borderWidth, colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
-            .background(colorScheme.surfaceVariant)
-            .padding(12.dp)
-    ) {
-        content()
-    }
-}
-
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     companion object {
         const val EXTRA_NAV_ROUTE = "com.droid.dolphy.extra.NAV_ROUTE"
     }
@@ -525,8 +255,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    private fun ensureIrdbCopied() {
-    }
 
     private val spamViewModel: SpamViewModel by viewModels { SpamViewModelFactory(application) }
     private val dolphyViewModel: DolphyViewModel by viewModels { DolphyViewModelFactory(application) }
@@ -534,6 +262,7 @@ class MainActivity : ComponentActivity() {
     private val pendingNavRoute = mutableStateOf<String?>(null)
     private val pendingPluginUri = mutableStateOf<String?>(null)
 
+<<<<<<< HEAD
     private val requestBluetoothPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         if (permissions.values.any { it }) {
             spamViewModel.onPermissionsGranted()
@@ -543,6 +272,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+=======
+>>>>>>> upstream/main
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PluginRuntimeAccess.attach(this)
@@ -559,32 +290,33 @@ class MainActivity : ComponentActivity() {
         UsbIrManager.init(this)
 
         val openedPluginUri = pluginUriFromIntent(intent)
+<<<<<<< HEAD
         if (openedPluginUri == null) requestPermissions()
         handleIncomingApk(intent)
+=======
+>>>>>>> upstream/main
         nfcViewModel.handleNfcIntent(intent)
         pendingNavRoute.value = intent.getStringExtra(EXTRA_NAV_ROUTE)
         pendingPluginUri.value = openedPluginUri
 
         window.decorView.post {
             IrRepository.warmIndexInBackground(applicationContext)
-            window.decorView.postDelayed({
-                if (openedPluginUri == null) {
-                    requestShizukuPermissionOnLaunch()
-                    requestRootOnLaunch()
-                }
-            }, 2500L)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val filter = IntentFilter().apply {
                 addAction("android.intent.action.ACTION_CONFIGURATION_CHANGED")
             }
+<<<<<<< HEAD
             androidx.core.content.ContextCompat.registerReceiver(
                 this,
                 systemThemeReceiver,
                 filter,
                 androidx.core.content.ContextCompat.RECEIVER_EXPORTED
             )
+=======
+            ContextCompat.registerReceiver(this, systemThemeReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+>>>>>>> upstream/main
         }
 
         setContent {
@@ -707,6 +439,7 @@ class MainActivity : ComponentActivity() {
         return uri.toString()
     }
 
+<<<<<<< HEAD
     private fun requestPermissions() {
         val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val list = mutableListOf(
@@ -770,6 +503,8 @@ class MainActivity : ComponentActivity() {
             }
         }, "root-probe").start()
     }
+=======
+>>>>>>> upstream/main
 
 }
 
@@ -1222,6 +957,12 @@ fun MainScaffold(
     }
 
     val contentBackdrop = rememberLayerBackdrop()
+    var bottomBarHeight by remember { mutableIntStateOf(0) }
+    val scaffoldDensity = LocalDensity.current
+    val keyboardVisible = WindowInsets.ime.getBottom(scaffoldDensity) > 0
+    val showBottomBar = appStyleMode != 1 && !keyboardVisible
+    val bottomBarSpace = with(scaffoldDensity) { bottomBarHeight.toDp() }
+
     val controlsBackdrop = remember(liquidGlassEnabled) {
         if (liquidGlassEnabled) com.kyant.backdrop.backdrops.emptyBackdrop() else null
     }
@@ -1266,18 +1007,28 @@ fun MainScaffold(
         }
 
         val density = LocalDensity.current
-        val bottomBlurHeight = with(density) { 105.dp.toPx() }
+        val bottomBlurHeight = with(density) { (bottomBarSpace + 40.dp).toPx() }
 
-        ProgressiveBlurContent(
-            modifier = Modifier.fillMaxSize(),
-            topHeightPx = 0f,
-            bottomHeightPx = if (performanceModeEnabled) 0f else bottomBlurHeight,
-            blurRadius = 18f
-        ) {
         NavHost(
             navController = screenNavController,
+<<<<<<< HEAD
             startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
             modifier = Modifier.fillMaxSize(),
+=======
+            startDestination = if (appStyleMode == 1) "other" else "bluetooth",
+            modifier = Modifier.fillMaxSize()
+                .then(
+                    if (showBottomBar && !performanceModeEnabled)
+                        Modifier.progressiveBlur(
+                            blurRadius = 40f,
+                            height = bottomBlurHeight,
+                            direction = BlurDirection.BOTTOM,
+                        )
+                    else Modifier
+                )
+                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                .imePadding(),
+>>>>>>> upstream/main
             enterTransition = {
                 rootSectionEnterTransition(
                     initialRoute = initialState.destination.route.orEmpty(),
@@ -1429,8 +1180,6 @@ fun MainScaffold(
                 val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: return@composable
                 NfcResultScreen(screenNavController, nfcViewModel, id)
             }
-            composable("nfc_master_key") { NfcMasterKeyScreen(screenNavController, nfcViewModel) }
-            composable("other/nfc_master_key") { NfcMasterKeyScreen(screenNavController, nfcViewModel) }
             composable("nfc_audio_spoofer") {
                 val accentColor = MaterialTheme.colorScheme.primary
                 NfcAudioSpooferScreen(screenNavController, accentColor = accentColor)
@@ -1449,19 +1198,9 @@ fun MainScaffold(
             composable("other/dolphy_chat") {
                 com.droid.dolphy.chat.GlobalChatScreen(screenNavController)
             }
-            composable("other/dolphy_chat_main/{userName}") { backStackEntry ->
-                val userName = backStackEntry.arguments?.getString("userName") ?: return@composable
-                com.droid.dolphy.chat.DolphyChatMainScreen(userName, screenNavController)
-            }
             composable("other/dolphy_chat_global") {
                 com.droid.dolphy.chat.GlobalChatScreen(screenNavController)
             }
-            composable("other/dolphy_chat_conversation/{userId}/{userName}") { backStackEntry ->
-                val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                val userName = backStackEntry.arguments?.getString("userName") ?: return@composable
-                com.droid.dolphy.chat.DolphyChatConversationScreen(userId, userName, screenNavController)
-            }
-
             composable("ir_tv_home") { IRTvHome(screenNavController) }
             composable("other/ir_tv_home") { IRTvHome(screenNavController) }
             composable("ir_flipper_home") { IRFlipperHome(screenNavController) }
@@ -1624,6 +1363,14 @@ fun MainScaffold(
                 PluginManagerScreen(navController = screenNavController)
             }
 
+            composable("plugin_store") {
+                com.droid.dolphy.plugin.store.PluginStoreScreen(navController = screenNavController)
+            }
+
+            composable("plugin_store_detail") {
+                com.droid.dolphy.plugin.store.PluginStoreDetailScreen(navController = screenNavController)
+            }
+
             composable("plugin_security") {
                 com.droid.dolphy.plugin.ui.PluginSecurityScreen(navController = screenNavController)
             }
@@ -1644,15 +1391,21 @@ fun MainScaffold(
                 }
             }
         }
-        }
         PluginScreenExtensionHost(visibleRoute, screenNavController)
         }
 
         AnimatedVisibility(
-            visible = appStyleMode != 1,
-            enter = slideInVertically(initialOffsetY = { it }),
-            exit = slideOutVertically(targetOffsetY = { it }),
+            visible = showBottomBar,
+            enter = slideInVertically(
+                animationSpec = spring(dampingRatio = 0.9f, stiffness = Spring.StiffnessMediumLow),
+                initialOffsetY = { it },
+            ) + fadeIn(animationSpec = tween(220)),
+            exit = slideOutVertically(
+                animationSpec = spring(dampingRatio = 1f, stiffness = Spring.StiffnessMedium),
+                targetOffsetY = { it },
+            ) + fadeOut(animationSpec = tween(150)),
             modifier = Modifier.align(Alignment.BottomCenter)
+                .onSizeChanged { bottomBarHeight = it.height }
         ) {
             PluginSurfaceExtensionHost("bottom_bar", screenNavController) {
                 DolphyUnifiedBottomBar(
@@ -1810,6 +1563,33 @@ private fun DolphyUnifiedBottomBar(
         DolphyNavigationItem(stringResource(R.string.nav_modules), Icons.Default.Extension, modulesSelected, onModulesClick),
         DolphyNavigationItem(stringResource(R.string.nav_settings), Icons.Default.Settings, settingsSelected, onSettingsClick),
     )
+    val selectedIndex = items.indexOfFirst { it.selected }.takeIf { it >= 0 } ?: 0
+
+    var itemLefts by remember { mutableStateOf(listOf(0f, 0f, 0f)) }
+    var itemWidths by remember { mutableStateOf(listOf(0f, 0f, 0f)) }
+    val allMeasured = itemWidths.all { it > 0f }
+
+    fun itemCenterX(i: Int): Float = itemLefts[i] + itemWidths[i] / 2f
+
+    val pillCenterPx by animateFloatAsState(
+        targetValue = itemCenterX(selectedIndex),
+        animationSpec = if (allMeasured) spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow) else snap(),
+        label = "nav_pill_center",
+    )
+    val pillWidthPx by animateFloatAsState(
+        targetValue = itemWidths[selectedIndex],
+        animationSpec = if (allMeasured) spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow) else snap(),
+        label = "nav_pill_width",
+    )
+    val coveredIndex = if (allMeasured) {
+        items.indices.minByOrNull { abs(itemCenterX(it) - pillCenterPx) }
+    } else {
+        null
+    }
+
+    val pillColor = MaterialTheme.colorScheme.primaryFixed
+    val onPillColor = MaterialTheme.colorScheme.onPrimaryFixed
+    val offPillColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column(
         modifier = Modifier
@@ -1820,40 +1600,71 @@ private fun DolphyUnifiedBottomBar(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val contentRow: @Composable () -> Unit = {
-            items.forEach { item ->
-                val shape = RoundedCornerShape(24.dp)
-                val containerColor by animateColorAsState(
-                    targetValue = if (item.selected) MaterialTheme.colorScheme.primaryFixed else MaterialTheme.colorScheme.surfaceContainer,
-                    label = "bottom_bar_container",
-                )
-                val contentColor by animateColorAsState(
-                    targetValue = if (item.selected) MaterialTheme.colorScheme.onPrimaryFixed else MaterialTheme.colorScheme.onSurfaceVariant,
-                    label = "bottom_bar_content",
-                )
-                Row(
-                    modifier = Modifier
-                        .clip(shape)
-                        .background(containerColor, shape)
-                        .clickable(onClick = item.onClick)
-                        .padding(horizontal = if (item.selected) 16.dp else 12.dp, vertical = 12.dp)
-                        .animateContentSize(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title,
-                        tint = contentColor,
+            Row(
+                modifier = Modifier
+                    .drawBehind {
+                        if (allMeasured && pillWidthPx > 0f) {
+                            drawRoundRect(
+                                color = pillColor,
+                                topLeft = Offset(pillCenterPx - pillWidthPx / 2f, 0f),
+                                size = Size(pillWidthPx, size.height),
+                                cornerRadius = CornerRadius(size.height / 2f, size.height / 2f),
+                            )
+                        }
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                items.forEachIndexed { index, item ->
+                    val tint by animateColorAsState(
+                        targetValue = if (index == coveredIndex) onPillColor else offPillColor,
+                        animationSpec = spring(dampingRatio = 1f, stiffness = 500f),
+                        label = "bottom_bar_tint_$index",
                     )
-                    if (item.selected) {
-                        Spacer(Modifier.size(8.dp))
-                        Text(
-                            text = item.title,
-                            color = contentColor,
-                            style = MaterialTheme.typography.labelLarge,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+
+                            ) {
+                                item.onClick()
+                            }
+                            .onGloballyPositioned { coords ->
+                                itemLefts = itemLefts.toMutableList().also { it[index] = coords.positionInParent().x }
+                                itemWidths = itemWidths.toMutableList().also { it[index] = coords.size.width.toFloat() }
+                            }
+                            .padding(horizontal = 12.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.title,
+                            tint = tint,
                         )
+                        AnimatedVisibility(
+                            visible = index == selectedIndex,
+                            enter = fadeIn(tween(180)) + expandHorizontally(
+                                animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow),
+                                expandFrom = Alignment.Start,
+                            ),
+                            exit = fadeOut(tween(120)) + shrinkHorizontally(
+                                animationSpec = spring(dampingRatio = 1f, stiffness = Spring.StiffnessMedium),
+                                shrinkTowards = Alignment.Start,
+                            ),
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Spacer(Modifier.size(8.dp))
+                                Text(
+                                    text = item.title,
+                                    color = tint,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    maxLines = 1,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -1970,8 +1781,14 @@ private fun isSettingsSectionRoute(route: String): Boolean {
     if (route == "plugin_manager" || route == "plugin_security" ||
         route == "plugin_about" ||
         route == "plugin_install_helper" ||
+<<<<<<< HEAD
         route == "customize_animations" ||
         route == "accent_color"
+=======
+        route == "plugin_store" ||
+        route == "plugin_store_detail" ||
+        route == "customize_animations"
+>>>>>>> upstream/main
     ) {
         return true
     }
@@ -2020,7 +1837,7 @@ private val OTHER_ROUTE_PREFIXES = setOf(
 private fun isOtherSectionRoute(route: String): Boolean {
     if (route == "other" || route.startsWith("other/")) return true
     if (route.startsWith("plugin/")) return true
-    if (route == "plugin_manager" || route == "plugin_security" || route == "plugin_about" || route == "plugin_install_helper") {
+    if (route == "plugin_manager" || route == "plugin_security" || route == "plugin_about" || route == "plugin_install_helper" || route == "plugin_store" || route == "plugin_store_detail") {
         return false
     }
     return OTHER_ROUTE_PREFIXES.any { prefix ->
@@ -2118,7 +1935,98 @@ private fun expressivePopExitTransition(): ExitTransition {
 }
 
 @Composable
-fun BluetoothContainerScreen(viewModel: SpamViewModel, navController: NavController) {
+private fun BluetoothTabPillRow(
+    tabs: List<String>,
+    selectedIndex: Int,
+    modifier: Modifier = Modifier,
+    onSelect: (Int) -> Unit,
+) {
+    var itemLefts by remember { mutableStateOf(List(tabs.size) { 0f }) }
+    var itemWidths by remember { mutableStateOf(List(tabs.size) { 0f }) }
+    val allMeasured = itemWidths.all { it > 0f }
+
+    fun itemCenterX(i: Int): Float = itemLefts[i] + itemWidths[i] / 2f
+
+    val pillCenterPx by animateFloatAsState(
+        targetValue = itemCenterX(selectedIndex),
+        animationSpec = if (allMeasured) spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow) else snap(),
+        label = "bt_tab_pill_center",
+    )
+    val pillWidthPx by animateFloatAsState(
+        targetValue = itemWidths[selectedIndex],
+        animationSpec = if (allMeasured) spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow) else snap(),
+        label = "bt_tab_pill_width",
+    )
+    val coveredIndex = if (allMeasured) {
+        tabs.indices.minByOrNull { abs(itemCenterX(it) - pillCenterPx) }
+    } else {
+        null
+    }
+
+    val pillColor = MaterialTheme.colorScheme.primaryFixed
+    val onPillColor = MaterialTheme.colorScheme.onPrimaryFixed
+    val offPillColor = MaterialTheme.colorScheme.onSurfaceVariant
+
+    HorizontalFloatingToolbar(
+        expanded = true,
+        modifier = modifier,
+        colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+            toolbarContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .drawBehind {
+                    if (allMeasured && pillWidthPx > 0f) {
+                        drawRoundRect(
+                            color = pillColor,
+                            topLeft = Offset(pillCenterPx - pillWidthPx / 2f, 0f),
+                            size = Size(pillWidthPx, size.height),
+                            cornerRadius = CornerRadius(size.height / 2f, size.height / 2f),
+                        )
+                    }
+                },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            tabs.forEachIndexed { index, title ->
+                val tint by animateColorAsState(
+                    targetValue = if (index == coveredIndex) onPillColor else offPillColor,
+                    animationSpec = spring(dampingRatio = 1f, stiffness = 500f),
+                    label = "bt_tab_tint_$index",
+                )
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(50))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+
+                        ) { onSelect(index) }
+                        .onGloballyPositioned { coords ->
+                            itemLefts = itemLefts.toMutableList().also { it[index] = coords.positionInParent().x }
+                            itemWidths = itemWidths.toMutableList().also { it[index] = coords.size.width.toFloat() }
+                        }
+                        .padding(horizontal = 12.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = title,
+                        color = tint,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = if (index == selectedIndex) FontWeight.Bold else FontWeight.Medium,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BluetoothContainerContent(viewModel: SpamViewModel, navController: NavController) {
     val context = LocalContext.current
     val savedTabIndex by viewModel.bleTabIndex.collectAsState()
     var tabIndex by remember { mutableIntStateOf(savedTabIndex) }
@@ -2151,51 +2059,31 @@ fun BluetoothContainerScreen(viewModel: SpamViewModel, navController: NavControl
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            SingleChoiceSegmentedButtonRow(
+            BluetoothTabPillRow(
+                tabs = tabs,
+                selectedIndex = tabIndex,
                 modifier = Modifier
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    SegmentedButton(
-                        selected = tabIndex == index,
-                        onClick = {
-                            val decision = PluginBluetoothHooks.action(
-                                "bluetooth.section.select",
-                                JSONObject().put("current", tabRoutes[tabIndex]).put("section", tabRoutes[index]).put("index", index),
-                            )
-                            if (!decision.cancelled && !decision.handled) {
-                                val changed = runCatching { JSONObject(decision.payloadJson) }.getOrNull()
-                                val requested = changed?.optString("section")?.lowercase()
-                                val effectiveIndex = tabRoutes.indexOf(requested).takeIf { it >= 0 }
-                                    ?: changed?.optInt("index", index)?.coerceIn(0, tabs.lastIndex)
-                                    ?: index
-                                if (tabIndex != effectiveIndex) {
-                                    vibrate(context)
-                                }
-                                tabIndex = effectiveIndex
-                                viewModel.setBleTabIndex(effectiveIndex)
-                            }
-                        },
-                        shape = SegmentedButtonDefaults.itemShape(index, tabs.size),
-                        colors = SegmentedButtonDefaults.colors(
-                            activeContainerColor = MaterialTheme.colorScheme.primaryFixed,
-                            activeContentColor = MaterialTheme.colorScheme.onPrimaryFixed,
-                            activeBorderColor = MaterialTheme.colorScheme.primaryFixed,
-                            inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
-                        ),
-                        icon = {},
-                        label = {
-                            Text(
-                                text = title,
-                                fontWeight = if (tabIndex == index) FontWeight.Bold else FontWeight.Medium
-                            )
-                        }
+                    .fillMaxWidth(),
+                onSelect = { index ->
+                    val decision = PluginBluetoothHooks.action(
+                        "bluetooth.section.select",
+                        JSONObject().put("current", tabRoutes[tabIndex]).put("section", tabRoutes[index]).put("index", index),
                     )
-                }
-            }
+                    if (!decision.cancelled && !decision.handled) {
+                        val changed = runCatching { JSONObject(decision.payloadJson) }.getOrNull()
+                        val requested = changed?.optString("section")?.lowercase()
+                        val effectiveIndex = tabRoutes.indexOf(requested).takeIf { it >= 0 }
+                            ?: changed?.optInt("index", index)?.coerceIn(0, tabs.lastIndex)
+                            ?: index
+                        if (tabIndex != effectiveIndex) {
+                            vibrate(context)
+                        }
+                        tabIndex = effectiveIndex
+                        viewModel.setBleTabIndex(effectiveIndex)
+                    }
+                },
+            )
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -2263,7 +2151,7 @@ fun BluetoothContainerScreen(viewModel: SpamViewModel, navController: NavControl
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AdvertiseSpamScreen(viewModel: SpamViewModel) {
-    val bottomOverlayPadding = 124.dp
+    val bottomOverlayPadding = 16.dp
     val context = LocalContext.current
     val presets by viewModel.advertisePresets.collectAsState()
     val activePresetId by viewModel.activeAdvertisePresetId.collectAsState()
@@ -2638,7 +2526,7 @@ private fun AdvertiseAddDialog(
     )
 }
 
-private fun requiredBleAdvertisePermissions(): Array<String> {
+internal fun requiredBleAdvertisePermissions(): Array<String> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         arrayOf(
             Manifest.permission.BLUETOOTH_ADVERTISE,
@@ -2656,7 +2544,7 @@ private fun requiredBleAdvertisePermissions(): Array<String> {
 
 @Composable
 fun AllSpamScreen(viewModel: SpamViewModel) {
-    val bottomOverlayPadding = 124.dp
+    val bottomOverlayPadding = 120.dp
     val selectedDevice by viewModel.selectedDevice.collectAsState()
     val isSpamming by viewModel.isSpamming.collectAsState()
     val sliderValue by viewModel.sliderValue.collectAsState()
@@ -2893,7 +2781,7 @@ internal fun RandomExternalDolphinAnimation(modifier: Modifier = Modifier) {
 
 @Composable
 fun BleSpamScreen(viewModel: SpamViewModel, onSectionClick: (BleSection) -> Unit) {
-    val bottomScrollPadding = 220.dp
+    val bottomScrollPadding = 16.dp
     val spammingStates by viewModel.spammingStates.collectAsState()
     val kitchenSinkActive by viewModel.kitchenSinkActive.collectAsState()
     val pluginBleModes by PluginBleModeRegistry.modes.collectAsState()
@@ -3130,7 +3018,11 @@ fun BleSpamScreen(viewModel: SpamViewModel, onSectionClick: (BleSection) -> Unit
 
         item {
             AnimatedBleButton(
+<<<<<<< HEAD
                 text = stringResource(R.string.ble_swift_pair_windows),
+=======
+                text = "Swift Pair on Windows",
+>>>>>>> upstream/main
                 isActive = spammingStates[Pair(SpamType.SWIFT_PAIR, null)] == true,
                 onClick = { ensureBluetoothEnabled { viewModel.toggleBleSpam(SpamType.SWIFT_PAIR, null) } },
                 blinkIntervalMs = bleDelay.toLong(),
@@ -3430,6 +3322,7 @@ fun PluginSystemWarningDialog(onConfirm: () -> Unit) {
 }
 
 @Composable
+<<<<<<< HEAD
 fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewModel, navController: NavController) {
     val bottomScrollPadding = 180.dp
     val isDarkTheme by spamViewModel.isDarkTheme.collectAsState()
@@ -4319,6 +4212,8 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
 }
 
 @Composable
+=======
+>>>>>>> upstream/main
 private fun BleSectionHeader(section: BleSection, onClick: () -> Unit) {
     val isDarkTheme = !isLightColor(MaterialTheme.colorScheme.background)
     val logoRes = when (section) {
@@ -4518,7 +4413,7 @@ fun buildAllBleItems(context: Context): List<BleDeviceItem> {
 }
 
 @Composable
-fun BleSectionScreen(section: BleSection, onBack: () -> Unit) {
+private fun BleSectionContent(section: BleSection, onBack: () -> Unit) {
     val accent = MaterialTheme.colorScheme.primary
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
@@ -4562,6 +4457,7 @@ fun BleSectionScreen(section: BleSection, onBack: () -> Unit) {
 
     BackHandler { onBack() }
 
+<<<<<<< HEAD
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -4758,329 +4654,121 @@ fun AccentColorScreen(viewModel: SpamViewModel, onNavigateBack: () -> Unit) {
             }
         }
 
+=======
+    BlurHeaderBox(
+        title = section.title,
+        onBack = onBack,
+        accentColor = accent
+    ) { headerPadding ->
+>>>>>>> upstream/main
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(top = headerPadding + 8.dp, bottom = 160.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(themes.size) { index ->
-                val theme = themes[index]
-                val isSelected = if (theme.isAdaptive) isAdaptive else (!isAdaptive && selectedAccentColor.toArgb() == theme.accent.toArgb())
-
-
-                MaterialCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    accentColor = theme.accent,
-                    cornerRadius = 12.dp
+            item {
+                val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+                val logoRes = when (section) {
+                    BleSection.IOS -> if (isDark) R.drawable.ble_logo_ios_white else R.drawable.ble_logo_ios
+                    BleSection.ANDROID -> R.drawable.ble_logo_android
+                    BleSection.SAMSUNG -> R.drawable.ble_logo_samsung
+                    BleSection.WINDOWS -> R.drawable.ble_logo_windows
+                    BleSection.XIAOMI -> R.drawable.ble_logo_xiaomi
+                    BleSection.VIVO -> R.drawable.ble_logo_vivo
+                    BleSection.PHANTOM -> R.drawable.ic_bluetooth_pixel
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    AccentButton(
-                        onClick = {
-                            vibrate(context)
-                            if (theme.isAdaptive) {
-                                viewModel.setAdaptiveColor(true)
-                            } else {
-                                viewModel.setAccentColor(theme.accent)
-                            }
-                        },
+                    Image(
+                        painter = painterResource(id = logoRes),
+                        contentDescription = section.title,
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
+            }
+
+            item {
+                val deviceCount = groups.sumOf { it.items.size }
+                Text(
+                    text = "$deviceCount Devices in ${groups.size} Lists",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            groups.forEach { group ->
+                val isExpanded = expandedGroups[group.title] ?: false
+
+                item {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(60.dp)
-                            .border(if (isSelected) 3.dp else 0.dp, if (isSelected) theme.accent else Color.Transparent, RoundedCornerShape(12.dp)),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            contentColor = MaterialTheme.colorScheme.onSurface
-                        )
+                            .clickable {
+                                expandedGroups[group.title] = !(expandedGroups[group.title] ?: false)
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            }
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = theme.name,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = TextWhite
-                            )
+                        Icon(
+                            imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
+                            contentDescription = "Expand",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = group.title,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
+                }
 
-                            Box(
-                                modifier = Modifier
-                                    .width(80.dp)
-                                    .height(24.dp)
-                                    .background(
-                                        brush = Brush.horizontalGradient(theme.gradientColors),
-                                        shape = RoundedCornerShape(4.dp)
-                                    )
-                            )
-                        }
+                if (isExpanded) {
+                    items(group.items) { item ->
+                        val key = group.title to item.name
+                        val isItemActive = activeSpammers.containsKey(key)
+                        AnimatedBleButton(
+                            text = item.name,
+                            isActive = isItemActive,
+                            onClick = {
+                                ensureBluetoothEnabled {
+                                    if (isItemActive) {
+                                        stopDevice(key)
+                                    } else {
+                                        startDevice(item, group.title)
+                                    }
+                                }
+                            },
+                            blinkIntervalMs = 20L,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
 
             item {
-                val isCustomSelected = !isAdaptive && themes.none { !it.isAdaptive && it.accent.toArgb() == selectedAccentColor.toArgb() }
-                MaterialCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    accentColor = selectedAccentColor,
-                    cornerRadius = 12.dp
-                ) {
-                    AccentButton(
-                        onClick = {
-                            vibrate(context)
-                            showRgbDialog = true
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .border(if (isCustomSelected) 3.dp else 0.dp, if (isCustomSelected) selectedAccentColor else Color.Transparent, RoundedCornerShape(12.dp)),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            contentColor = MaterialTheme.colorScheme.onSurface
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = null, tint = if (isCustomSelected) selectedAccentColor else TextWhite)
-                                Text(
-                                    text = stringResource(R.string.settings_custom_color),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = TextWhite
-                                )
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .width(80.dp)
-                                    .height(24.dp)
-                                    .background(
-                                        color = if (isCustomSelected) selectedAccentColor else accentColor,
-                                        shape = RoundedCornerShape(4.dp)
-                                    )
-                                    .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
-                            )
-                        }
-                    }
+                val activeNames = activeSpammers.keys.map { it.second }.distinct()
+                val statusText = if (activeNames.isNotEmpty()) {
+                    stringResource(R.string.spam_status_current, activeNames.joinToString(", "))
+                } else {
+                    stringResource(R.string.spam_status_empty)
                 }
-            }
-        }
-        }
-    }
-
-    if (showRgbDialog) {
-        AlertDialog(
-            onDismissRequest = { showRgbDialog = false },
-            title = {
                 Text(
-                    text = stringResource(R.string.settings_custom_color),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    text = statusText,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(top = 8.dp)
                 )
-            },
-            text = {
-                val currentColor = Color(customR, customG, customB)
-                val hexStr = String.format("#%02X%02X%02X", customR, customG, customB)
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(currentColor),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = Color.Black.copy(alpha = 0.5f)
-                        ) {
-                            Text(
-                                text = hexStr,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Red", color = Color(0xFFFF5252), fontWeight = FontWeight.SemiBold)
-                            Text("$customR", fontWeight = FontWeight.Bold)
-                        }
-                        DolphySlider(
-                            value = customR.toFloat(),
-                            onValueChange = { customR = it.toInt().coerceIn(0, 255) },
-                            valueRange = 0f..255f,
-                            colors = SliderDefaults.colors(thumbColor = Color(0xFFFF5252), activeTrackColor = Color(0xFFFF5252))
-                        )
-                    }
-
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Green", color = Color(0xFF69F0AE), fontWeight = FontWeight.SemiBold)
-                            Text("$customG", fontWeight = FontWeight.Bold)
-                        }
-                        DolphySlider(
-                            value = customG.toFloat(),
-                            onValueChange = { customG = it.toInt().coerceIn(0, 255) },
-                            valueRange = 0f..255f,
-                            colors = SliderDefaults.colors(thumbColor = Color(0xFF69F0AE), activeTrackColor = Color(0xFF69F0AE))
-                        )
-                    }
-
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Blue", color = Color(0xFF448AFF), fontWeight = FontWeight.SemiBold)
-                            Text("$customB", fontWeight = FontWeight.Bold)
-                        }
-                        DolphySlider(
-                            value = customB.toFloat(),
-                            onValueChange = { customB = it.toInt().coerceIn(0, 255) },
-                            valueRange = 0f..255f,
-                            colors = SliderDefaults.colors(thumbColor = Color(0xFF448AFF), activeTrackColor = Color(0xFF448AFF))
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                DolphyButton(
-                    onClick = {
-                        vibrate(context)
-                        viewModel.setAdaptiveColor(false)
-                        viewModel.setAccentColor(Color(customR, customG, customB))
-                        showRgbDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.color_picker_select))
-                }
-            },
-            dismissButton = {
-                DolphyTextButton(onClick = { showRgbDialog = false }) {
-                    Text(stringResource(R.string.btn_cancel))
-                }
-            }
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun ThemeModeScreen(viewModel: SpamViewModel, onNavigateBack: () -> Unit) {
-    val accentColor = MaterialTheme.colorScheme.primary
-    val themeMode by viewModel.themeMode.collectAsState()
-    val context = LocalContext.current
-
-
-    data class ThemeModeOption(val mode: Int, val name: String, val description: String)
-    val themeModes = listOf(
-        ThemeModeOption(0, stringResource(R.string.settings_theme_auto), stringResource(R.string.theme_mode_auto_desc)),
-        ThemeModeOption(1, stringResource(R.string.settings_theme_dark), stringResource(R.string.theme_mode_dark_desc)),
-        ThemeModeOption(2, stringResource(R.string.settings_theme_light), stringResource(R.string.theme_mode_light_desc))
-    )
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        MaterialBackground(accentColor = accentColor) {
-            Column(modifier = Modifier.fillMaxSize()) {
-
-                MaterialCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    accentColor = accentColor,
-                    cornerRadius = 12.dp
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                    ) {
-                        DolphyIconButton(
-                            onClick = onNavigateBack,
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = accentColor)
-                        }
-                        Text(
-                            text = stringResource(R.string.theme_selection_title),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                }
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(themeModes.size) { index ->
-                        val option = themeModes[index]
-                        val isSelected = themeMode == option.mode
-
-                        MaterialCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            accentColor = if (isSelected) accentColor else MaterialTheme.colorScheme.surfaceVariant,
-                            cornerRadius = 12.dp
-                        ) {
-                            AccentButton(
-                                onClick = {
-                                    vibrate(context)
-                                    viewModel.setThemeMode(option.mode)
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(72.dp)
-                                    .border(
-                                        if (isSelected) 2.dp else 0.dp,
-                                        if (isSelected) accentColor else Color.Transparent,
-                                        RoundedCornerShape(12.dp)
-                                    ),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column {
-                                        Text(
-                                            text = option.name,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = if (isSelected) accentColor else MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Text(
-                                            text = option.description,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                    if (isSelected) {
-                                        Icon(
-                                            imageVector = Icons.Default.Info,
-                                            contentDescription = null,
-                                            tint = accentColor
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -5094,8 +4782,16 @@ fun AnimatedBleButton(
     blinkIntervalMs: Long = 20L,
     modifier: Modifier = Modifier,
     accentColor: Color = Color.Unspecified,
-    fullyRounded: Boolean = false
+    fullyRounded: Boolean = false,
+    enabled: Boolean = true
 ) {
+    if (!enabled) {
+        AccentButton(onClick = {}, enabled = false, modifier = modifier.height(56.dp),
+            shape = RoundedCornerShape(if (fullyRounded) 32.dp else 28.dp)) {
+            Text(text, fontWeight = FontWeight.Bold)
+        }
+        return
+    }
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val accent = if (accentColor != Color.Unspecified) accentColor else MaterialTheme.colorScheme.primary
@@ -6356,16 +6052,15 @@ fun OnboardingSetupScreen(viewModel: SpamViewModel) {
     }
 }
 
-class SpamViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SpamViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SpamViewModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+@Composable
+fun BluetoothContainerScreen(viewModel: SpamViewModel, navController: NavController) {
+    BluetoothPermissionGate(advertise = true, onBack = { navController.navigate("other") }) {
+        LaunchedEffect(Unit) { viewModel.onPermissionsGranted() }
+        BluetoothContainerContent(viewModel, navController)
     }
 }
 
+<<<<<<< HEAD
 class SpamViewModel(private val application: Application) : AndroidViewModel(application) {
 
     private val prefs: SharedPreferences = application.getSharedPreferences("DolphyPrefs", Context.MODE_PRIVATE)
@@ -7273,7 +6968,9 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
         stopAllBleSpam()
         stopAdvertisePreset()
     }
+=======
+@Composable
+fun BleSectionScreen(section: BleSection, onBack: () -> Unit) {
+    BluetoothPermissionGate(advertise = true, onBack = onBack) { BleSectionContent(section, onBack) }
+>>>>>>> upstream/main
 }
-
-
-

@@ -27,11 +27,16 @@ import java.net.URL
 import java.util.Base64
 import java.util.Locale
 
+<<<<<<< HEAD
 
 
 
 
 
+=======
+/**
+ */
+>>>>>>> upstream/main
 object MyCamEngine {
 
     sealed interface Status {
@@ -59,10 +64,16 @@ object MyCamEngine {
             get() = "Basic " + Base64.getEncoder()
                 .encodeToString("$user:$password".toByteArray(Charsets.UTF_8))
         val label: String
+<<<<<<< HEAD
             get() = "$user / ${if (password.isEmpty()) "(mot de passe vide)" else password}"
     }
 
 
+=======
+            get() = "$user / ${if (password.isEmpty()) "(empty password)" else password}"
+    }
+
+>>>>>>> upstream/main
     val CREDENTIALS = listOf(
         Credentials("admin", ""),
         Credentials("admin", "123456"),
@@ -112,9 +123,14 @@ object MyCamEngine {
         "keenetic", "routerlogin", "tplinkwifi", "miwifi", "pppoe", "wan settings",
     )
 
+<<<<<<< HEAD
 
 
 
+=======
+    /**
+     */
+>>>>>>> upstream/main
     suspend fun findCamera(
         onStatus: (Status) -> Unit,
         onLog: (String) -> Unit,
@@ -132,22 +148,36 @@ object MyCamEngine {
 
         val localIp = localIpv4()
         if (localIp == null) {
+<<<<<<< HEAD
             onLog("Impossible de déterminer l'IP locale — vérifiez la connexion Wi-Fi")
+=======
+            onLog("Failed to determine local IP — check the Wi-Fi connection")
+>>>>>>> upstream/main
             return ScanResult(null, false, 0)
         }
         val (addr, ifName) = localIp
         val prefix = addr.hostAddress?.substringBeforeLast('.')
         if (prefix == null) {
+<<<<<<< HEAD
             onLog("Impossible de déterminer le sous-réseau")
             return ScanResult(null, false, 0)
         }
         onLog("IP locale : ${addr.hostAddress} ($ifName)")
         onLog("Sous-réseau : $prefix.0/24, test de ${CREDENTIALS.size} mots de passe par défaut")
         if (forceAll) onLog("Mode : vérification de tous les appareils du réseau")
+=======
+            onLog("Failed to determine the subnet")
+            return ScanResult(null, false, 0)
+        }
+        onLog("Local IP: ${addr.hostAddress} ($ifName)")
+        onLog("Subnet: $prefix.0/24, trying ${CREDENTIALS.size} default passwords")
+        if (forceAll) onLog("Mode: checking all network devices")
+>>>>>>> upstream/main
 
         onStatus(Status.Searching)
         val openPorts = scanSubnet(prefix, onLog)
         if (openPorts.isEmpty()) {
+<<<<<<< HEAD
             onLog("Aucun appareil avec des ports ouverts trouvé après deux passages")
             onLog("Vérifiez : le téléphone est sur le même Wi-Fi que les caméras ; l'isolation AP est désactivée")
             return ScanResult(null, false, 0)
@@ -155,6 +185,15 @@ object MyCamEngine {
         onLog("Appareils avec ports ouverts trouvés : ${openPorts.size}")
         openPorts.forEach { (ip, ports) ->
             onLog("$ip : ports ouverts ${ports.sorted().joinToString()}")
+=======
+            onLog("No devices with open ports found after two passes")
+            onLog("Check that the phone is on the same Wi-Fi network as the cameras and that client isolation (AP isolation) is disabled")
+            return ScanResult(null, false, 0)
+        }
+        onLog("Devices with open ports found: ${openPorts.size}")
+        openPorts.forEach { (ip, ports) ->
+            onLog("$ip: open ports ${ports.sorted().joinToString()}")
+>>>>>>> upstream/main
         }
 
         val hosts = openPorts.entries
@@ -173,32 +212,51 @@ object MyCamEngine {
                 val page = httpGet("$baseUrl/", authHeader = null)
                 if (page == null) {
                     onStatus(Status.NoReply)
+<<<<<<< HEAD
                     onLog("$ip : aucune réponse à la requête")
+=======
+                    onLog("$ip: no response to the request")
+>>>>>>> upstream/main
                     onStatus(Status.NextDevice)
                     continue
                 }
                 hostsResponded++
                 if (!forceAll && !detectCamera(page)) {
+<<<<<<< HEAD
                     onLog("$ip : l'appareil a répondu, mais ne semble pas être une caméra")
+=======
+                    onLog("$ip: device responded but does not look like a camera")
+>>>>>>> upstream/main
                     onStatus(Status.NextDevice)
                     continue
                 }
                 cameraSeen = true
                 if (forceAll) {
+<<<<<<< HEAD
                     onLog("$ip : test forcé de l'appareil (HTTP $httpPort)")
                 } else {
                     onLog("$ip : webcam détectée (HTTP $httpPort)")
+=======
+                    onLog("$ip: forcing device check (HTTP $httpPort)")
+                } else {
+                    onLog("$ip: found a web camera (HTTP $httpPort)")
+>>>>>>> upstream/main
                 }
                 onStatus(Status.CheckingPassword)
 
                 val target = probeCamera(ip, ports, baseUrl, page, onLog)
                 if (target != null) return ScanResult(target, true, hostsResponded)
 
+<<<<<<< HEAD
                 onLog("$ip : impossible d'obtenir le flux vidéo — aucun mot de passe valide ou flux introuvable")
+=======
+                onLog("$ip: failed to get video — no password worked or no stream found")
+>>>>>>> upstream/main
                 onStatus(Status.NextDevice)
             } else {
                 val rtspPort = ports.firstOrNull(RTSP_PORTS::contains) ?: continue
                 cameraSeen = true
+<<<<<<< HEAD
                 onLog("$ip : port RTSP ouvert $rtspPort")
                 onStatus(Status.CheckingPassword)
                 val found = probeRtspOnly(ip, rtspPort, onLog)
@@ -207,6 +265,16 @@ object MyCamEngine {
                     return ScanResult(CameraTarget.Rtsp(found.first), true, hostsResponded)
                 }
                 onLog("$ip : flux RTSP inaccessible avec les mots de passe de la liste")
+=======
+                onLog("$ip: RTSP port $rtspPort is open")
+                onStatus(Status.CheckingPassword)
+                val found = probeRtspOnly(ip, rtspPort, onLog)
+                if (found != null) {
+                    onLog("$ip: RTSP stream available (${found.second.label})")
+                    return ScanResult(CameraTarget.Rtsp(found.first), true, hostsResponded)
+                }
+                onLog("$ip: RTSP stream unavailable with any password from the list")
+>>>>>>> upstream/main
                 onStatus(Status.NextDevice)
             }
         }
@@ -228,26 +296,42 @@ object MyCamEngine {
         for (path in mjpegCandidates) {
             val url = if (path.startsWith("http")) path else baseUrl + path
             if (isMjpegStream(url, null)) {
+<<<<<<< HEAD
                 onLog("$ip : flux MJPEG trouvé sans authentification $path")
+=======
+                onLog("$ip: found unauthenticated MJPEG stream $path")
+>>>>>>> upstream/main
                 return CameraTarget.Mjpeg(url, null)
             }
         }
         for (path in snapshotCandidates) {
             val url = if (path.startsWith("http")) path else baseUrl + path
             if (isJpegSnapshot(url, null)) {
+<<<<<<< HEAD
                 onLog("$ip : flux d'instantanés accessible sans authentification $path")
+=======
+                onLog("$ip: unauthenticated snapshot stream available $path")
+>>>>>>> upstream/main
                 return CameraTarget.Snapshot(url, null)
             }
         }
 
         for (cred in CREDENTIALS) {
+<<<<<<< HEAD
             onLog("$ip : test des identifiants ${cred.label}")
+=======
+            onLog("$ip: trying login ${cred.label}")
+>>>>>>> upstream/main
             val auth = cred.basicHeader
 
             for (path in mjpegCandidates) {
                 val url = if (path.startsWith("http")) path else baseUrl + path
                 if (isMjpegStream(url, auth)) {
+<<<<<<< HEAD
                     onLog("$ip : mot de passe validé (${cred.label}), flux MJPEG $path")
+=======
+                    onLog("$ip: password worked (${cred.label}), MJPEG stream $path")
+>>>>>>> upstream/main
                     return CameraTarget.Mjpeg(url, auth)
                 }
             }
@@ -255,7 +339,11 @@ object MyCamEngine {
             for (path in snapshotCandidates) {
                 val url = if (path.startsWith("http")) path else baseUrl + path
                 if (isJpegSnapshot(url, auth)) {
+<<<<<<< HEAD
                     onLog("$ip : mot de passe validé (${cred.label}), flux d'instantanés $path")
+=======
+                    onLog("$ip: password worked (${cred.label}), snapshot stream $path")
+>>>>>>> upstream/main
                     return CameraTarget.Snapshot(url, auth)
                 }
             }
@@ -264,11 +352,19 @@ object MyCamEngine {
                 val url = rtspUrlWithCredentials(raw, cred)
                 when (rtspProbe(url, auth)) {
                     RtspProbe.OK -> {
+<<<<<<< HEAD
                         onLog("$ip : mot de passe validé (${cred.label}), le flux RTSP répond")
                         return CameraTarget.Rtsp(url)
                     }
                     RtspProbe.BAD_AUTH -> onLog("$ip : le serveur RTSP a rejeté l'utilisateur ${cred.user} (401)")
                     RtspProbe.FAIL -> onLog("$ip : le serveur RTSP n'a pas répondu à DESCRIBE")
+=======
+                        onLog("$ip: password worked (${cred.label}), RTSP stream responds")
+                        return CameraTarget.Rtsp(url)
+                    }
+                    RtspProbe.BAD_AUTH -> onLog("$ip: RTSP server rejected login ${cred.user} (401)")
+                    RtspProbe.FAIL -> onLog("$ip: RTSP server did not respond to DESCRIBE")
+>>>>>>> upstream/main
                 }
             }
 
@@ -277,7 +373,11 @@ object MyCamEngine {
                 for (path in RTSP_PATHS) {
                     val url = "rtsp://${cred.user}:${cred.password}@$ip:$rtspPort$path"
                     if (rtspProbe(url, auth) == RtspProbe.OK) {
+<<<<<<< HEAD
                         onLog("$ip : mot de passe validé (${cred.label}), flux RTSP sur le chemin $path")
+=======
+                        onLog("$ip: password worked (${cred.label}), RTSP stream at path $path")
+>>>>>>> upstream/main
                         return CameraTarget.Rtsp(url)
                     }
                 }
@@ -289,7 +389,11 @@ object MyCamEngine {
 
     private fun probeRtspOnly(ip: String, port: Int, onLog: (String) -> Unit): Pair<String, Credentials>? {
         for (cred in CREDENTIALS) {
+<<<<<<< HEAD
             onLog("$ip : test des identifiants ${cred.label}")
+=======
+            onLog("$ip: trying login ${cred.label}")
+>>>>>>> upstream/main
             for (path in RTSP_PATHS) {
                 val url = "rtsp://${cred.user}:${cred.password}@$ip:$port$path"
                 if (rtspProbe(url, cred.basicHeader) == RtspProbe.OK) return url to cred
@@ -316,9 +420,15 @@ object MyCamEngine {
             }.awaitAll().filterNotNull().groupBy({ it.first }, { it.second })
         }
 
+<<<<<<< HEAD
         val first = runPass("Balayage de 254 adresses × ${ports.size} ports…")
         if (first.isNotEmpty()) return@coroutineScope first
         runPass("Premier passage sans résultat — nouveau balayage…")
+=======
+        val first = runPass("Scanning 254 addresses × ${ports.size} ports…")
+        if (first.isNotEmpty()) return@coroutineScope first
+        runPass("First pass found nothing — rescanning…")
+>>>>>>> upstream/main
     }
 
     private fun portOpen(ip: String, port: Int): Boolean = try {
