@@ -126,7 +126,6 @@ import com.droid.dolphy.plugin.PluginManager
 import com.droid.dolphy.plugin.PluginBluetoothHooks
 import com.droid.dolphy.plugin.PluginRuntimeAccess
 import com.droid.dolphy.printer.WifiPrintScreen
-import com.droid.dolphy.network.WifiGeneratorScreen
 import com.droid.dolphy.qr.*
 import com.droid.dolphy.tvcast.SmartTvCastScreen
 import com.droid.dolphy.ui.theme.ExpressiveShapes
@@ -1117,8 +1116,6 @@ fun MainScaffold(
             composable("other/my_cam") { MyCamScreen(screenNavController) }
             composable("wifi_print") { WifiPrintScreen(screenNavController) }
             composable("other/wifi_print") { WifiPrintScreen(screenNavController) }
-            composable("wifi_generator") { WifiGeneratorScreen(screenNavController) }
-            composable("other/wifi_generator") { WifiGeneratorScreen(screenNavController) }
             composable("smarttv_cast") { SmartTvCastScreen(screenNavController) }
             composable("other/smarttv_cast") { SmartTvCastScreen(screenNavController) }
 

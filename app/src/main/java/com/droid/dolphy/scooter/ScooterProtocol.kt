@@ -4,13 +4,42 @@ import java.util.UUID
 
 object ScooterProtocol {
 
-    val SERVICE_UUID: UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e")
-    val WRITE_UUID: UUID = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e")
-    val NOTIFY_UUID: UUID = UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e")
+    // Service & Caractéristiques Nordic UART (Ninebot ES / Max standard)
+    val SERVICE_UUID_NORDIC_UART: UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e")
+    val WRITE_UUID_NORDIC_UART: UUID = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e")
+    val NOTIFY_UUID_NORDIC_UART: UUID = UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e")
+
+    // Service & Caractéristiques Xiaomi UART (M365, 1S, Pro, Pro 2, Essential, Mi 3)
+    val SERVICE_UUID_XIAOMI_UART: UUID = UUID.fromString("0000e0ff-3c17-d293-8e48-14fe2e4da212")
+    val WRITE_UUID_XIAOMI_UART: UUID = UUID.fromString("0000e001-3c17-d293-8e48-14fe2e4da212")
+    val NOTIFY_UUID_XIAOMI_UART: UUID = UUID.fromString("0000e002-3c17-d293-8e48-14fe2e4da212")
+
+    // Service Ninebot Custom
+    val SERVICE_UUID_NINEBOT_CUSTOM: UUID = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb")
+    val WRITE_UUID_NINEBOT_CUSTOM: UUID = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb")
+    val NOTIFY_UUID_NINEBOT_CUSTOM: UUID = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb")
+
+    // Service Série générique HM-10 / CC2540
+    val SERVICE_UUID_HM10: UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
+    val CHAR_UUID_HM10: UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
+
+    // Service Xiaomi MiBeacon (Détection Xiaomi en broadcast)
+    val SERVICE_UUID_XIAOMI_MIBEACON: UUID = UUID.fromString("0000fe95-0000-1000-8000-00805f9b34fb")
+
+    // Service Télématique Boîtiers IoT Flottes (Omni, Okai, Teltonika)
+    val SERVICE_UUID_OMNI_IOT: UUID = UUID.fromString("0000aa70-0000-1000-8000-00805f9b34fb")
+
+    // Rétrocompatibilité
+    val SERVICE_UUID: UUID = SERVICE_UUID_NORDIC_UART
+    val WRITE_UUID: UUID = WRITE_UUID_NORDIC_UART
+    val NOTIFY_UUID: UUID = NOTIFY_UUID_NORDIC_UART
 
     const val NINEBOT_MANUFACTURER_ID = 0x424E
+    const val NINEBOT_ALT_MANUFACTURER_ID = 0x4E42
+    const val XIAOMI_MANUFACTURER_ID = 0x038F
+    const val SEGWAY_MANUFACTURER_ID = 0x05A7
 
-    // Commands directes Ninebot / Xiaomi UART
+    // Commandes directes Ninebot / Xiaomi UART
     val COMMAND_LOCK = byteArrayOf(0x55, 0xAA.toByte(), 0x03, 0x20, 0x01, 0x71, 0x01, 0x69.toByte(), 0xFF.toByte())
     val COMMAND_UNLOCK = byteArrayOf(0x55, 0xAA.toByte(), 0x03, 0x20, 0x01, 0x71, 0x00, 0x6A.toByte(), 0xFF.toByte())
     val COMMAND_BEEP = byteArrayOf(0x55, 0xAA.toByte(), 0x03, 0x20, 0x01, 0x72, 0x01, 0x68.toByte(), 0xFF.toByte())
@@ -51,5 +80,18 @@ object ScooterProtocol {
             csLow.toByte(),
             csHigh.toByte()
         )
+    }
+
+    fun buildNinebotPacket(target: Byte, cmd: Byte, payload: ByteArray): ByteArray {
+        val len = (payload.size + 2).toByte()
+        val source = 0x01.toByte()
+        var sum = (len.toInt() and 0xFF) + (target.toInt() and 0xFF) + (source.toInt() and 0xFF) + (cmd.toInt() and 0xFF)
+        for (b in payload) {
+            sum += (b.toInt() and 0xFF)
+        }
+        val checksum = (0xFFFF - sum) and 0xFFFF
+        val csLow = (checksum and 0xFF).toByte()
+        val csHigh = ((checksum shr 8) and 0xFF).toByte()
+        return byteArrayOf(0x55, 0xAA.toByte(), len, target, source, cmd) + payload + byteArrayOf(csLow, csHigh)
     }
 }

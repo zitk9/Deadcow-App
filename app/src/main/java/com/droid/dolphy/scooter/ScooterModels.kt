@@ -8,5 +8,7 @@ data class ScooterDevice(
     val isConnecting: Boolean = false,
     val isConnected: Boolean = false,
     val statusMessage: String? = null,
+    val brandOrCategory: String = "Trottinette BLE",
+    val isRentalFleet: Boolean = false,
+    val rawAdvertisement: String? = null,
 )
-

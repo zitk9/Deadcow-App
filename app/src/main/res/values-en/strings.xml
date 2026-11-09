@@ -1117,7 +1117,7 @@
     <string name="plugin_capability_hooks">Screen and logic modification</string>
 
         <string name="scooter_hack_title">ScooterHack</string>
-    <string name="scooter_hack_card_desc">Scan Xiaomi/Ninebot, lock/unlock, beep, battery</string>
+    <string name="scooter_hack_card_desc">Scan Xiaomi/Ninebot &amp; rental fleets (Lime, Tier, Bolt), BLE controls</string>
     <string name="scooter_scan_start">Scan scooters</string>
     <string name="scooter_scan_stop">Stop scan</string>
     <string name="scooter_scan_hint"> </string>

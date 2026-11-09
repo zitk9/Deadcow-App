@@ -1029,7 +1029,7 @@ Sous licence GNU GPL.</string>
     <string name="plugin_capability_shell">Commandes shell</string>
     <string name="plugin_capability_hooks">Modification d\'écran et de logique</string>
     <string name="scooter_hack_title">ScooterHack</string>
-    <string name="scooter_hack_card_desc">Scanner Xiaomi/Ninebot, verrouiller/déverrouiller, bip, batterie</string>
+    <string name="scooter_hack_card_desc">Scanner Xiaomi/Ninebot, détection flottes libre-service, verrou/déverrou</string>
     <string name="scooter_scan_start">Scanner les scooters</string>
     <string name="scooter_scan_stop">Arrêter l\'analyse</string>
     <string name="scooter_scan_hint"> </string>

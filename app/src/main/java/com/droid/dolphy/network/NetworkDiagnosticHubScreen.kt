@@ -50,7 +50,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Wifi
-import androidx.compose.material.icons.filled.WifiTethering
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.SettingsEthernet
 import androidx.compose.material.icons.filled.Shield
@@ -1175,9 +1174,6 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
                     title = stringResource(R.string.network_hub_title),
                     onBack = { navController.popBackStack() },
                     actions = {
-                        DolphyIconButton(onClick = { navController.navigate("other/wifi_generator") }) {
-                            Icon(Icons.Default.WifiTethering, contentDescription = "Générateur Wi-Fi & Hotspot", tint = MaterialTheme.colorScheme.primary)
-                        }
                         DolphyIconButton(onClick = { showPasswordDialog = true }) {
                             Icon(Icons.Filled.VpnKey, contentDescription = stringResource(R.string.wifi_brute_force_passwords), tint = MaterialTheme.colorScheme.primary)
                         }

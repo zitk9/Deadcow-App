@@ -32,11 +32,23 @@ object DeadcowChangelog {
 
     val ENTRIES = listOf(
         ChangelogEntry(
-            version = "v1.20",
+            version = "v1.26",
             date = "Novembre 2026",
             isCurrent = true,
             items = listOf(
-                "📶 Nouveau module Générateur Wi-Fi & Hotspot : Génération instantanée de réseaux (paroles complètes de Rickroll, phrases trolls & geeks, aléatoire ou personnalisé), lancement d'un vrai Point d'accès local Android avec QR code instantané pour permettre aux autres appareils de s'y connecter, et export pour ESP32 / Flipper Zero.",
+                "🛴 Refonte et correctifs du module Trottinette (ScooterHack) : Résolution du bug de détection BLE sur Android 12+ (suppression du filtre matériel restrictif bloquant les trames publicitaires).",
+                "🔓 Découverte universelle BLE : Détection et reconnaissance automatique des trottinettes Xiaomi (M365, Pro, 1S, Essential, Mi 3), Ninebot / Segway (ES1-ES4, Max G30, séries F/D/GT), Okai et autres marques.",
+                "🚲 Détection des flottes de libre-service : Identification des balises et trottinettes commerciales (Lime, Tier, Bolt, Dott, Bird, Pony, Omni IoT) avec badge 'FLOTTE', affichage du niveau de signal RSSI et explications sur la sécurisation cloud / IoT.",
+                "⚡ Fiabilisation des connexions GATT : Support multi-services (Nordic UART, Xiaomi UART 0000e0ff, Ninebot custom 0000fff0, HM-10) et découverte universelle avec fallback automatique sans gel de l'interface.",
+                "🎛️ Filtre interactif & Commandes : Bascule en un clic entre le mode 'Trottinettes & Flottes' et 'Tous les périphériques BLE', curseur de vitesse de 15 à 100 km/h et payloads de tuning.",
+                "🧹 Nettoyage applicatif : Suppression du module générateur Wi-Fi pour recentrer l'arsenal sur les outils radio et IoT."
+            )
+        ),
+        ChangelogEntry(
+            version = "v1.20",
+            date = "Novembre 2026",
+            isCurrent = false,
+            items = listOf(
                 "🔍 Identification Bluetooth avancée : Fin des appareils 'Unknown' ! Affichage automatique des vrais noms utilisateur (paquets BLE et inquiry classique) ou de la marque et catégorie détaillée (Apple, Samsung, Sony, JBL, Bose, Xiaomi, Google, Logitech, etc.).",
                 "🏢 Base constructeurs enrichie : Plus de 60 identifiants Bluetooth SIG et 40 000+ préfixes MAC OUI pour identifier précisément chaque marque et modèle.",
                 "🔑 Mises à jour fluides sans réinstallation : Configuration d'une clé de signature release pérenne et sécurisation des autorisations de l'installeur de packages (fin de l'erreur INSTALL_FAILED_UPDATE_INCOMPATIBLE).",
