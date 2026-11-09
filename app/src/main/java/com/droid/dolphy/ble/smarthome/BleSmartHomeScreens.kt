@@ -136,13 +136,8 @@ fun BleSmartHomeScanScreen(navController: NavController) {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 val device = result.device ?: return
                 val addr = device.address ?: return
-<<<<<<< HEAD
                 val resolved = com.droid.dolphy.BluetoothDeviceResolver.resolve(device, result.scanRecord, context = context)
                 val vendor = resolved.manufacturer ?: BleVendorDb.getVendorLabel(context, addr)
-=======
-                val name = result.scanRecord?.deviceName ?: (try { device.name } catch (_: SecurityException) { null }) ?: "BLE device"
-                val vendor = BleVendorDb.getVendorLabel(context, addr)
->>>>>>> upstream/main
                 val rssi = result.rssi
                 items = (items.filterNot { it.address == addr } + SmartHomeScanItem(addr, resolved.name, vendor, rssi))
                     .sortedByDescending { it.rssi }
@@ -219,7 +214,6 @@ fun BleSmartHomeScanScreen(navController: NavController) {
                 return@Column
             }
 
-<<<<<<< HEAD
                 if (!hasPerm) {
                     Text(stringResource(R.string.ble_smarthome_need_perms), color = MaterialTheme.colorScheme.onBackground)
                     Spacer(Modifier.height(12.dp))
@@ -307,10 +301,6 @@ fun BleSmartHomeScanScreen(navController: NavController) {
                             },
                         )
                     }
-=======
-            if (items.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
->>>>>>> upstream/main
                     if (isScanning) {
                         val pulse = rememberInfiniteTransition(label = "scanPulse")
                         val scale by pulse.animateFloat(

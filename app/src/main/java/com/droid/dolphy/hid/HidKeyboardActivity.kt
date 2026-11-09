@@ -273,7 +273,6 @@ class HidKeyboardActivity : ComponentActivity(), KeyboardService.Listener {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-<<<<<<< HEAD
         }
         androidx.core.content.ContextCompat.registerReceiver(
             this,
@@ -287,10 +286,6 @@ class HidKeyboardActivity : ComponentActivity(), KeyboardService.Listener {
         if (!adapter.isEnabled) {
             runCatching { btEnableLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)) }
         }
-=======
-        })
-
->>>>>>> upstream/main
 
         val permLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
             if (grants.values.all { it }) {

@@ -446,11 +446,7 @@ private fun EmulationHeaderScaffold(
             DolphyIconButton(onClick = onToggleEditMode) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-<<<<<<< HEAD
                     contentDescription = if (editMode) "Quitter le mode édition" else "Modifier"
-=======
-                    contentDescription = if (editMode) "Exit edit mode" else "Edit"
->>>>>>> upstream/main
                 )
             }
             if (editMode) {

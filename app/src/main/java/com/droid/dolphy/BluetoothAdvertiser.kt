@@ -15,61 +15,14 @@ import org.json.JSONObject
 
 class BluetoothAdvertiser {
 
-<<<<<<< HEAD
     private val bluetoothAdapter get() = BluetoothHelper.bluetoothAdapter
     private val advertiser get() = bluetoothAdapter?.bluetoothLeAdvertiser
-=======
-    private val bluetoothAdapter = BluetoothHelper.bluetoothAdapter
-    private val advertiser get() = try { bluetoothAdapter?.bluetoothLeAdvertiser } catch (_: SecurityException) { null }
->>>>>>> upstream/main
 
     private var currentLegacyCallback: AdvertiseCallback? = null
     private var currentExtCallback: AdvertisingSetCallback? = null
 
-<<<<<<< HEAD
     @Synchronized
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
-=======
->>>>>>> upstream/main
-    fun advertise(
-        advertiseData: AdvertiseData,
-        scanResponse: AdvertiseData? = null,
-        forceLegacy: Boolean = true,
-        connectable: Boolean = false
-    ) {
-        val pluginDecision = PluginBluetoothHooks.interceptAdvertising(
-            advertiseData,
-            scanResponse,
-            JSONObject().put("source", "ble_spam"),
-        )
-        if (pluginDecision.skipNative) return
-        val effectiveData = pluginDecision.advertiseData
-        val effectiveScanResponse = pluginDecision.scanResponse
-
-        // BLE pair/setup protocols (Samsung Watch/Buds, FastPair, SwiftPair, Continuity)
-        // require standard legacy Bluetooth 4.x advertisements (channels 37/38/39).
-        // Extended advertising with setLegacyMode(false) is only used when explicitly requested
-        // or when payload exceeds standard 31-byte legacy limit.
-        if (!forceLegacy && Helper.canUseExtendedAdvertising()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                advertiseExtended(effectiveData, effectiveScanResponse, connectable)
-                return
-            }
-        }
-        advertiseLegacy(effectiveData, effectiveScanResponse, connectable)
-    }
-
-<<<<<<< HEAD
-    @Synchronized
-    @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
-    private fun advertiseLegacy(
-        advertiseData: AdvertiseData,
-        scanResponse: AdvertiseData?,
-        connectable: Boolean = false
-    ) {
-=======
-    private fun advertiseLegacy(advertiseData: AdvertiseData, scanResponse: AdvertiseData?, connectable: Boolean = false) {
->>>>>>> upstream/main
         val adv = advertiser ?: run {
             Helper.log("BluetoothLeAdvertiser is null - Bluetooth disabled or peripheral mode unsupported")
             return
@@ -111,7 +64,6 @@ class BluetoothAdvertiser {
     }
 
     @androidx.annotation.RequiresApi(Build.VERSION_CODES.O)
-<<<<<<< HEAD
     @Synchronized
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
     private fun advertiseExtended(
@@ -119,9 +71,6 @@ class BluetoothAdvertiser {
         scanResponse: AdvertiseData?,
         connectable: Boolean = false
     ) {
-=======
-    private fun advertiseExtended(advertiseData: AdvertiseData, connectable: Boolean = false) {
->>>>>>> upstream/main
         val adv = advertiser ?: run {
             Helper.log("BluetoothLeAdvertiser is null (extended)")
             return
@@ -169,29 +118,8 @@ class BluetoothAdvertiser {
         }
     }
 
-<<<<<<< HEAD
     @Synchronized
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
-=======
->>>>>>> upstream/main
-    fun stopAdvertising() {
-        val pluginDecision = PluginBluetoothHooks.action("bluetooth.advertising.stop", JSONObject().put("source", "ble_spam"))
-        if (pluginDecision.cancelled) return
-        if (pluginDecision.handled) {
-            currentLegacyCallback = null
-            currentExtCallback = null
-            return
-        }
-<<<<<<< HEAD
-        stopAdvertisingInternal()
-    }
-=======
-        if (extendedCallbackActive) {
-            extCallback?.let {
-                try {
-                    val adv = advertiser
-                    try { adv?.stopAdvertisingSet(it) } catch (error: SecurityException) { Log.w("BLESpam", "Advertising permission revoked", error) }
->>>>>>> upstream/main
 
     @Synchronized
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
@@ -200,7 +128,6 @@ class BluetoothAdvertiser {
 
         currentExtCallback?.let {
             try {
-<<<<<<< HEAD
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     adv?.stopAdvertisingSet(it)
                 }
@@ -214,9 +141,6 @@ class BluetoothAdvertiser {
         currentLegacyCallback?.let {
             try {
                 adv?.stopAdvertising(it)
-=======
-                try { advertiser?.stopAdvertising(advertiseCallback) } catch (error: SecurityException) { Log.w("BLESpam", "Advertising permission revoked", error) }
->>>>>>> upstream/main
                 Helper.log("Legacy advertising stopped")
             } catch (e: Exception) {
                 Log.e("BLESpam", "Error stopping legacy advertising: ${e.message}")

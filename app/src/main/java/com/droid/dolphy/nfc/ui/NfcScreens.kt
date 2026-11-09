@@ -100,7 +100,6 @@ fun NfcWaitScreen(navController: NavController, viewModel: NfcViewModel) {
         }
     }
 
-<<<<<<< HEAD
     Box(modifier = Modifier.fillMaxSize()) {
         MaterialBackground(accentColor = accent) {
             Column(
@@ -159,44 +158,6 @@ fun NfcWaitScreen(navController: NavController, viewModel: NfcViewModel) {
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 4.dp),
-=======
-    NfcHeaderScaffold(
-        title = stringResource(R.string.nfc_read_title),
-        onBack = { navController.popBackStack() },
-        onHistory = { navController.navigate("other/nfc_history") },
-        accentColor = accent,
-    ) { headerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = headerPadding + 24.dp)
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-        ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    if(nfcReady) {
-                        TintedFrameAnimation(
-                            frames = listOf(
-                                R.drawable.mm_nfc_14_frame_01,
-                                R.drawable.mm_nfc_14_frame_02,
-                                R.drawable.mm_nfc_14_frame_03,
-                                R.drawable.mm_nfc_14_frame_04,
-                            ),
-                            modifier = Modifier.size(width = 53.dp, height = 53.dp),
-                            frameDelayMs = 333L,
-                            tintColor = accent,
-                            contentDescription = "NFC reading animation",
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.passport_bad2_46x49),
-                            contentDescription = "NFC unavailable",
-                            modifier = Modifier.size(width = 138.dp, height = 147.dp),
-                            colorFilter = ColorFilter.tint(
-                                color = accent,
-                                blendMode = BlendMode.Modulate
-                            ),
->>>>>>> upstream/main
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -298,7 +259,6 @@ fun NfcResultScreen(navController: NavController, viewModel: NfcViewModel, scanI
                 }
             }
 
-<<<<<<< HEAD
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -432,26 +392,6 @@ fun NfcResultScreen(navController: NavController, viewModel: NfcViewModel, scanI
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-=======
-            if(!scan!!.ndefRecordType.isNullOrBlank()) {
-                item {
-                    SectionCard(title = stringResource(R.string.nfc_section_ndef)) {
-                        KeyValue(AppLocale.getString(context, R.string.nfc_detail_8), scan!!.ndefRecordType ?: "—")
-                        KeyValue(AppLocale.getString(context, R.string.nfc_detail_9), scan!!.ndefContent ?: "—")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { showHex = !showHex }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                        ) {
-                            Text(
-                                text = if(showHex) AppLocale.getString(context, R.string.nfc_detail_10) else AppLocale.getString(context, R.string.nfc_detail_11),
-                                color = accent,
-                                fontWeight = FontWeight.SemiBold,
->>>>>>> upstream/main
                             )
                         }
                         if(showHex) {
@@ -577,11 +517,7 @@ fun NfcResultScreen(navController: NavController, viewModel: NfcViewModel, scanI
             confirmButton = {
                 com.droid.dolphy.AccentButton(
                     onClick = {
-<<<<<<< HEAD
                         val name = emulationName.trim().ifBlank { "Copie du badge" }
-=======
-                        val name = emulationName.trim().ifBlank { AppLocale.getString(context, R.string.nfc_detail_20) }
->>>>>>> upstream/main
                         val url = buildEmulationUrl(scan)
                         val tags = NfcTagEmulationStore.loadTags(context)
                         val copy = EmulatedNfcTag(
@@ -636,11 +572,7 @@ private fun NfcHeaderScaffold(
         actions = {
             if(onHistory != null) {
                 DolphyIconButton(onClick = onHistory) {
-<<<<<<< HEAD
                     Icon(Icons.Outlined.History, contentDescription = "Historique")
-=======
-                    Icon(Icons.Outlined.History, contentDescription = stringResource(R.string.nfc_detail_21))
->>>>>>> upstream/main
                 }
             }
         },

@@ -135,13 +135,8 @@ private fun BondSpamContent(
                                 ) {
                                     m3SegmentedItems(devices, key = { it.address }) { index, count, device ->
                                         val isSelected = selectedDevice?.address == device.address
-<<<<<<< HEAD
                                         val resolved = BluetoothDeviceResolver.resolve(device, context = context)
                                         val deviceName = resolved.name
-=======
-                                        val deviceName = (try { device.name } catch (_: SecurityException) { null })?.takeIf { it.isNotBlank() }
-                                            ?: unknownName
->>>>>>> upstream/main
 
                                         M3SegmentedListItem(
                                             index = index,
@@ -164,7 +159,6 @@ private fun BondSpamContent(
                                             onClick = {
                                                 vibrate(context)
                                                 viewModel.selectDevice(device)
-<<<<<<< HEAD
                                             },
                                             modifier = Modifier.fillMaxWidth(),
                                             shape = RoundedCornerShape(12.dp),
@@ -218,44 +212,6 @@ private fun BondSpamContent(
                                                         modifier = Modifier.size(20.dp)
                                                     )
                                                 }
-=======
->>>>>>> upstream/main
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        shape = RoundedCornerShape(28.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-<<<<<<< HEAD
-                                val targetName = selectedDevice?.let { BluetoothDeviceResolver.resolve(it, context = context).name }
-=======
-                                val targetName = (try { selectedDevice?.name } catch (_: SecurityException) { null })?.takeIf { it.isNotBlank() }
-                                    ?: selectedDevice?.address
->>>>>>> upstream/main
                                 val targetText = if (targetName != null) {
                                     "${stringResource(R.string.bond_spam_target)} $targetName"
                                 } else {

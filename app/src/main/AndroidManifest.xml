@@ -36,12 +36,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
-<<<<<<< HEAD
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     
-=======
-
->>>>>>> upstream/main
     <uses-permission android:name="android.permission.TRANSMIT_IR" />
 
 
@@ -157,14 +153,9 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-<<<<<<< HEAD
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="application/octet-stream" />
-=======
-                <data android:scheme="content" android:host="*" />
-                <data android:mimeType="*/*" />
->>>>>>> upstream/main
                 <data android:pathPattern=".*\\.dolphyplugin" />
             </intent-filter>
             <intent-filter>
@@ -188,11 +179,7 @@
             android:name=".hid.HidKeyboardActivity"
             android:exported="false"
             android:launchMode="singleTop"
-<<<<<<< HEAD
             android:label="Clavier HID"
-=======
-            android:label="HID Keyboard"
->>>>>>> upstream/main
             android:theme="@style/Theme.Dolphy" />
 
         <service
@@ -210,7 +197,6 @@
 
         <service
             android:name=".hid.KeyboardService"
-            android:foregroundServiceType="connectedDevice"
             android:exported="false"
             android:foregroundServiceType="connectedDevice"
             android:stopWithTask="false" />

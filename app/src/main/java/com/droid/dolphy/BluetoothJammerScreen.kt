@@ -180,7 +180,6 @@ fun BluetoothJammerScanScreen(onBack: () -> Unit, accentColor: Color) {
                 }
             }
 
-<<<<<<< HEAD
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -213,11 +212,6 @@ fun BluetoothJammerScanScreen(onBack: () -> Unit, accentColor: Color) {
                             }
                         }
                     }
-=======
-            if (devices.isEmpty() && !isScanning) {
-                item(key = "empty") {
-                    JammerEmptyState()
->>>>>>> upstream/main
                 }
             }
         }

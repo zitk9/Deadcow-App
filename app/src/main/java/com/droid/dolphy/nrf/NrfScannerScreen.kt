@@ -32,12 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-<<<<<<< HEAD
 import com.droid.dolphy.BluetoothHelper
-=======
-import com.droid.dolphy.BluetoothPermissionGate
-import com.droid.dolphy.BlurHeaderBox
->>>>>>> upstream/main
 import com.droid.dolphy.ConnectedButtonGroup
 import com.droid.dolphy.ExpressiveBounceButton
 import com.droid.dolphy.R

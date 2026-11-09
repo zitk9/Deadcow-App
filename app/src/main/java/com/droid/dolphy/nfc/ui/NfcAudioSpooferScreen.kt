@@ -63,11 +63,7 @@ fun NfcAudioSpooferScreen(
 
     val spoofUrl = if (serverIp != null) {
         if (serverIp!!.startsWith("http")) serverIp!! else "http://$serverIp"
-<<<<<<< HEAD
     } else "En attente..."
-=======
-    } else "Waiting..."
->>>>>>> upstream/main
 
     val infinite = rememberInfiniteTransition(label = "nfc_spoof_animation")
     val scale by infinite.animateFloat(
@@ -79,17 +75,10 @@ fun NfcAudioSpooferScreen(
 
     var expanded by remember { mutableStateOf(false) }
     val pages = listOf(
-<<<<<<< HEAD
         "dolphy" to "Deadcow (Par défaut)",
         "wifi" to "Wi-Fi Gratuit",
         "error" to "Erreur (Style Chrome)",
         "vpn" to "Service VPN"
-=======
-        "dolphy" to "Dolphy (Default)",
-        "wifi" to "Free Wi-Fi",
-        "error" to "Error (Chrome style)",
-        "vpn" to "VPN Service"
->>>>>>> upstream/main
     )
 
     val showFirstTimeInfo by viewModel.showFirstTimeInfo.collectAsState()
@@ -114,29 +103,17 @@ fun NfcAudioSpooferScreen(
                 title = { Text("NFC Audio Spoof", color = Color.White) },
                 navigationIcon = {
                     DolphyIconButton(onClick = { navController.popBackStack() }) {
-<<<<<<< HEAD
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Retour", tint = Color.White)
-=======
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
->>>>>>> upstream/main
                     }
                 },
                 actions = {
                     if (!isStarted) {
                         DolphyIconButton(onClick = { viewModel.startServer() }) {
-<<<<<<< HEAD
                             Icon(Icons.Default.PlayArrow, "Démarrer", tint = accentColor)
                         }
                     } else {
                         DolphyIconButton(onClick = { viewModel.stopServer() }) {
                             Icon(Icons.Default.Stop, "Arrêter", tint = Color.Red)
-=======
-                            Icon(Icons.Default.PlayArrow, "Start", tint = accentColor)
-                        }
-                    } else {
-                        DolphyIconButton(onClick = { viewModel.stopServer() }) {
-                            Icon(Icons.Default.Stop, "Stop", tint = Color.Red)
->>>>>>> upstream/main
                         }
                     }
                 },
@@ -167,11 +144,7 @@ fun NfcAudioSpooferScreen(
                     if (isStarted && nfcReady) {
                         Image(
                             painter = painterResource(id = R.drawable.nfc_dolphin_emulation_51x64_transparent),
-<<<<<<< HEAD
                             contentDescription = "Émulation NFC Active",
-=======
-                            contentDescription = "NFC emulation active",
->>>>>>> upstream/main
                             modifier = Modifier
                                 .size(width = 153.dp, height = 192.dp)
                                 .graphicsLayer(scaleX = scale, scaleY = scale),
@@ -179,11 +152,7 @@ fun NfcAudioSpooferScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-<<<<<<< HEAD
                             "ÉMULATION NDEF URL",
-=======
-                            "NDEF URL EMULATION",
->>>>>>> upstream/main
                             color = accentColor,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
@@ -192,22 +161,14 @@ fun NfcAudioSpooferScreen(
                         if (!nfcReady) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-<<<<<<< HEAD
                                 contentDescription = "NFC Indisponible",
-=======
-                                contentDescription = "NFC unavailable",
->>>>>>> upstream/main
                                 modifier = Modifier.size(120.dp),
                                 tint = accentColor
                             )
                         } else {
                             Image(
                                 painter = painterResource(id = R.drawable.passport_bad2_46x49),
-<<<<<<< HEAD
                                 contentDescription = "Prêt à démarrer",
-=======
-                                contentDescription = "Ready to start",
->>>>>>> upstream/main
                                 modifier = Modifier
                                     .size(width = 138.dp, height = 147.dp),
                                 colorFilter = ColorFilter.tint(Color.Gray),
@@ -215,22 +176,14 @@ fun NfcAudioSpooferScreen(
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-<<<<<<< HEAD
                             if (!nfcReady) "NFC DÉSACTIVÉ" else "PRÊT À DÉMARRER",
-=======
-                            if (!nfcReady) "NFC DISABLED" else "READY TO START",
->>>>>>> upstream/main
                             color = if (!nfcReady) accentColor else Color.Gray,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
                         if (!nfcReady) {
                             Text(
-<<<<<<< HEAD
                                 "Veuillez activer le NFC dans les paramètres",
-=======
-                                "Please enable NFC in settings",
->>>>>>> upstream/main
                                 color = Color.Gray,
                                 fontSize = 12.sp
                             )
@@ -251,21 +204,13 @@ fun NfcAudioSpooferScreen(
                     DolphyIconButton(
                         onClick = {
                             clipboard.setText(AnnotatedString(spoofUrl))
-<<<<<<< HEAD
                             Toast.makeText(context, "URL copiée dans le presse-papiers", Toast.LENGTH_SHORT).show()
-=======
-                            Toast.makeText(context, "URL copied to clipboard", Toast.LENGTH_SHORT).show()
->>>>>>> upstream/main
                         },
                         modifier = Modifier.size(32.dp)
                     ) {
                         Icon(
                             Icons.Default.ContentCopy,
-<<<<<<< HEAD
                             contentDescription = "Copier l'URL",
-=======
-                            contentDescription = "Copy URL",
->>>>>>> upstream/main
                             tint = accentColor.copy(alpha = 0.7f),
                             modifier = Modifier.size(16.dp)
                         )
@@ -275,11 +220,7 @@ fun NfcAudioSpooferScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
 
-<<<<<<< HEAD
             Text("CHOISISSEZ LE TYPE DE PAGE", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
-=======
-            Text("SELECT PAGE TYPE", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
->>>>>>> upstream/main
             Spacer(modifier = Modifier.height(8.dp))
             Box(modifier = Modifier.fillMaxWidth()) {
                 Card(
@@ -292,11 +233,7 @@ fun NfcAudioSpooferScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-<<<<<<< HEAD
                             pages.find { it.first == pageType }?.second ?: "Choisissez une page",
-=======
-                            pages.find { it.first == pageType }?.second ?: "Select a page",
->>>>>>> upstream/main
                             modifier = Modifier.weight(1f),
                             color = Color.White
                         )
@@ -332,13 +269,8 @@ fun NfcAudioSpooferScreen(
                 uri?.let { viewModel.addCustomAudio(it) }
             }
 
-<<<<<<< HEAD
             Text("TABLE D'EFFETS SONORES", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
             Text("Connecté : $deviceCount appareil(s)", color = accentColor, fontSize = 11.sp, modifier = Modifier.fillMaxWidth())
-=======
-            Text("SOUND PANEL", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
-            Text("Connected: $deviceCount devices", color = accentColor, fontSize = 11.sp, modifier = Modifier.fillMaxWidth())
->>>>>>> upstream/main
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SoundButton("", Icons.Default.Email, accentColor) { viewModel.sendCommand("PLAY:iphone_message.mp3") }
@@ -369,11 +301,7 @@ fun NfcAudioSpooferScreen(
 
 
             var ttsText by remember { mutableStateOf("") }
-<<<<<<< HEAD
             Text("SYNTHÈSE VOCALE (TTS)", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
-=======
-            Text("TEXT TO SPEECH", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
->>>>>>> upstream/main
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -384,11 +312,7 @@ fun NfcAudioSpooferScreen(
                     value = ttsText,
                     onValueChange = { ttsText = it },
                     modifier = Modifier.weight(1f),
-<<<<<<< HEAD
                     placeholder = { Text("Entrez du texte...", fontSize = 14.sp) },
-=======
-                    placeholder = { Text("Enter text...", fontSize = 14.sp) },
->>>>>>> upstream/main
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White.copy(alpha = 0.05f),
                         unfocusedContainerColor = Color.White.copy(alpha = 0.05f),
@@ -412,22 +336,14 @@ fun NfcAudioSpooferScreen(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.height(52.dp)
                 ) {
-<<<<<<< HEAD
                     Text("Parler", color = Color.Black, fontWeight = FontWeight.Bold)
-=======
-                    Text("Say", color = Color.Black, fontWeight = FontWeight.Bold)
->>>>>>> upstream/main
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
 
-<<<<<<< HEAD
             Text("JOURNAUX DU TERMINAL", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
-=======
-            Text("TERMINAL LOGS", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
->>>>>>> upstream/main
             Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier

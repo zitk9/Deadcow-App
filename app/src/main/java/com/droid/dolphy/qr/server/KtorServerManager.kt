@@ -136,11 +136,7 @@ class KtorServerManager(private val context: Context) {
     @Synchronized
     fun start(port: Int = 8080, shouldContinue: () -> Boolean = { true }): Int {
         if (server != null) {
-<<<<<<< HEAD
             log("Serveur déjà démarré sur le port $actualPort")
-=======
-            log(AppLocale.getString(context, R.string.qr_log_1, actualPort))
->>>>>>> upstream/main
             return actualPort
         }
 
@@ -150,11 +146,7 @@ class KtorServerManager(private val context: Context) {
         } catch (_: Exception) {
         }
 
-<<<<<<< HEAD
         log("Initialisation Netty sur le port $port...")
-=======
-        log(AppLocale.getString(context, R.string.qr_log_2, port))
->>>>>>> upstream/main
         for (tryPort in port..(port + 30)) {
             if (isClosed || !shouldContinue()) return -1
             try {
@@ -181,11 +173,7 @@ class KtorServerManager(private val context: Context) {
                     intercept(ApplicationCallPipeline.Call) {
                         val remoteHost = call.request.local.remoteHost
                         if (!isLocalClient(remoteHost)) {
-<<<<<<< HEAD
                             log("Connexion externe rejetée : $remoteHost")
-=======
-                            log(AppLocale.getString(this@KtorServerManager.context, R.string.qr_log_3, remoteHost))
->>>>>>> upstream/main
                             call.respondText(
                                 "Local network only",
                                 ContentType.Text.Plain,
@@ -263,11 +251,7 @@ class KtorServerManager(private val context: Context) {
                                     }
                                     call.respondBytes(bytes, contentType)
                                 } catch (e: Exception) {
-<<<<<<< HEAD
                                     log("Erreur audio: ${e.message}")
-=======
-                                    log(AppLocale.getString(context, R.string.qr_log_4, e.message.orEmpty()))
->>>>>>> upstream/main
                                     call.respond(HttpStatusCode.NotFound)
                                 }
                             } else {
@@ -281,11 +265,7 @@ class KtorServerManager(private val context: Context) {
                             _deviceCount.value = sessions.size
                             val remote = call.request.local.remoteHost
                             if (isCustomHtmlMode()) {
-<<<<<<< HEAD
                                 log("Visite du site (WS) ip=$remote id=${sessionId.take(8)}")
-=======
-                                log(AppLocale.getString(context, R.string.qr_log_5, remote, sessionId.take(8)))
->>>>>>> upstream/main
                             }
                             try {
                                 for (frame in incoming) {
@@ -300,30 +280,18 @@ class KtorServerManager(private val context: Context) {
                                                 }
                                             }
                                             text == "CLIENT:VISIT" || text.startsWith("CLIENT:VISIT") -> {
-<<<<<<< HEAD
                                                 log("Visite du site: $remote")
-=======
-                                                log(AppLocale.getString(context, R.string.qr_log_6, remote))
->>>>>>> upstream/main
                                             }
                                             text.startsWith("CLIENT:TEXT:") -> {
                                                 val payload = text.removePrefix("CLIENT:TEXT:")
                                                 if (payload.isNotBlank()) {
-<<<<<<< HEAD
                                                     log("Saisie: $payload")
-=======
-                                                    log(AppLocale.getString(context, R.string.qr_log_7, payload))
->>>>>>> upstream/main
                                                 }
                                             }
                                             text.startsWith("CLIENT:INPUT:") -> {
                                                 val payload = text.removePrefix("CLIENT:INPUT:")
                                                 if (payload.isNotBlank()) {
-<<<<<<< HEAD
                                                     log("Saisie: $payload")
-=======
-                                                    log(AppLocale.getString(context, R.string.qr_log_7, payload))
->>>>>>> upstream/main
                                                 }
                                             }
                                         }
@@ -335,11 +303,7 @@ class KtorServerManager(private val context: Context) {
                                 sessions.remove(sessionId)
                                 _deviceCount.value = sessions.size
                                 if (isCustomHtmlMode()) {
-<<<<<<< HEAD
                                     log("Déconnexion du site id=${sessionId.take(8)}")
-=======
-                                    log(AppLocale.getString(context, R.string.qr_log_8, sessionId.take(8)))
->>>>>>> upstream/main
                                 }
                             }
                         }
@@ -358,11 +322,7 @@ class KtorServerManager(private val context: Context) {
                     }
                 }
                 if (!healthy) {
-<<<<<<< HEAD
                     log("Port $tryPort: échec health check, tentative sur port suivant…")
-=======
-                    log(AppLocale.getString(context, R.string.qr_log_9, tryPort))
->>>>>>> upstream/main
                     try {
                         engine.stop(0, 0, TimeUnit.MILLISECONDS)
                     } catch (_: Exception) {
@@ -370,18 +330,10 @@ class KtorServerManager(private val context: Context) {
                     server = null
                     continue
                 }
-<<<<<<< HEAD
                 log("Serveur démarré sur le port $tryPort (health OK)")
                 return tryPort
             } catch (e: Exception) {
                 log("Port $tryPort inaccessible: ${e.javaClass.simpleName}: ${e.message}")
-=======
-                log(AppLocale.getString(context, R.string.qr_log_10, tryPort))
-                _running.value = true
-                return tryPort
-            } catch (e: Exception) {
-                log(AppLocale.getString(context, R.string.qr_log_11, tryPort, e.javaClass.simpleName, e.message.orEmpty()))
->>>>>>> upstream/main
                 try {
                     server?.stop(0, 0, TimeUnit.MILLISECONDS)
                 } catch (_: Exception) {
@@ -389,11 +341,7 @@ class KtorServerManager(private val context: Context) {
                 server = null
             }
         }
-<<<<<<< HEAD
         log("Impossible de démarrer le serveur (tous les ports sont occupés)")
-=======
-        log(AppLocale.getString(context, R.string.qr_log_12))
->>>>>>> upstream/main
         return -1
     }
 
@@ -416,11 +364,7 @@ class KtorServerManager(private val context: Context) {
                 call.respondText(html, ContentType.Text.Html.withCharset(Charsets.UTF_8))
             }
         } catch (e: Exception) {
-<<<<<<< HEAD
             log("Erreur HTML: ${e.message}")
-=======
-            log(AppLocale.getString(context, R.string.qr_log_13, e.message.orEmpty()))
->>>>>>> upstream/main
             try {
                 call.respondText(FALLBACK_HTML, ContentType.Text.Html.withCharset(Charsets.UTF_8))
             } catch (_: Exception) {
@@ -440,11 +384,7 @@ class KtorServerManager(private val context: Context) {
         _serverUrl = null
         sessions.clear()
         _deviceCount.value = 0
-<<<<<<< HEAD
         log("Serveur local arrêté")
-=======
-        log(AppLocale.getString(context, R.string.qr_log_14))
->>>>>>> upstream/main
     }
 
     fun broadcast(message: String) {

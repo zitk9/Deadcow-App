@@ -110,7 +110,6 @@ fun NrfDeviceCard(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-<<<<<<< HEAD
                         if (!device.manufacturerName.isNullOrBlank() && (device.name == null || !device.name.contains(device.manufacturerName, ignoreCase = true))) {
                             Text(
                                 text = device.manufacturerName,
@@ -124,10 +123,6 @@ fun NrfDeviceCard(
                                 style = MaterialTheme.typography.labelSmall,
                                 color = colorScheme.onSurfaceVariant
                             )
-=======
-                        if (displayVendor != null) {
-                            VendorChip(vendor = displayVendor)
->>>>>>> upstream/main
                         }
                         Text(
                             text = getDeviceTypeLabel(device.type),
@@ -273,7 +268,6 @@ private fun ExpandedDetails(
                     interactionSource = interaction,
                     enabled = !device.isProfiling
                 ) {
-<<<<<<< HEAD
 
                     DetailRow(
                         label = "Adresse MAC",
@@ -287,23 +281,10 @@ private fun ExpandedDetails(
                         label = "Type d'appareil",
                         value = getDeviceTypeLabel(device.type),
                         valueColor = Color.White
-=======
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = stringResource(R.string.nrf_profile),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
->>>>>>> upstream/main
                     )
                 }
             }
 
-<<<<<<< HEAD
 
                     DetailRow(
                         label = "Puissance du signal",
@@ -662,34 +643,6 @@ private fun ExpandedDetails(
                             }
                         }
                     }
-=======
-            if (device.isConnected) {
-                val (interaction, scale) = rememberPressShrink(pressedScale = 0.96f)
-                Button(
-                    onClick = { onDisconnect(device) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(44.dp)
-                        .scale(scale),
-                    shape = RoundedCornerShape(22.dp),
-                    interactionSource = interaction,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorScheme.error,
-                        contentColor = colorScheme.onError
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.LinkOff,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = stringResource(R.string.nrf_disconnect),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
-                    )
->>>>>>> upstream/main
                 }
             }
         }

@@ -94,13 +94,8 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
                     ?: "imported.html"
                 val text = context.contentResolver.openInputStream(uri)?.use {
                     it.bufferedReader(Charsets.UTF_8).readText()
-<<<<<<< HEAD
                 } ?: throw IllegalStateException("Impossible de lire le fichier")
                 if (text.isBlank()) throw IllegalStateException("Fichier HTML vide")
-=======
-                } ?: throw IllegalStateException(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_1))
-                if (text.isBlank()) throw IllegalStateException(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_2))
->>>>>>> upstream/main
 
                 val dir = File(context.filesDir, "qr_spoofer")
                 if (!dir.exists()) dir.mkdirs()
@@ -116,19 +111,11 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
                     _customHtmlName.value = name
                     _pageType.value = KtorServerManager.PAGE_CUSTOM_HTML
                     applyCustomHtmlToServer(QrSpooferService.serverManager)
-<<<<<<< HEAD
                     _logs.value = (listOf("HTML importé: $name (${text.length} caractères)") + _logs.value).take(80)
                 }
             } catch (e: Exception) {
                 launch(Dispatchers.Main) {
                     _logs.value = (listOf("Erreur d'importation HTML: ${e.message}") + _logs.value).take(80)
-=======
-                    _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_3, name, text.length)) + _logs.value).take(80)
-                }
-            } catch (e: Exception) {
-                launch(Dispatchers.Main) {
-                    _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_4, e.message.orEmpty())) + _logs.value).take(80)
->>>>>>> upstream/main
                 }
             }
         }
@@ -158,19 +145,11 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
 
                 launch(Dispatchers.Main) {
                     loadCustomAudioList()
-<<<<<<< HEAD
                     _logs.value = (listOf("Audio ajouté: $fileName") + _logs.value).take(50)
                 }
             } catch (e: Exception) {
                 launch(Dispatchers.Main) {
                     _logs.value = (listOf("Erreur d'ajout audio: ${e.message}") + _logs.value).take(50)
-=======
-                    _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_5, fileName)) + _logs.value).take(50)
-                }
-            } catch (e: Exception) {
-                launch(Dispatchers.Main) {
-                    _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_6, e.message.orEmpty())) + _logs.value).take(50)
->>>>>>> upstream/main
                 }
             }
         }
@@ -205,11 +184,7 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
         if (type == KtorServerManager.PAGE_CUSTOM_HTML) {
             val f = customHtmlFile()
             if (!f.exists()) {
-<<<<<<< HEAD
                 _logs.value = (listOf("Veuillez d'abord importer un fichier HTML") + _logs.value).take(80)
-=======
-                _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_7)) + _logs.value).take(80)
->>>>>>> upstream/main
                 return
             }
         }
@@ -223,28 +198,17 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun startServer() {
-<<<<<<< HEAD
         if (_isStarted.value && QrSpooferService.serverManager != null) {
             _logs.value = (listOf("Le serveur local est déjà en cours d'exécution") + _logs.value).take(80)
-=======
-        if (startJob?.isActive == true || QrSpooferService.serverManager?.isRunning == true) {
-            _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_8)) + _logs.value).take(80)
->>>>>>> upstream/main
             return
         }
 
         val localIp = getLocalIpAddress()
         if (localIp == null) {
             _logs.value = listOf(
-<<<<<<< HEAD
                 "Réseau local non trouvé",
                 "Connectez-vous au Wi-Fi, Ethernet ou point d'accès et réessayez",
                 "Internet et serveurs externes non requis",
-=======
-                AppLocale.getString(getApplication<Application>(), R.string.qr_notice_9),
-                AppLocale.getString(getApplication<Application>(), R.string.qr_notice_10),
-                AppLocale.getString(getApplication<Application>(), R.string.qr_notice_11),
->>>>>>> upstream/main
             )
             return
         }
@@ -252,15 +216,9 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
         _isStarted.value = false
         _serverIp.value = null
         _logs.value = listOf(
-<<<<<<< HEAD
             "Démarrage du serveur local…",
             "Mode : réseau local uniquement",
             "Serveurs distants et tunnels désactivés",
-=======
-            AppLocale.getString(getApplication<Application>(), R.string.qr_notice_12),
-            AppLocale.getString(getApplication<Application>(), R.string.qr_notice_13),
-            AppLocale.getString(getApplication<Application>(), R.string.qr_notice_14),
->>>>>>> upstream/main
         )
 
         startJob?.cancel()
@@ -285,13 +243,8 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
                     launch(Dispatchers.Main) {
                         _logs.value = (
                             listOf(
-<<<<<<< HEAD
                                 "ERREUR: Le serveur local n'a pas pu démarrer",
                                 "Ports 8080–8110 occupés ou échec de vérification",
-=======
-                                AppLocale.getString(getApplication<Application>(), R.string.qr_notice_15),
-                                AppLocale.getString(getApplication<Application>(), R.string.qr_notice_16),
->>>>>>> upstream/main
                             ) + _logs.value
                             ).take(80)
                         _isStarted.value = false
@@ -307,13 +260,8 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
                     _serverIp.value = "$localIp:$startedPort"
                     _logs.value = (
                         listOf(
-<<<<<<< HEAD
                             "Serveur local prêt: $localUrl",
                             "QR code accessible aux appareils du même réseau",
-=======
-                            AppLocale.getString(getApplication<Application>(), R.string.qr_notice_17, localUrl),
-                            AppLocale.getString(getApplication<Application>(), R.string.qr_notice_18),
->>>>>>> upstream/main
                         ) + _logs.value
                         ).take(80)
                 }
@@ -325,11 +273,7 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
             } catch (e: Exception) {
                 getApplication<Application>().stopService(Intent(getApplication(), QrSpooferService::class.java))
                 launch(Dispatchers.Main) {
-<<<<<<< HEAD
                     _logs.value = (listOf("ERREUR: ${e.message}") + _logs.value).take(80)
-=======
-                    _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_19, e.message.orEmpty())) + _logs.value).take(80)
->>>>>>> upstream/main
                     _isStarted.value = false
                 }
             }
@@ -355,11 +299,7 @@ class QrAudioSpooferViewModel(application: Application) : AndroidViewModel(appli
             getApplication<Application>().stopService(intent)
         } catch (_: Exception) {
         }
-<<<<<<< HEAD
         _logs.value = (listOf("Serveur arrêté") + _logs.value).take(80)
-=======
-        _logs.value = (listOf(AppLocale.getString(getApplication<Application>(), R.string.qr_notice_20)) + _logs.value).take(80)
->>>>>>> upstream/main
     }
 
     fun sendCommand(command: String) {

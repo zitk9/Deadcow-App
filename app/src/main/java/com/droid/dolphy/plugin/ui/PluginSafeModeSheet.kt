@@ -81,11 +81,7 @@ fun PluginSafeModeSheet() {
             AccentButton(
                 onClick = {
                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-<<<<<<< HEAD
                     clipboard.setPrimaryClip(ClipData.newPlainText("Deadcow plugin crash log", PluginManager.safeModeCrashLog()))
-=======
-                    clipboard.setPrimaryClip(ClipData.newPlainText(clipboardLabel, PluginManager.safeModeCrashLog()))
->>>>>>> upstream/main
                     Toast.makeText(context, copiedMessage, Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),

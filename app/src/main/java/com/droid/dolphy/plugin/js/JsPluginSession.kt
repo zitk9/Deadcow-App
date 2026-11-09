@@ -200,11 +200,7 @@ class JsPluginSession(
         synchronized(this) {
             val sc = scope
             if (!started || sc == null) {
-<<<<<<< HEAD
                 return errorNode(lastError ?: "Plugin non chargé")
-=======
-                return errorNode(lastError ?: "Plugin is not loaded")
->>>>>>> upstream/main
             }
             return try {
                 withRhino { cx, _ ->
@@ -224,11 +220,7 @@ class JsPluginSession(
                             if (main is org.mozilla.javascript.Function) {
                                 main.call(cx, sc, sc, arrayOf(ui, api, stateObj))
                             } else {
-<<<<<<< HEAD
                                 return@withRhino errorNode("Fonction $fnName / screen_main introuvable")
-=======
-                                return@withRhino errorNode("Function $fnName / screen_main not found")
->>>>>>> upstream/main
                             }
                         }
                     }
@@ -236,11 +228,7 @@ class JsPluginSession(
                     if (node is UiNode.Empty || (node is UiNode.Scaffold && node.content is UiNode.Empty)) {
                         Log.w(TAG, "render produced empty tree for ${manifest.id}/$screenId")
                         if (lastError != null) errorNode(lastError!!)
-<<<<<<< HEAD
                         else errorNode("Interface UI vide (vérifiez return ui.scaffold({ content: ... }))")
-=======
-                        else errorNode("Empty UI (check return ui.scaffold({ content: ... }))")
->>>>>>> upstream/main
                     } else {
                         lastError = null
                         node

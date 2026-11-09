@@ -455,17 +455,11 @@ fun CustomizeAnimationsScreen(
                                                 modifier = Modifier.size(11.dp)
                                             )
                                             Text(
-<<<<<<< HEAD
                                                 text = if (anim.isWatchDogs) "WatchDogs" else "Deadcow",
                                                 style = MaterialTheme.typography.labelSmall,
                                                 fontSize = 9.sp,
                                                 fontWeight = FontWeight.Medium,
                                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
-=======
-                                                text = stringResource(R.string.customize_animations_permanent_badge),
-                                                fontSize = 10.sp,
-                                                fontWeight = FontWeight.Bold
->>>>>>> upstream/main
                                             )
                                         }
                                     }

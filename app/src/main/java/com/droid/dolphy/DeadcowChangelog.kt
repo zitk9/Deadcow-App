@@ -32,9 +32,21 @@ object DeadcowChangelog {
 
     val ENTRIES = listOf(
         ChangelogEntry(
-            version = "v1.26",
+            version = "v1.28",
             date = "Novembre 2026",
             isCurrent = true,
+            items = listOf(
+                "🛡️ Résolution intégrale des conflits de code : Nettoyage et suppression de tous les résidus de merge upstream sur l'ensemble du projet (Manifest, Composants Bluetooth, NFC, IR, CamWatch).",
+                "⚙️ Correction du Manifest Android & AAPT2 : Suppression de l'erreur XML de syntaxe (attributs de service dupliqués et markers) débloquant la compilation de l'APK en Release et Debug.",
+                "📱 Sécurisation des récepteurs Android 14+ : Ajustement de tous les Context.registerReceiver avec ContextCompat.RECEIVER_EXPORTED (prévention des plantages système au démarrage).",
+                "🔄 Automatisation CI/CD fiabilisée : Correction du script de synchronisation GitHub Actions pour garantir une résolution pérenne des conflits sans pollution du code source.",
+                "🛴 Module Trottinettes stabilisé : Maintien de la détection BLE Xiaomi, Ninebot/Segway et balises flottes en libre-service."
+            )
+        ),
+        ChangelogEntry(
+            version = "v1.26",
+            date = "Novembre 2026",
+            isCurrent = false,
             items = listOf(
                 "🛴 Refonte et correctifs du module Trottinette (ScooterHack) : Résolution du bug de détection BLE sur Android 12+ (suppression du filtre matériel restrictif bloquant les trames publicitaires).",
                 "🔓 Découverte universelle BLE : Détection et reconnaissance automatique des trottinettes Xiaomi (M365, Pro, 1S, Essential, Mi 3), Ninebot / Segway (ES1-ES4, Max G30, séries F/D/GT), Okai et autres marques.",

@@ -1053,11 +1053,7 @@ fun OtherScreen(navController: NavController, spamViewModel: SpamViewModel) {
                         )
                     }
                     Text(
-<<<<<<< HEAD
                         text = info.description.ifEmpty { "Aucune description disponible" },
-=======
-                        text = info.description.ifEmpty { "No description available" },
->>>>>>> upstream/main
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center

@@ -157,11 +157,7 @@ object PluginManager {
 
     fun sharePlugin(context: Context, pluginId: String): Result<Unit> {
         return runCatching {
-<<<<<<< HEAD
             val entry = loaded[pluginId] ?: error("Plugin introuvable")
-=======
-            val entry = loaded[pluginId] ?: error("Plugin not found")
->>>>>>> upstream/main
             val shareDir = File(appContext.cacheDir, "shared_plugins").apply { mkdirs() }
             val file = File(shareDir, "${entry.manifest.id}.dolphyplugin")
             file.writeText(entry.sourceCode, Charsets.UTF_8)
@@ -185,34 +181,8 @@ object PluginManager {
             val acceptedByHints = fileName.endsWith(".dolphyplugin", true) ||
                 fileName.endsWith(".js", true) ||
                 uri.path?.endsWith(".dolphyplugin", true) == true ||
-<<<<<<< HEAD
                 mime.equals("application/x-dolphy-plugin", true)
             if (!accepted) return Result.failure(IllegalArgumentException("Fichiers .dolphyplugin uniquement"))
-=======
-                uri.path?.endsWith(".js", true) == true ||
-                mime.equals("application/x-dolphy-plugin", true) ||
-                mime.contains("javascript", true) ||
-                mime.contains("python", true)
-            if (!acceptedByHints) {
-                val sniff = runCatching {
-                    appContext.contentResolver.openInputStream(uri)?.use { input ->
-                        val buffer = ByteArray(8192)
-                        val read = input.read(buffer)
-                        if (read <= 0) null else String(buffer, 0, read, Charsets.UTF_8)
-                    }
-                }.getOrNull()
-                val looksLikeSource = sniff != null && !sniff.contains('\u0000') && (
-                    sniff.contains("manifest") ||
-                        sniff.contains("def ") ||
-                        sniff.contains("import ") ||
-                        sniff.contains("function") ||
-                        sniff.contains("const ")
-                    )
-                if (!looksLikeSource) {
-                    return Result.failure(IllegalArgumentException("Only .dolphyplugin files are supported"))
-                }
-            }
->>>>>>> upstream/main
             val bytes = appContext.contentResolver.openInputStream(uri)?.use { input ->
                 val output = ByteArrayOutputStream()
                 val buffer = ByteArray(8192)
@@ -222,24 +192,14 @@ object PluginManager {
                     if (read < 0) break
                     total += read
                     if (total > MAX_PLUGIN_SOURCE_BYTES) {
-<<<<<<< HEAD
                         return Result.failure(IllegalArgumentException("Fichier de plugin trop volumineux"))
-=======
-                        return Result.failure(IllegalArgumentException("Plugin file is too large"))
->>>>>>> upstream/main
                     }
                     output.write(buffer, 0, read)
                 }
                 output.toByteArray()
-<<<<<<< HEAD
             } ?: return Result.failure(IllegalStateException("Impossible de lire le fichier"))
             val raw = bytes.toString(Charsets.UTF_8)
             if (raw.isBlank()) return Result.failure(IllegalArgumentException("Fichier vide"))
-=======
-            } ?: return Result.failure(IllegalStateException("Failed to read file"))
-            val raw = bytes.toString(Charsets.UTF_8)
-            if (raw.isBlank()) return Result.failure(IllegalArgumentException("File is empty"))
->>>>>>> upstream/main
             val fallbackId = fileName.substringBeforeLast('.')
                 .replace(Regex("[^A-Za-z0-9_-]"), "_")
                 .lowercase()
@@ -307,15 +267,9 @@ object PluginManager {
         return sessions[pluginId]?.renderScreen(screenId)
             ?: UiNode.Column(
                 listOf(
-<<<<<<< HEAD
                     UiNode.Text("Plugin non installé", "headlineSmall"),
                     UiNode.Spacer(8f),
                     UiNode.Text("id=$pluginId — importez le fichier .dolphyplugin via la Gestion des plugins", "bodyMedium"),
-=======
-                    UiNode.Text("Plugin not installed", "headlineSmall"),
-                    UiNode.Spacer(8f),
-                    UiNode.Text("id=$pluginId — import a .dolphyplugin via Plugin Manager", "bodyMedium"),
->>>>>>> upstream/main
                 ),
                 padding = 16f,
                 spacing = 8f,
@@ -338,19 +292,11 @@ object PluginManager {
                         val read = input.read(buffer)
                         if (read < 0) break
                         total += read
-<<<<<<< HEAD
                         if (total > MAX_PLUGIN_SOURCE_BYTES) throw IllegalArgumentException("Fichier de plugin trop volumineux")
                         output.write(buffer, 0, read)
                     }
                 }
             } ?: return Result.failure(IllegalStateException("Impossible de lire le fichier"))
-=======
-                        if (total > MAX_PLUGIN_SOURCE_BYTES) throw IllegalArgumentException("Plugin file is too large")
-                        output.write(buffer, 0, read)
-                    }
-                }
-            } ?: return Result.failure(IllegalStateException("Failed to read file"))
->>>>>>> upstream/main
             val result = installFromFile(tmp)
             tmp.delete()
             result
@@ -361,17 +307,10 @@ object PluginManager {
     }
 
     fun installFromFile(sourceFile: File): Result<PluginManifest> {
-<<<<<<< HEAD
         if (!sourceFile.exists()) return Result.failure(IllegalArgumentException("Fichier introuvable"))
         return try {
             val raw = sourceFile.readText(Charsets.UTF_8)
             if (raw.isBlank()) return Result.failure(IllegalArgumentException("Fichier vide"))
-=======
-        if (!sourceFile.exists()) return Result.failure(IllegalArgumentException("File not found"))
-        return try {
-            val raw = sourceFile.readText(Charsets.UTF_8)
-            if (raw.isBlank()) return Result.failure(IllegalArgumentException("File is empty"))
->>>>>>> upstream/main
             val fallbackId = sourceFile.nameWithoutExtension
                 .replace(Regex("[^A-Za-z0-9_-]"), "_")
                 .lowercase()
@@ -408,11 +347,7 @@ object PluginManager {
         saveMeta(manifest, enabled = shouldEnable, runtime = runtime, pinned = wasPinned)
 
         if (!saved.exists() || saved.length() == 0L) {
-<<<<<<< HEAD
             return Result.failure(IllegalStateException("Impossible d'enregistrer le plugin sur le stockage"))
-=======
-            return Result.failure(IllegalStateException("Failed to save plugin to disk"))
->>>>>>> upstream/main
         }
 
         if (!shouldEnable) {
@@ -426,11 +361,7 @@ object PluginManager {
             updateMetaEnabled(manifest.id, false)
             loaded[manifest.id] = LoadedPlugin(manifest, saved, raw, enabled = false, runtime = runtime, pinned = wasPinned)
             publish()
-<<<<<<< HEAD
             return Result.failure(IllegalStateException("Dépendances manquantes ou désactivées : ${missingDependencies.joinToString()}"))
-=======
-            return Result.failure(IllegalStateException("Libraries not installed or disabled: ${missingDependencies.joinToString()}"))
->>>>>>> upstream/main
         }
 
         val session = try {
@@ -446,11 +377,7 @@ object PluginManager {
             publish()
             return Result.failure(
                 IllegalStateException(
-<<<<<<< HEAD
                     "Plugin enregistré, mais le lancement a échoué : ${t.javaClass.simpleName}: ${t.message}",
-=======
-                    "Plugin saved but failed to start: ${t.javaClass.simpleName}: ${t.message}",
->>>>>>> upstream/main
                     t,
                 ),
             )

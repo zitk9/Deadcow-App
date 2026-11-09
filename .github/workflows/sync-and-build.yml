@@ -68,13 +68,8 @@ jobs:
           if [ "$LOCAL_REV" != "$UPSTREAM_REV" ] || [ "${{ github.event.inputs.force_sync }}" == "true" ]; then
             echo "Attempting to merge upstream/${UPSTREAM_BRANCH}..."
             git merge upstream/${UPSTREAM_BRANCH} -m "chore(sync): merge upstream changes from official repo" || {
-              echo "Resolving merge conflicts favoring Deadcow branding..."
-              git checkout --ours app/src/main/res/values/strings.xml || true
-              git checkout --ours app/src/main/res/values-en/strings.xml || true
-              git checkout --ours app/src/main/res/values-fr/strings.xml || true
-              git checkout --ours app/src/main/res/values-ru/strings.xml || true
-              git checkout --ours app/src/main/java/com/droid/dolphy/AppLocale.kt || true
-              git checkout --ours app/build.gradle.kts || true
+              echo "Resolving merge conflicts favoring Deadcow customizations..."
+              git checkout --ours .
               git add -A
               git commit -m "chore(sync): resolve upstream merge keeping Deadcow customizations"
             }

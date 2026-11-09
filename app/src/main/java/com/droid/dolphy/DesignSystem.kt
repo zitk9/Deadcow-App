@@ -561,7 +561,6 @@ fun DeviceItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-<<<<<<< HEAD
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = resolved.name,
@@ -579,12 +578,6 @@ fun DeviceItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-=======
-        Text(
-            text = (try { device.name } catch (_: SecurityException) { null }) ?: device.address,
-            modifier = Modifier.weight(1f)
-        )
->>>>>>> upstream/main
     }
 }
 

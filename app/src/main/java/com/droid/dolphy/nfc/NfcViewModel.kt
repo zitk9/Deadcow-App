@@ -52,7 +52,6 @@ class NfcViewModel(private val app: Application) : AndroidViewModel(app) {
     val writeOutcome: StateFlow<NfcWriteOutcome> = _writeOutcome.asStateFlow()
 
 
-<<<<<<< HEAD
     private val _masterKeyRunning = MutableStateFlow(false)
     val masterKeyRunning = _masterKeyRunning.asStateFlow()
 
@@ -133,8 +132,6 @@ class NfcViewModel(private val app: Application) : AndroidViewModel(app) {
     }
 
 
-=======
->>>>>>> upstream/main
     private var lastWriteForRetry: NdefMessage? = null
 
     fun scanDetails(id: Long): Flow<NfcScanEntity?> = dao.observeById(id)

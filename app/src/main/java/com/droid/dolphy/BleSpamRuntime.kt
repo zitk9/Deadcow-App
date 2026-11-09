@@ -251,11 +251,7 @@ object BleSpamRuntime {
             .setContentTitle("BLE Spam")
             .setContentText(text)
             .setOngoing(true)
-<<<<<<< HEAD
             .addAction(0, context.getString(R.string.stop), stopPending)
-=======
-            .addAction(0, "Stop", stopPending)
->>>>>>> upstream/main
             .build()
 
         if (android.os.Build.VERSION.SDK_INT >= 33 &&

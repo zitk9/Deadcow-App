@@ -36,7 +36,6 @@ import com.droid.dolphy.R
 @Composable
 fun PluginAboutScreen(navController: NavController) {
     val accent = MaterialTheme.colorScheme.primary
-<<<<<<< HEAD
     MaterialBackground(accentColor = accent) {
         Column(Modifier.fillMaxSize()) {
             SectionTopBar(
@@ -146,38 +145,6 @@ fun PluginAboutScreen(navController: NavController) {
                 item {
                     CodeBlock(
                         """
-=======
-    BlurHeaderBox(
-        title = stringResource(R.string.plugin_about_title),
-        onBack = { navController.popBackStack() },
-        accentColor = accent,
-    ) { headerPadding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(top = headerPadding + 8.dp, bottom = 120.dp),
-        ) {
-            item {
-                GuideCard(
-                    icon = Icons.Default.Code,
-                    title = stringResource(R.string.plugin_about_guide_title),
-                    body = stringResource(R.string.plugin_about_guide_body),
-                    accent = accent,
-                )
-            }
-            item { SectionTitle(stringResource(R.string.pabout_section_minimal)) }
-            item {
-                CodeBlock(
-                    """
-                    __id__ = "radio_lab"
-                    __name__ = "Radio Lab"
-                    __version__ = "1.0.0"
-                    __author__ = "Developer"
-                    __description__ = "Bluetooth and Wi-Fi toolkit"
-                    __icon__ = "filled:bluetooth_searching"
-
-                    class RadioLab(BasePlugin):
->>>>>>> upstream/main
                         def on_plugin_load(self):
                             self.add_module(
                                 title="Radio Lab",
@@ -185,7 +152,6 @@ fun PluginAboutScreen(navController: NavController) {
                                 icon="bluetooth",
                                 section="BLUETOOTH"
                             )
-<<<<<<< HEAD
                             return {"handled": True, "ok": ok}
                         """.trimIndent(),
                     )
@@ -204,145 +170,6 @@ fun PluginAboutScreen(navController: NavController) {
                         """
                         enabled = self.get_setting("enabled", True)
                         self.set_setting("enabled", not enabled)
-=======
->>>>>>> upstream/main
-
-                        def screen_main(self, ui, api, state):
-                            return ui.scaffold(
-                                title="Radio Lab",
-                                content=ui.column([
-                                    ui.card([
-                                        ui.text("Bluetooth", "titleLarge"),
-                                        ui.button("Scan", self.scan, fill_max_width=True)
-                                    ])
-                                ], padding=16, spacing=12, fill_max_size=True)
-                            )
-
-                        def scan(self):
-                            self.toast("Starting scan")
-                    """.trimIndent(),
-                )
-            }
-            item { SectionTitle(stringResource(R.string.pabout_section_full_access)) }
-            item {
-                GuideCard(
-                    icon = Icons.Default.Terminal,
-                    title = stringResource(R.string.pabout_title_root),
-                    body = stringResource(R.string.pabout_body_root),
-                    accent = accent,
-                )
-            }
-            item {
-                CodeBlock(
-                    """
-                    from java import jclass
-
-                    BluetoothAdapter = jclass("android.bluetooth.BluetoothAdapter")
-                    adapter = BluetoothAdapter.getDefaultAdapter()
-                    result = self.root("id; getenforce; ls /sys/class/udc")
-                    context = self.api.getContext()
-                    app_class = self.api.getClassLoader().loadClass(
-                        "com.droid.dolphy.MainActivity"
-                    )
-                    """.trimIndent(),
-                )
-            }
-            item { SectionTitle(stringResource(R.string.pabout_section_radio)) }
-            item {
-                GuideCard(
-                    icon = Icons.Default.Bluetooth,
-                    title = stringResource(R.string.pabout_title_bluetooth),
-                    body = stringResource(R.string.pabout_body_bluetooth),
-                    accent = accent,
-                )
-            }
-            item {
-                GuideCard(
-                    icon = Icons.Default.Wifi,
-                    title = stringResource(R.string.pabout_title_wifi),
-                    body = stringResource(R.string.pabout_body_wifi),
-                    accent = accent,
-                )
-            }
-            item { SectionTitle(stringResource(R.string.pabout_section_hooking)) }
-            item {
-                GuideCard(
-                    icon = Icons.Default.Code,
-                    title = stringResource(R.string.pabout_title_hooks),
-                    body = stringResource(R.string.pabout_body_hooks),
-                    accent = accent,
-                )
-            }
-            item {
-                CodeBlock(
-                    """
-                    def on_plugin_load(self):
-                        self.hook_screen("ir_*", "ir_tools", "fab", 50)
-                        self.hook_action("infrared.transmit", 50)
-                        self.provide_service("infrared.transmitter", 100)
-
-                    def screen_ir_tools(self, ui, api, state):
-                        return ui.icon_button("usb", self.open_usb)
-
-                    def hook_infrared_transmit(self, payload):
-                        payload["source"] = "plugin"
-                        return {"payload": payload}
-
-                    def service_infrared_transmitter_available(self, payload):
-                        return {"available": self.usb_connected()}
-
-                    def service_infrared_transmitter_transmit(self, payload):
-                        if not self.usb_connected():
-                            return {"handled": False}
-                        ok = self.send_usb(
-                            payload["frequency"],
-                            payload["pattern"]
-                        )
-                        return {"handled": True, "ok": ok}
-                    """.trimIndent(),
-                )
-            }
-            item {
-                GuideCard(
-                    icon = Icons.Default.Security,
-                    title = stringResource(R.string.pabout_title_hook_modes),
-                    body = stringResource(R.string.pabout_body_hook_modes),
-                    accent = accent,
-                )
-            }
-            item { SectionTitle(stringResource(R.string.pabout_section_state)) }
-            item {
-                CodeBlock(
-                    """
-                    enabled = self.get_setting("enabled", True)
-                    self.set_setting("enabled", not enabled)
-
-                    self.api.registerSettings(
-                        "Radio Lab",
-                        '[{"type":"switch","key":"enabled","title":"Enabled","default":true}]'
-                    )
-<<<<<<< HEAD
-                }
-                item {
-                    GuideCard(
-                        icon = Icons.Default.Security,
-                        title = "Modèle de sécurité de confiance",
-                        body = "Les plugins Python s'exécutent au sein du processus Deadcow et disposent des permissions de l'application, des données internes, du Root et de Shizuku. N'installez que du code audité ou en qui vous avez totale confiance.",
-                        accent = accent,
-                    )
-                }
-=======
-                    """.trimIndent(),
-                )
-            }
-            item {
-                GuideCard(
-                    icon = Icons.Default.Security,
-                    title = stringResource(R.string.pabout_title_trusted),
-                    body = stringResource(R.string.pabout_body_trusted),
-                    accent = accent,
-                )
->>>>>>> upstream/main
             }
         }
     }

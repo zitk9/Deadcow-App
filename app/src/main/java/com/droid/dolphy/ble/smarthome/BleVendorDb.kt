@@ -8,7 +8,6 @@ object BleVendorDb {
     @Volatile
     private var cached: Map<String, String>? = null
 
-<<<<<<< HEAD
     fun getVendorLabel(context: Context? = null, macAddress: String?): String {
         if (macAddress.isNullOrBlank()) return "Unknown"
         val clean = macAddress.uppercase(Locale.ROOT)
@@ -26,12 +25,6 @@ object BleVendorDb {
         val ctx = context ?: runCatching { DolphyApplication.instance }.getOrNull()
         val db = cached ?: (ctx?.let { load(it) } ?: emptyMap()).also { if (it.isNotEmpty()) cached = it }
         return db[oui] ?: "Unknown"
-=======
-    fun getVendorLabel(context: Context, macAddress: String?): String {
-        val mac = macAddress?.uppercase(Locale.ROOT) ?: return "Unknown"
-        val db = cached ?: load(context).also { cached = it }
-        return VendorPrefixes.lookup(db, mac) ?: "Unknown"
->>>>>>> upstream/main
     }
 
     fun getCompanyIdentifierName(companyId: Int): String? = when (companyId) {
@@ -114,7 +107,6 @@ object BleVendorDb {
         return runCatching {
             val map = HashMap<String, String>(40_000)
             context.assets.open("ble/nmap-mac-prefixes.txt").bufferedReader().useLines { lines ->
-<<<<<<< HEAD
                 lines.forEach { rawLine ->
                     val line = rawLine.trim()
                     if (line.isEmpty() || line.startsWith("#")) return@forEach
@@ -127,10 +119,6 @@ object BleVendorDb {
                         val oui = hex.take(6).chunked(2).joinToString(":") { it.uppercase(Locale.ROOT) }
                         map[oui] = vendor
                     }
-=======
-                lines.forEach { line ->
-                    VendorPrefixes.parseLine(line)?.let { (oui, vendor) -> map[oui] = vendor }
->>>>>>> upstream/main
                 }
             }
             map

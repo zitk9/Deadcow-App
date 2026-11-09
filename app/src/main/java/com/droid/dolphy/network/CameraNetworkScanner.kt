@@ -101,11 +101,7 @@ object CameraNetworkScanner {
             }
         }
 
-<<<<<<< HEAD
         onProgress(ScanProgress(0.02f, "Préparation du réseau Wi-Fi…", 0))
-=======
-        onProgress(ScanProgress(0.02f, "Preparing network…", 0))
->>>>>>> upstream/main
         val subnet = localSubnetPrefix()
         val self = localIp()
         val multicastLock = try {
@@ -136,11 +132,7 @@ object CameraNetworkScanner {
                 onProgress(ScanProgress(0.2f, "ONVIF: ${found.size}", found.size))
             }
 
-<<<<<<< HEAD
             onProgress(ScanProgress(0.28f, "Recherche de caméras RTSP / NVR…", found.size))
-=======
-            onProgress(ScanProgress(0.28f, "Scanning RTSP / NVR ports…", found.size))
->>>>>>> upstream/main
 
             if (subnet != null && coroutineContext.isActive) {
                 val hosts = (1..254).map { "$subnet.$it" }
@@ -185,11 +177,7 @@ object CameraNetworkScanner {
                         onProgress(
                             ScanProgress(
                                 frac.coerceIn(0f, 0.92f),
-<<<<<<< HEAD
                                 "$done / ${hosts.size} vérifiés…",
-=======
-                                "Checked $done / ${hosts.size}…",
->>>>>>> upstream/main
                                 found.size,
                             )
                         )
@@ -197,11 +185,7 @@ object CameraNetworkScanner {
                 }
             }
 
-<<<<<<< HEAD
             onProgress(ScanProgress(0.95f, "Identification des constructeurs (MAC)…", found.size))
-=======
-            onProgress(ScanProgress(0.95f, "Resolving MAC…", found.size))
->>>>>>> upstream/main
             delay(300)
             found.values.toList().forEach { cam ->
                 val mac = cam.mac ?: getMacFromArp(cam.ip)
@@ -219,11 +203,7 @@ object CameraNetworkScanner {
                 .sortedBy { it.ip }
             found.clear()
             cleaned.forEach { found[it.ip] = it }
-<<<<<<< HEAD
             onProgress(ScanProgress(1f, "Scan terminé", found.size))
-=======
-            onProgress(ScanProgress(1f, "Done", found.size))
->>>>>>> upstream/main
         } finally {
             try {
                 if (multicastLock?.isHeld == true) multicastLock.release()

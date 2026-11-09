@@ -107,13 +107,8 @@ fun DolphyZeroScreen(navController: NavController) {
                 ZeroMenuItem("IR", "IR Storm", ZeroAction.Navigate("ir_storm")),
                 ZeroMenuItem("IJ", "IR Jammer", ZeroAction.Navigate("ir_jammer")),
                 ZeroMenuItem("AR", "Archive", ZeroAction.Navigate("user_ir_remotes")),
-<<<<<<< HEAD
                 ZeroMenuItem("JS", "JS Runner", ZeroAction.ShowMessage("JS Runner non disponible sous Android")),
                 ZeroMenuItem("UP", "Updater", ZeroAction.ShowMessage("Mise à jour via l'updater Deadcow"))
-=======
-                ZeroMenuItem("JS", "JS Runner", ZeroAction.ShowMessage("JS Runner is not implemented in the Android version")),
-                ZeroMenuItem("UP", "Updater", ZeroAction.ShowMessage("Updater is firmware-only"))
->>>>>>> upstream/main
             )
         )
     }
@@ -126,11 +121,7 @@ fun DolphyZeroScreen(navController: NavController) {
                 ZeroMenuItem("IR", "Infrared", ZeroAction.Navigate("ir_flipper_home")),
                 ZeroMenuItem("RF", "125 kHz RFID", ZeroAction.Navigate("nfc_tools")),
                 ZeroMenuItem("NF", "NFC", ZeroAction.Navigate("nfc_tools")),
-<<<<<<< HEAD
                 ZeroMenuItem("U2", "U2F", ZeroAction.ShowMessage("U2F non supporté sous Android")),
-=======
-                ZeroMenuItem("U2", "U2F", ZeroAction.ShowMessage("U2F is not supported by the Android version")),
->>>>>>> upstream/main
                 ZeroMenuItem("AR", "Archive", ZeroAction.Navigate("user_ir_remotes"))
             )
         )

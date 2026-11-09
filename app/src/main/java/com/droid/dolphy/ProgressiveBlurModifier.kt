@@ -19,7 +19,6 @@ enum class BlurDirection {
     BOTTOM
 }
 
-<<<<<<< HEAD
 
 
 
@@ -44,18 +43,6 @@ fun ProgressiveBlurContent(
         android.os.Build.MANUFACTURER.equals("samsung", ignoreCase = true) ||
         android.os.Build.BRAND.equals("samsung", ignoreCase = true)
     }
-=======
-/**
- *
- */
-@Language("AGSL")
-private val PROGRESSIVE_BLUR_SKSL = """
-    uniform shader content;
-    uniform float blurRadius;
-    uniform float height;
-    uniform float contentHeight;
-    uniform int isTop;
->>>>>>> upstream/main
 
     half4 main(float2 fragCoord) {
         float progress;

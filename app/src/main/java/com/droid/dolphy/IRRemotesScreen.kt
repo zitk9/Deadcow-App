@@ -651,11 +651,7 @@ fun IRFlipperHome(navController: NavController) {
         Triple(Icons.Default.FolderOpen, userRemotesTitle, "other/user_ir_remotes"),
     )
     val catRows = buildList {
-<<<<<<< HEAD
         add(Triple(Icons.Default.Tv, res.getString(R.string.tv_remotes_label), "other/ir_tv_home"))
-=======
-        add(Triple(Icons.Default.Tv, "TVs", "other/ir_tv_home"))
->>>>>>> upstream/main
         categories!!.forEach { catId ->
             add(
                 Triple(
@@ -3395,15 +3391,12 @@ fun IRJammerScreen(navController: NavController? = null) {
                                                 }
                                                 delay(8)
                                             }
-<<<<<<< HEAD
                                             withContext(Dispatchers.Main) {
                                                 sentCommands = index + 1
                                                 statusMessage = context.getString(R.string.ir_jammer_sending_signals) +
                                                     " · cycle $cycle"
                                             }
                                             delay(8)
-=======
->>>>>>> upstream/main
                                         }
                                     } catch (_: kotlinx.coroutines.CancellationException) {
                                     } finally {

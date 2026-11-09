@@ -304,11 +304,7 @@ class JsUiBuilder {
                     title = strProp(props, "title", ""),
                     message = strProp(props, "message", strProp(props, "text", "")),
                     confirmText = strProp(props, "confirmText", "OK"),
-<<<<<<< HEAD
                     dismissText = strProp(props, "dismissText", "Annuler"),
-=======
-                    dismissText = strProp(props, "dismissText", "Cancel"),
->>>>>>> upstream/main
                     onConfirmId = reg(props["onConfirm"]),
                     onDismissId = reg(props["onDismiss"]),
                     buttons = buttons,

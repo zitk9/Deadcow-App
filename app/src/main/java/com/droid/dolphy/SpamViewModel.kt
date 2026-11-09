@@ -556,7 +556,12 @@ class SpamViewModel(private val application: Application) : AndroidViewModel(app
     init {
         BleSpamRuntime.init(application)
         checkBluetoothState()
-        application.registerReceiver(bluetoothStateReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+        androidx.core.content.ContextCompat.registerReceiver(
+            application,
+            bluetoothStateReceiver,
+            IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED),
+            androidx.core.content.ContextCompat.RECEIVER_EXPORTED
+        )
         val discoveryFilter = IntentFilter().apply {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)

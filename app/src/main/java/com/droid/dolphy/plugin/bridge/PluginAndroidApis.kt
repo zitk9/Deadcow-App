@@ -717,11 +717,8 @@ class PluginAndroidApis(
     fun hasCamera(): Boolean = hasFeature(PackageManager.FEATURE_CAMERA_ANY)
         || hasFeature(PackageManager.FEATURE_CAMERA)
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> upstream/main
     private fun sanitizeAssetPath(path: String): String {
         return path.trim()
             .replace('\\', '/')
