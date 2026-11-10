@@ -1,0 +1,1438 @@
+
+Welcome to Gradle 8.11.1!
+
+Here are the highlights of this release:
+ - Parallel load and store for Configuration Cache
+ - Java compilation errors at the end of the build output
+ - Consolidated report for warnings and deprecations
+
+For more details see https://docs.gradle.org/8.11.1/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.11.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :app
+WARNING: The option setting 'android.overridePathCheck=true' is experimental.
+The current default is 'false'.
+WARNING: The option setting 'android.enableResourceOptimizations=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 9.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.lint.useK2Uast=false' is experimental.
+
+> Task :app:syncFlipperIrAssets NO-SOURCE
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:mergeReleaseArtProfile
+> Task :app:buildKotlinToolingMetadata
+> Task :app:expandReleaseL8ArtProfileWildcards
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateReleaseBuildConfig
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:extractReleasePythonBuildPackages
+> Task :app:installReleasePythonRequirements
+> Task :app:mergeReleasePythonSources
+> Task :app:generateReleasePythonProxies
+> Task :app:generateReleaseResValues
+> Task :app:checkReleaseAarMetadata
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:generateReleaseResources
+> Task :app:packageReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :app:parseReleaseLocalResources
+
+> Task :app:processReleaseMainManifest
+/home/runner/work/Deadcow-App/Deadcow-App/app/src/main/AndroidManifest.xml:89:9-41 Warning:
+	android:extractNativeLibs should not be specified in this source AndroidManifest.xml file. See https://d.android.com/guide/topics/manifest/application-element#extractNativeLibs for more information.
+The AGP Upgrade Assistant can remove the attribute from the AndroidManifest.xml file and update the build file accordingly. See https://d.android.com/studio/build/agp-upgrade-assistant for more information.
+/home/runner/work/Deadcow-App/Deadcow-App/app/src/main/AndroidManifest.xml:79:5-270:19 Warning:
+	application@android:extractNativeLibs was tagged at AndroidManifest.xml:79 to replace other declarations but no other declaration present
+
+> Task :app:processReleaseManifest
+> Task :app:mergeReleaseResources
+> Task :app:processReleaseManifestForPackage
+> Task :app:javaPreCompileRelease
+> Task :app:extractProguardFiles
+> Task :app:mergeReleaseStartupProfile
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:processReleaseResources
+> Task :app:generateReleasePythonMiscAssets
+> Task :app:generateReleasePythonRequirementsAssets
+> Task :app:generateReleasePythonSourceAssets
+> Task :app:generateReleasePythonBuildAssets
+> Task :app:mergeReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:generateReleasePythonJniLibs
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:mergeReleaseNativeLibs
+
+> Task :app:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libchaquopy_java.so, libcrypto_chaquopy.so, libcrypto_python.so, libdatastore_shared_counter.so, libpython3.11.so, libsqlite3_chaquopy.so, libsqlite3_python.so, libssl_chaquopy.so, libssl_python.so.
+
+> Task :app:compressReleaseAssets
+
+> Task :app:kspReleaseKotlin
+w: [ksp] /home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/db/NfcDatabase.kt:13: Schema export directory was not provided to the annotation processor so Room cannot export the schema. You can either provide `room.schemaLocation` annotation processor argument by applying the Room Gradle plugin (id 'androidx.room') OR set exportSchema to false.
+
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothJammerScreen.kt:231:49 Unresolved reference 'bt_jammer_scanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothJammerScreen.kt:241:49 Unresolved reference 'bt_jammer_found'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothJammerScreen.kt:243:49 Unresolved reference 'bt_jammer_tap_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:38:55 Unresolved reference 'bluetooth_permission_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:41:46 Unresolved reference 'bluetooth_permission_explanation'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:42:101 Unresolved reference 'bluetooth_permission_grant'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:45:51 Unresolved reference 'bluetooth_permission_settings'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothSpamScreens.kt:129:75 Unresolved reference 'nrf_unknown'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/IRRemotesScreen.kt:3395:64 Unresolved reference 'index'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/MainActivity.kt:1178:39 Overload resolution ambiguity between candidates:
+fun GlobalChatScreen(navController: NavController): Unit
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/MainActivity.kt:1181:39 Overload resolution ambiguity between candidates:
+fun GlobalChatScreen(navController: NavController): Unit
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/ble/smarthome/BleSmartHomeScreens.kt:212:33 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'android.bluetooth.BluetoothAdapter?'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:81:1 Conflicting overloads:
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:115:46 Unresolved reference 'chat_change_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:157:48 Unresolved reference 'chat_change_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:176:43 Unresolved reference 'chat_save_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:202:49 Unresolved reference 'chat_peers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:211:37 Unresolved reference 'chat_privacy_notice'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:228:66 Unresolved reference 'chat_status_connected'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:232:73 Unresolved reference 'chat_status_scanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:236:72 Unresolved reference 'chat_status_offline'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:283:45 Unresolved reference 'chat_retry'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:323:37 Unresolved reference 'chat_empty_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:331:37 Unresolved reference 'chat_empty_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Function 'component1()' is ambiguous for this expression: 
+fun <T> Array<out T>.component1(): T
+fun ByteArray.component1(): Byte
+fun ShortArray.component1(): Short
+fun IntArray.component1(): Int
+fun LongArray.component1(): Long
+fun FloatArray.component1(): Float
+fun DoubleArray.component1(): Double
+fun BooleanArray.component1(): Boolean
+fun CharArray.component1(): Char
+fun <T> List<T>.component1(): T
+fun <K, V> Map.Entry<K, V>.component1(): K
+fun UIntArray.component1(): UInt
+fun ULongArray.component1(): ULong
+fun UByteArray.component1(): UByte
+fun UShortArray.component1(): UShort.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Function 'component2()' is ambiguous for this expression: 
+fun <T> Array<out T>.component2(): T
+fun ByteArray.component2(): Byte
+fun ShortArray.component2(): Short
+fun IntArray.component2(): Int
+fun LongArray.component2(): Long
+fun FloatArray.component2(): Float
+fun DoubleArray.component2(): Double
+fun BooleanArray.component2(): Boolean
+fun CharArray.component2(): Char
+fun <T> List<T>.component2(): T
+fun <K, V> Map.Entry<K, V>.component2(): V
+fun UIntArray.component2(): UInt
+fun ULongArray.component2(): ULong
+fun UByteArray.component2(): UByte
+fun UShortArray.component2(): UShort.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Function 'component3()' is ambiguous for this expression: 
+fun <T> Array<out T>.component3(): T
+fun ByteArray.component3(): Byte
+fun ShortArray.component3(): Short
+fun IntArray.component3(): Int
+fun LongArray.component3(): Long
+fun FloatArray.component3(): Float
+fun DoubleArray.component3(): Double
+fun BooleanArray.component3(): Boolean
+fun CharArray.component3(): Char
+fun <T> List<T>.component3(): T
+fun UIntArray.component3(): UInt
+fun ULongArray.component3(): ULong
+fun UByteArray.component3(): UByte
+fun UShortArray.component3(): UShort.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Not enough information to infer type argument for 'K'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:373:44 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:373:44 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:373:83 Unresolved reference 'chat_delivery_pending'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:374:41 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:374:41 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:374:79 Unresolved reference 'chat_delivery_sent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:375:43 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:375:43 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:375:86 Unresolved reference 'chat_delivery_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:376:45 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:376:45 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:376:83 Unresolved reference 'chat_delivery_sent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:396:50 Unresolved reference 'chat_retry'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:29:12 Redeclaration:
+data class GlobalMessage : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:38:12 Redeclaration:
+data class ChatUser : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:40:8 Redeclaration:
+object GlobalChatData : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:50:7 Redeclaration:
+class DolphyChatManager : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:96:27 Unresolved reference 'bluetooth_scan_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:103:69 Unresolved reference 'chat_advertising_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:109:90 Unresolved reference 'chat_advertising_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:151:48 Unresolved reference 'bluetooth_permission_required'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:152:57 Unresolved reference 'bluetooth_enable_first'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:171:27 Unresolved reference 'chat_start_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:186:40 Unresolved reference 'chat_advertising_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:190:50 Unresolved reference 'chat_send_not_ready'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:194:74 Unresolved reference 'chat_no_recipients'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:198:63 Unresolved reference 'chat_message_too_long'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:63:8 Redeclaration:
+object GlobalChatData : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:71:9 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:71:46 Unresolved reference 'PREFS_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:72:9 Unresolved reference 'loadMessages'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:76:9 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:76:32 Unresolved reference 'KEY_USER_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:76:53 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:80:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:80:32 Unresolved reference 'KEY_USER_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:84:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:84:31 Unresolved reference 'KEY_USER_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:89:9 Unresolved reference 'saveMessages'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:93:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:94:9 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:94:9 Not enough information to infer type argument for 'R'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:104:13 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:104:36 Unresolved reference 'KEY_HISTORY'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:104:65 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:109:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:110:19 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:110:35 Unresolved reference 'KEY_HISTORY'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:113:35 Unresolved reference 'length'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:114:29 Unresolved reference 'getJSONObject'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:131:12 Redeclaration:
+data class GlobalMessage : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:139:12 Redeclaration:
+data class ChatUser : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:154:7 Redeclaration:
+class DolphyChatManager : AutoCloseable
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:155:36 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:156:36 Unresolved reference 'bluetoothManager'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:157:38 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:203:40 Unresolved reference 'addMessage'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:204:81 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:212:13 Unresolved reference 'gattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:218:24 Unresolved reference 'init'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:218:29 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:221:26 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:13 Unresolved reference 'gattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:26 Unresolved reference 'bluetoothManager'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:59 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:68 Unresolved reference 'gattServerCallback'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:229:40 Unresolved reference 'getUserName'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:232:13 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:233:13 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:242:13 Condition type mismatch: inferred type is 'androidx.compose.material3.WideNavigationRailValue' but 'Boolean' was expected.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:242:14 Unresolved reference 'isBluetoothEnabled'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:243:35 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:246:24 Unresolved reference 'saveUserName'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:247:9 Unresolved reference 'startGattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:281:9 Unresolved reference 'gattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:281:21 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:281:27 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:298:20 Unresolved reference 'addService'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:309:34 Unresolved reference 'bluetoothLeScanner'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:310:13 Condition type mismatch: inferred type is 'androidx.compose.material3.WideNavigationRailValue' but 'Boolean' was expected.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:310:14 Unresolved reference 'isBluetoothEnabled'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:313:9 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:318:9 'val' cannot be reassigned.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:318:24 Assignment type mismatch: actual type is 'com.droid.dolphy.chat.<anonymous>#2', but 'com.droid.dolphy.chat.<anonymous>#1' was expected.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:351:89 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:371:13 Unresolved reference 'bluetoothLeScanner'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:380:23 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:380:29 Unresolved reference 'bluetoothLeScanner'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:391:28 Unresolved reference 'addMessage'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:399:17 Unresolved reference 'sendQuickMessage'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:433:26 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:474:36 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:477:36 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:499:9 Unresolved reference 'messageHandlers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:518:47 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:523:16 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:721:21 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:722:21 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:728:25 Unresolved reference 'stopAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:729:25 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:39:1 Conflicting overloads:
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:55:29 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:56:29 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:81:29 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:82:29 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:101:25 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:102:25 Unresolved reference 'stopAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:112:33 Unresolved reference 'stopAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:113:33 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:724:60 Unresolved reference 'hid_attack_in_progress'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:734:49 Unresolved reference 'hid_payloads'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:778:49 Unresolved reference 'hid_phantom_clicks'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:785:62 Unresolved reference 'hid_quick_actions'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:797:64 Unresolved reference 'hid_url_to_open'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:837:54 Unresolved reference 'hid_open_link'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:856:46 Unresolved reference 'hid_center_cursor'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:860:66 Unresolved reference 'hid_ducky_scripts'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:76:13 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:78:17 Unresolved reference 'RootUtils'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:79:17 Unresolved reference 'RootUtils'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:112:21 Unresolved reference 'delay'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:115:17 Unresolved reference 'delay'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:143:83 Unresolved reference 'nfc_detail_1'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:143:140 Unresolved reference 'nfc_detail_2'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:153:67 Unresolved reference 'nfc_detail_3'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:234:68 Unresolved reference 'nfc_detail_4'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:235:110 Unresolved reference 'nfc_detail_5'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:235:167 Unresolved reference 'nfc_detail_6'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:236:68 Unresolved reference 'nfc_detail_7'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:243:72 Unresolved reference 'nfc_detail_8'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:244:72 Unresolved reference 'nfc_detail_9'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:255:90 Unresolved reference 'nfc_detail_10'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:255:148 Unresolved reference 'nfc_detail_11'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:270:113 Unresolved reference 'nfc_detail_5'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:270:170 Unresolved reference 'nfc_detail_6'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:275:111 Unresolved reference 'nfc_detail_12'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:276:112 Unresolved reference 'nfc_detail_13'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:277:75 Unresolved reference 'nfc_detail_14'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:281:68 Unresolved reference 'nfc_detail_15'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:294:76 Unresolved reference 'nfc_detail_16'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:294:130 Unresolved reference 'nfc_detail_17'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:339:76 Unresolved reference 'nfc_copy_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:346:74 Unresolved reference 'nfc_detail_18'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:355:70 Unresolved reference 'nfc_detail_19'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:212:45 Unresolved reference 'nrf_mac'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:217:45 Unresolved reference 'nrf_type'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:221:45 Unresolved reference 'nrf_signal'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:226:49 Unresolved reference 'nrf_tx_power'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:232:49 Unresolved reference 'nrf_vendor'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:237:45 Unresolved reference 'nrf_last_seen'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:238:64 Unresolved reference 'nrf_scans'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:278:56 Unresolved reference 'nrf_profile'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:307:56 Unresolved reference 'nrf_disconnect'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:434:48 Unresolved reference 'nrf_connectable'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:541:48 Unresolved reference 'nrf_battery_level'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:576:44 Unresolved reference 'nrf_capabilities'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:588:53 Unresolved reference 'nrf_keyboard'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:596:53 Unresolved reference 'nrf_audio'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:604:53 Unresolved reference 'nrf_battery'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:651:44 Unresolved reference 'nrf_gatt_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:680:56 Unresolved reference 'nrf_characteristics_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:689:48 Unresolved reference 'nrf_more_services'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:702:44 Unresolved reference 'nrf_advertised_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:733:48 Unresolved reference 'nrf_more_services'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:745:36 Unresolved reference 'nrf_unknown_device'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:750:33 Unresolved reference 'nrf_signal_excellent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:751:33 Unresolved reference 'nrf_signal_good'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:752:33 Unresolved reference 'nrf_signal_fair'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:753:33 Unresolved reference 'nrf_signal_weak'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:754:26 Unresolved reference 'nrf_signal_very_weak'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:769:51 Unresolved reference 'nrf_last_seen_now'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:770:52 Unresolved reference 'nrf_last_seen_seconds'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:771:54 Unresolved reference 'nrf_last_seen_minutes'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:772:41 Unresolved reference 'nrf_last_seen_hours'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:66:5 Unresolved reference 'BlurHeaderBox'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:70:9 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:71:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:141:60 Unresolved reference 'nrf_filter_named_only'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:157:60 Unresolved reference 'nrf_filter_known_vendors'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:179:94 Unresolved reference 'nrf_sort_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:180:58 Unresolved reference 'nrf_sort_signal'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:236:60 Unresolved reference 'bluetooth_scan_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:246:53 Unresolved reference 'nrf_bluetooth_off_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:247:55 Unresolved reference 'nrf_bluetooth_off_message'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:343:5 Unresolved reference 'BluetoothPermissionGate'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:343:74 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:101:31 Unresolved reference 'Dispatchers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:120:25 Unresolved reference 'Dispatchers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:368:27 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:369:30 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:370:83 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:371:21 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/PluginManager.kt:185:18 Unresolved reference 'accepted'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:177:75 Unresolved reference 'store_error_catalog'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:208:86 Unresolved reference 'store_plugin'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:248:101 Unresolved reference 'store_error_not_ready'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:270:81 Unresolved reference 'store_error_install'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:307:86 Unresolved reference 'store_error_redirect_no_url'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:322:102 Unresolved reference 'store_error_file_too_large'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:331:67 Unresolved reference 'store_error_too_many_redirects'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:340:93 Unresolved reference 'store_error_parse_url'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:401:96 Unresolved reference 'store_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:417:94 Unresolved reference 'store_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:105:41 Unresolved reference 'store_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:110:69 Unresolved reference 'store_refresh'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:113:72 Unresolved reference 'store_sources'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:130:70 Unresolved reference 'store_search_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:148:53 Unresolved reference 'store_active_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:157:57 Unresolved reference 'store_items_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:167:103 Unresolved reference 'store_featured'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:183:102 Unresolved reference 'store_all_plugins'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:202:74 Unresolved reference 'store_empty_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:203:58 Unresolved reference 'store_nothing_found'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:217:54 Unresolved reference 'store_loading_catalog'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:232:49 Unresolved reference 'store_error_catalog'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:246:54 Unresolved reference 'store_retry'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:385:64 Unresolved reference 'store_update_available'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:389:37 Unresolved reference 'store_installed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:408:45 Unresolved reference 'store_plugin'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:412:52 Unresolved reference 'store_no_plugin_selected'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:466:64 Unresolved reference 'store_error_prefix'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:468:65 Unresolved reference 'store_installing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:469:66 Unresolved reference 'store_install'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:470:94 Unresolved reference 'store_update_to_version'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:471:57 Unresolved reference 'store_reinstall'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:478:78 Unresolved reference 'store_install_success'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:508:88 Unresolved reference 'store_open_link_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:519:58 Unresolved reference 'store_discussion'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:538:53 Unresolved reference 'store_installed_version'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:548:45 Unresolved reference 'store_description'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:557:86 Unresolved reference 'store_no_description'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:566:57 Unresolved reference 'store_author'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:567:57 Unresolved reference 'store_version'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:568:93 Unresolved reference 'store_updated'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:569:88 Unresolved reference 'store_file'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:615:42 Unresolved reference 'store_sources_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:617:41 Unresolved reference 'store_sources_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:651:84 Unresolved reference 'store_delete'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:663:62 Unresolved reference 'store_source_input_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:681:46 Unresolved reference 'store_add_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:692:64 Unresolved reference 'store_source_connected'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:695:78 Unresolved reference 'store_invalid_link'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginDownloadPermissionHost.kt:25:37 Unresolved reference 'psafe_size_mb'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginManagerScreen.kt:85:65 Unresolved reference 'pmanager_import_plugin'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginManagerScreen.kt:88:72 Unresolved reference 'pmanager_plugin_store'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginPreviewScreen.kt:362:38 Unresolved reference 'ppreview_size_mb'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginPreviewScreen.kt:363:38 Unresolved reference 'ppreview_size_kb'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginPreviewScreen.kt:364:45 Unresolved reference 'ppreview_size_bytes'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSafeModeSheet.kt:46:50 Unresolved reference 'psafe_clipboard_label'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSecurityScreen.kt:60:17 Unresolved reference 'SectionLabel'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSecurityScreen.kt:90:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSecurityScreen.kt:91:24 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:68:103 Unresolved reference 'print_invalid_address'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:75:103 Unresolved reference 'print_invalid_address'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:174:80 Unresolved reference 'print_accepted'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:215:100 Unresolved reference 'print_certificate_error'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:216:105 Unresolved reference 'print_timeout'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:217:99 Unresolved reference 'print_connection_error'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:4:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:5:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:6:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:7:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:9:35 Unresolved reference 'OptionsProvider'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:10:5 'getCastOptions' overrides nothing.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:10:52 Unresolved reference 'CastOptions'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:10:66 Unresolved reference 'CastOptions'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:11:35 Unresolved reference 'CastMediaControlIntent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:13:5 'getAdditionalSessionProviders' overrides nothing.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:13:72 Unresolved reference 'SessionProvider'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:50:17 Unresolved reference 'mediarouter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:57:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:58:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:59:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:60:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:17 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:17 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:43 Unresolved reference 'CastContext'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:57 Null cannot be a value of a non-null type 'T'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:73:50 Unresolved reference 'cast_no_session'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:78:9 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:79:13 Unresolved reference 'CastContext'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:80:60 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:81:73 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:82:11 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:82:11 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:106:85 Unresolved reference 'cast_importing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:143:68 Unresolved reference 'cast_google'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:149:68 Unresolved reference 'cast_google_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:156:37 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:156:37 Not enough information to infer type argument for 'R'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:157:41 Unresolved reference 'MediaRouteButton'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:157:63 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:157:69 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:158:45 Unresolved reference 'CastButtonFactory'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:158:90 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:166:60 Unresolved reference 'cast_play'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:168:52 Unresolved reference 'sessionManager'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:173:49 Unresolved reference 'MediaInfo'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:174:56 Unresolved reference 'MediaInfo'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:175:44 Unresolved reference 'load'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:175:49 Unresolved reference 'MediaLoadRequestData'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:176:75 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:176:96 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:273:72 Unresolved reference 'cast_browser_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:37:92 Unresolved reference 'cast_importing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:42:73 Unresolved reference 'cast_network_missing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:44:53 Unresolved reference 'cast_import_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:55:112 Unresolved reference 'cast_file_too_large'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:59:55 Unresolved reference 'cast_import_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:60:71 Unresolved reference 'cast_import_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:71:85 Unresolved reference 'cast_ready'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:75:53 Unresolved reference 'cast_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:96:105 Unresolved reference 'cast_discovery_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:113:102 Unresolved reference 'cast_loading'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:115:104 Unresolved reference 'cast_loaded'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:116:41 Unresolved reference 'cast_failed'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileReleaseKotlin'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:287)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:335)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:318)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:323)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:252)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeAndStoreInCache(BuildCacheStep.java:145)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$4(BuildCacheStep.java:101)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$5(BuildCacheStep.java:101)
+	at org.gradle.internal.Try$Success.map(Try.java:175)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithCache(BuildCacheStep.java:85)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$0(BuildCacheStep.java:74)
+	at org.gradle.internal.Either$Left.fold(Either.java:115)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:61)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:21)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:119)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:76)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)
+	... 2 more
+
+
+BUILD FAILED in 2m 28s
+44 actionable tasks: 44 executed
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.11.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :app
+WARNING: The option setting 'android.overridePathCheck=true' is experimental.
+The current default is 'false'.
+WARNING: The option setting 'android.enableResourceOptimizations=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 9.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.lint.useK2Uast=false' is experimental.
+
+> Task :app:syncFlipperIrAssets NO-SOURCE
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateDebugBuildConfig
+> Task :app:extractDebugPythonBuildPackages
+> Task :app:installDebugPythonRequirements
+> Task :app:mergeDebugPythonSources
+> Task :app:generateDebugPythonProxies
+> Task :app:checkDebugAarMetadata
+> Task :app:generateDebugResValues FROM-CACHE
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:parseDebugLocalResources FROM-CACHE
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug FROM-CACHE
+
+> Task :app:processDebugMainManifest
+/home/runner/work/Deadcow-App/Deadcow-App/app/src/main/AndroidManifest.xml:89:9-41 Warning:
+	android:extractNativeLibs should not be specified in this source AndroidManifest.xml file. See https://d.android.com/guide/topics/manifest/application-element#extractNativeLibs for more information.
+The AGP Upgrade Assistant can remove the attribute from the AndroidManifest.xml file and update the build file accordingly. See https://d.android.com/studio/build/agp-upgrade-assistant for more information.
+/home/runner/work/Deadcow-App/Deadcow-App/app/src/main/AndroidManifest.xml:79:5-270:19 Warning:
+	application@android:extractNativeLibs was tagged at AndroidManifest.xml:79 to replace other declarations but no other declaration present
+
+> Task :app:processDebugManifest
+> Task :app:javaPreCompileDebug FROM-CACHE
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugResources
+> Task :app:generateDebugPythonMiscAssets
+> Task :app:generateDebugPythonRequirementsAssets
+> Task :app:generateDebugPythonSourceAssets
+> Task :app:generateDebugPythonBuildAssets
+> Task :app:mergeDebugAssets
+> Task :app:processDebugManifestForPackage
+> Task :app:compressDebugAssets
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources
+> Task :app:desugarDebugFileDependencies
+> Task :app:l8DexDesugarLibDebug
+
+> Task :app:kspDebugKotlin
+w: [ksp] /home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/db/NfcDatabase.kt:13: Schema export directory was not provided to the annotation processor so Room cannot export the schema. You can either provide `room.schemaLocation` annotation processor argument by applying the Room Gradle plugin (id 'androidx.room') OR set exportSchema to false.
+
+> Task :app:mergeExtDexDebug
+> Task :app:mergeLibDexDebug
+> Task :app:generateDebugPythonJniLibs
+> Task :app:mergeDebugJniLibFolders
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:mergeDebugNativeLibs
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libchaquopy_java.so, libcrypto_chaquopy.so, libcrypto_python.so, libdatastore_shared_counter.so, libpython3.11.so, libsqlite3_chaquopy.so, libsqlite3_python.so, libssl_chaquopy.so, libssl_python.so.
+
+> Task :app:compileDebugKotlin FAILED
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothJammerScreen.kt:231:49 Unresolved reference 'bt_jammer_scanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothJammerScreen.kt:241:49 Unresolved reference 'bt_jammer_found'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothJammerScreen.kt:243:49 Unresolved reference 'bt_jammer_tap_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:38:55 Unresolved reference 'bluetooth_permission_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:41:46 Unresolved reference 'bluetooth_permission_explanation'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:42:101 Unresolved reference 'bluetooth_permission_grant'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothPermissionGate.kt:45:51 Unresolved reference 'bluetooth_permission_settings'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/BluetoothSpamScreens.kt:129:75 Unresolved reference 'nrf_unknown'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/IRRemotesScreen.kt:3395:64 Unresolved reference 'index'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/MainActivity.kt:1178:39 Overload resolution ambiguity between candidates:
+fun GlobalChatScreen(navController: NavController): Unit
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/MainActivity.kt:1181:39 Overload resolution ambiguity between candidates:
+fun GlobalChatScreen(navController: NavController): Unit
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/ble/smarthome/BleSmartHomeScreens.kt:212:33 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'android.bluetooth.BluetoothAdapter?'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:81:1 Conflicting overloads:
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:115:46 Unresolved reference 'chat_change_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:157:48 Unresolved reference 'chat_change_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:176:43 Unresolved reference 'chat_save_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:202:49 Unresolved reference 'chat_peers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:211:37 Unresolved reference 'chat_privacy_notice'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:228:66 Unresolved reference 'chat_status_connected'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:232:73 Unresolved reference 'chat_status_scanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:236:72 Unresolved reference 'chat_status_offline'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:283:45 Unresolved reference 'chat_retry'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:323:37 Unresolved reference 'chat_empty_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:331:37 Unresolved reference 'chat_empty_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Function 'component1()' is ambiguous for this expression: 
+fun <T> Array<out T>.component1(): T
+fun ByteArray.component1(): Byte
+fun ShortArray.component1(): Short
+fun IntArray.component1(): Int
+fun LongArray.component1(): Long
+fun FloatArray.component1(): Float
+fun DoubleArray.component1(): Double
+fun BooleanArray.component1(): Boolean
+fun CharArray.component1(): Char
+fun <T> List<T>.component1(): T
+fun <K, V> Map.Entry<K, V>.component1(): K
+fun UIntArray.component1(): UInt
+fun ULongArray.component1(): ULong
+fun UByteArray.component1(): UByte
+fun UShortArray.component1(): UShort.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Function 'component2()' is ambiguous for this expression: 
+fun <T> Array<out T>.component2(): T
+fun ByteArray.component2(): Byte
+fun ShortArray.component2(): Short
+fun IntArray.component2(): Int
+fun LongArray.component2(): Long
+fun FloatArray.component2(): Float
+fun DoubleArray.component2(): Double
+fun BooleanArray.component2(): Boolean
+fun CharArray.component2(): Char
+fun <T> List<T>.component2(): T
+fun <K, V> Map.Entry<K, V>.component2(): V
+fun UIntArray.component2(): UInt
+fun ULongArray.component2(): ULong
+fun UByteArray.component2(): UByte
+fun UShortArray.component2(): UShort.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Function 'component3()' is ambiguous for this expression: 
+fun <T> Array<out T>.component3(): T
+fun ByteArray.component3(): Byte
+fun ShortArray.component3(): Short
+fun IntArray.component3(): Int
+fun LongArray.component3(): Long
+fun FloatArray.component3(): Float
+fun DoubleArray.component3(): Double
+fun BooleanArray.component3(): Boolean
+fun CharArray.component3(): Char
+fun <T> List<T>.component3(): T
+fun UIntArray.component3(): UInt
+fun ULongArray.component3(): ULong
+fun UByteArray.component3(): UByte
+fun UShortArray.component3(): UShort.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:372:61 Not enough information to infer type argument for 'K'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:373:44 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:373:44 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:373:83 Unresolved reference 'chat_delivery_pending'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:374:41 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:374:41 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:374:79 Unresolved reference 'chat_delivery_sent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:375:43 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:375:43 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:375:86 Unresolved reference 'chat_delivery_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:376:45 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:376:45 Not enough information to infer type argument for 'B'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:376:83 Unresolved reference 'chat_delivery_sent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/ChatScreen.kt:396:50 Unresolved reference 'chat_retry'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:29:12 Redeclaration:
+data class GlobalMessage : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:38:12 Redeclaration:
+data class ChatUser : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:40:8 Redeclaration:
+object GlobalChatData : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:50:7 Redeclaration:
+class DolphyChatManager : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:96:27 Unresolved reference 'bluetooth_scan_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:103:69 Unresolved reference 'chat_advertising_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:109:90 Unresolved reference 'chat_advertising_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:151:48 Unresolved reference 'bluetooth_permission_required'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:152:57 Unresolved reference 'bluetooth_enable_first'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:171:27 Unresolved reference 'chat_start_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:186:40 Unresolved reference 'chat_advertising_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:190:50 Unresolved reference 'chat_send_not_ready'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:194:74 Unresolved reference 'chat_no_recipients'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatManager.kt:198:63 Unresolved reference 'chat_message_too_long'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:63:8 Redeclaration:
+object GlobalChatData : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:71:9 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:71:46 Unresolved reference 'PREFS_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:72:9 Unresolved reference 'loadMessages'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:76:9 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:76:32 Unresolved reference 'KEY_USER_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:76:53 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:80:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:80:32 Unresolved reference 'KEY_USER_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:84:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:84:31 Unresolved reference 'KEY_USER_NAME'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:89:9 Unresolved reference 'saveMessages'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:93:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:94:9 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:94:9 Not enough information to infer type argument for 'R'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:104:13 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:104:36 Unresolved reference 'KEY_HISTORY'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:104:65 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:109:16 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:110:19 Unresolved reference 'prefs'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:110:35 Unresolved reference 'KEY_HISTORY'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:113:35 Unresolved reference 'length'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:114:29 Unresolved reference 'getJSONObject'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:131:12 Redeclaration:
+data class GlobalMessage : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:139:12 Redeclaration:
+data class ChatUser : Any
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:154:7 Redeclaration:
+class DolphyChatManager : AutoCloseable
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:155:36 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:156:36 Unresolved reference 'bluetoothManager'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:157:38 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:203:40 Unresolved reference 'addMessage'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:204:81 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:212:13 Unresolved reference 'gattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:218:24 Unresolved reference 'init'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:218:29 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:221:26 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:13 Unresolved reference 'gattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:26 Unresolved reference 'bluetoothManager'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:59 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:222:68 Unresolved reference 'gattServerCallback'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:229:40 Unresolved reference 'getUserName'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:232:13 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:233:13 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:242:13 Condition type mismatch: inferred type is 'androidx.compose.material3.WideNavigationRailValue' but 'Boolean' was expected.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:242:14 Unresolved reference 'isBluetoothEnabled'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:243:35 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:246:24 Unresolved reference 'saveUserName'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:247:9 Unresolved reference 'startGattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:281:9 Unresolved reference 'gattServer'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:281:21 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:281:27 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:298:20 Unresolved reference 'addService'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:309:34 Unresolved reference 'bluetoothLeScanner'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:310:13 Condition type mismatch: inferred type is 'androidx.compose.material3.WideNavigationRailValue' but 'Boolean' was expected.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:310:14 Unresolved reference 'isBluetoothEnabled'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:313:9 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:318:9 'val' cannot be reassigned.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:318:24 Assignment type mismatch: actual type is 'com.droid.dolphy.chat.<anonymous>#2', but 'com.droid.dolphy.chat.<anonymous>#1' was expected.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:351:89 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:371:13 Unresolved reference 'bluetoothLeScanner'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:380:23 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:380:29 Unresolved reference 'bluetoothLeScanner'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:391:28 Unresolved reference 'addMessage'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:399:17 Unresolved reference 'sendQuickMessage'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:433:26 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:474:36 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:477:36 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:499:9 Unresolved reference 'messageHandlers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:518:47 Unresolved reference 'context'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:523:16 Unresolved reference 'bluetoothAdapter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:721:21 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:722:21 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:728:25 Unresolved reference 'stopAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/DolphyChatScreens.kt:729:25 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:39:1 Conflicting overloads:
+fun GlobalChatScreen(navController: NavController): Unit
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:55:29 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:56:29 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:81:29 Unresolved reference 'startAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:82:29 Unresolved reference 'startScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:101:25 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:102:25 Unresolved reference 'stopAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:112:33 Unresolved reference 'stopAdvertising'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/chat/GlobalChatScreen.kt:113:33 Unresolved reference 'stopScanning'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:724:60 Unresolved reference 'hid_attack_in_progress'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:734:49 Unresolved reference 'hid_payloads'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:778:49 Unresolved reference 'hid_phantom_clicks'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:785:62 Unresolved reference 'hid_quick_actions'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:797:64 Unresolved reference 'hid_url_to_open'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:837:54 Unresolved reference 'hid_open_link'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:856:46 Unresolved reference 'hid_center_cursor'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/hid/HidUi.kt:860:66 Unresolved reference 'hid_ducky_scripts'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:76:13 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:78:17 Unresolved reference 'RootUtils'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:79:17 Unresolved reference 'RootUtils'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:112:21 Unresolved reference 'delay'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/NfcViewModel.kt:115:17 Unresolved reference 'delay'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:143:83 Unresolved reference 'nfc_detail_1'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:143:140 Unresolved reference 'nfc_detail_2'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:153:67 Unresolved reference 'nfc_detail_3'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:234:68 Unresolved reference 'nfc_detail_4'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:235:110 Unresolved reference 'nfc_detail_5'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:235:167 Unresolved reference 'nfc_detail_6'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:236:68 Unresolved reference 'nfc_detail_7'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:243:72 Unresolved reference 'nfc_detail_8'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:244:72 Unresolved reference 'nfc_detail_9'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:255:90 Unresolved reference 'nfc_detail_10'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:255:148 Unresolved reference 'nfc_detail_11'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:270:113 Unresolved reference 'nfc_detail_5'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:270:170 Unresolved reference 'nfc_detail_6'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:275:111 Unresolved reference 'nfc_detail_12'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:276:112 Unresolved reference 'nfc_detail_13'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:277:75 Unresolved reference 'nfc_detail_14'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:281:68 Unresolved reference 'nfc_detail_15'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:294:76 Unresolved reference 'nfc_detail_16'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:294:130 Unresolved reference 'nfc_detail_17'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:339:76 Unresolved reference 'nfc_copy_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:346:74 Unresolved reference 'nfc_detail_18'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nfc/ui/NfcScreens.kt:355:70 Unresolved reference 'nfc_detail_19'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:212:45 Unresolved reference 'nrf_mac'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:217:45 Unresolved reference 'nrf_type'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:221:45 Unresolved reference 'nrf_signal'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:226:49 Unresolved reference 'nrf_tx_power'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:232:49 Unresolved reference 'nrf_vendor'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:237:45 Unresolved reference 'nrf_last_seen'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:238:64 Unresolved reference 'nrf_scans'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:278:56 Unresolved reference 'nrf_profile'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:307:56 Unresolved reference 'nrf_disconnect'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:434:48 Unresolved reference 'nrf_connectable'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:541:48 Unresolved reference 'nrf_battery_level'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:576:44 Unresolved reference 'nrf_capabilities'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:588:53 Unresolved reference 'nrf_keyboard'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:596:53 Unresolved reference 'nrf_audio'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:604:53 Unresolved reference 'nrf_battery'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:651:44 Unresolved reference 'nrf_gatt_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:680:56 Unresolved reference 'nrf_characteristics_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:689:48 Unresolved reference 'nrf_more_services'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:702:44 Unresolved reference 'nrf_advertised_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:733:48 Unresolved reference 'nrf_more_services'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:745:36 Unresolved reference 'nrf_unknown_device'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:750:33 Unresolved reference 'nrf_signal_excellent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:751:33 Unresolved reference 'nrf_signal_good'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:752:33 Unresolved reference 'nrf_signal_fair'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:753:33 Unresolved reference 'nrf_signal_weak'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:754:26 Unresolved reference 'nrf_signal_very_weak'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:769:51 Unresolved reference 'nrf_last_seen_now'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:770:52 Unresolved reference 'nrf_last_seen_seconds'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:771:54 Unresolved reference 'nrf_last_seen_minutes'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfDeviceCard.kt:772:41 Unresolved reference 'nrf_last_seen_hours'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:66:5 Unresolved reference 'BlurHeaderBox'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:70:9 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:71:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:141:60 Unresolved reference 'nrf_filter_named_only'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:157:60 Unresolved reference 'nrf_filter_known_vendors'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:179:94 Unresolved reference 'nrf_sort_name'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:180:58 Unresolved reference 'nrf_sort_signal'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:236:60 Unresolved reference 'bluetooth_scan_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:246:53 Unresolved reference 'nrf_bluetooth_off_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:247:55 Unresolved reference 'nrf_bluetooth_off_message'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:343:5 Unresolved reference 'BluetoothPermissionGate'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerScreen.kt:343:74 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:101:31 Unresolved reference 'Dispatchers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:120:25 Unresolved reference 'Dispatchers'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:368:27 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:369:30 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:370:83 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/nrf/NrfScannerViewModel.kt:371:21 Unresolved reference 'VulnerabilityType'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/PluginManager.kt:185:18 Unresolved reference 'accepted'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:177:75 Unresolved reference 'store_error_catalog'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:208:86 Unresolved reference 'store_plugin'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:248:101 Unresolved reference 'store_error_not_ready'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:270:81 Unresolved reference 'store_error_install'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:307:86 Unresolved reference 'store_error_redirect_no_url'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:322:102 Unresolved reference 'store_error_file_too_large'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:331:67 Unresolved reference 'store_error_too_many_redirects'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:340:93 Unresolved reference 'store_error_parse_url'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:401:96 Unresolved reference 'store_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStore.kt:417:94 Unresolved reference 'store_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:105:41 Unresolved reference 'store_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:110:69 Unresolved reference 'store_refresh'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:113:72 Unresolved reference 'store_sources'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:130:70 Unresolved reference 'store_search_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:148:53 Unresolved reference 'store_active_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:157:57 Unresolved reference 'store_items_count'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:167:103 Unresolved reference 'store_featured'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:183:102 Unresolved reference 'store_all_plugins'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:202:74 Unresolved reference 'store_empty_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:203:58 Unresolved reference 'store_nothing_found'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:217:54 Unresolved reference 'store_loading_catalog'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:232:49 Unresolved reference 'store_error_catalog'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:246:54 Unresolved reference 'store_retry'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:385:64 Unresolved reference 'store_update_available'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:389:37 Unresolved reference 'store_installed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:408:45 Unresolved reference 'store_plugin'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:412:52 Unresolved reference 'store_no_plugin_selected'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:466:64 Unresolved reference 'store_error_prefix'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:468:65 Unresolved reference 'store_installing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:469:66 Unresolved reference 'store_install'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:470:94 Unresolved reference 'store_update_to_version'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:471:57 Unresolved reference 'store_reinstall'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:478:78 Unresolved reference 'store_install_success'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:508:88 Unresolved reference 'store_open_link_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:519:58 Unresolved reference 'store_discussion'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:538:53 Unresolved reference 'store_installed_version'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:548:45 Unresolved reference 'store_description'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:557:86 Unresolved reference 'store_no_description'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:566:57 Unresolved reference 'store_author'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:567:57 Unresolved reference 'store_version'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:568:93 Unresolved reference 'store_updated'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:569:88 Unresolved reference 'store_file'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:615:42 Unresolved reference 'store_sources_title'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:617:41 Unresolved reference 'store_sources_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:651:84 Unresolved reference 'store_delete'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:663:62 Unresolved reference 'store_source_input_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:681:46 Unresolved reference 'store_add_source'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:692:64 Unresolved reference 'store_source_connected'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/store/PluginStoreScreen.kt:695:78 Unresolved reference 'store_invalid_link'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginDownloadPermissionHost.kt:25:37 Unresolved reference 'psafe_size_mb'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginManagerScreen.kt:85:65 Unresolved reference 'pmanager_import_plugin'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginManagerScreen.kt:88:72 Unresolved reference 'pmanager_plugin_store'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginPreviewScreen.kt:362:38 Unresolved reference 'ppreview_size_mb'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginPreviewScreen.kt:363:38 Unresolved reference 'ppreview_size_kb'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginPreviewScreen.kt:364:45 Unresolved reference 'ppreview_size_bytes'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSafeModeSheet.kt:46:50 Unresolved reference 'psafe_clipboard_label'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSecurityScreen.kt:60:17 Unresolved reference 'SectionLabel'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSecurityScreen.kt:90:13 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/plugin/ui/PluginSecurityScreen.kt:91:24 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:68:103 Unresolved reference 'print_invalid_address'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:75:103 Unresolved reference 'print_invalid_address'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:174:80 Unresolved reference 'print_accepted'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:215:100 Unresolved reference 'print_certificate_error'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:216:105 Unresolved reference 'print_timeout'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/printer/WifiPrintViewModel.kt:217:99 Unresolved reference 'print_connection_error'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:4:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:5:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:6:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:7:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:9:35 Unresolved reference 'OptionsProvider'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:10:5 'getCastOptions' overrides nothing.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:10:52 Unresolved reference 'CastOptions'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:10:66 Unresolved reference 'CastOptions'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:11:35 Unresolved reference 'CastMediaControlIntent'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:13:5 'getAdditionalSessionProviders' overrides nothing.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/DolphyCastOptionsProvider.kt:13:72 Unresolved reference 'SessionProvider'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:50:17 Unresolved reference 'mediarouter'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:57:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:58:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:59:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:60:27 Unresolved reference 'gms'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:17 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:17 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:43 Unresolved reference 'CastContext'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:72:57 Null cannot be a value of a non-null type 'T'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:73:50 Unresolved reference 'cast_no_session'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:78:9 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:79:13 Unresolved reference 'CastContext'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:80:60 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:81:73 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:82:11 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:82:11 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:106:85 Unresolved reference 'cast_importing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:143:68 Unresolved reference 'cast_google'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:149:68 Unresolved reference 'cast_google_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:156:37 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:156:37 Not enough information to infer type argument for 'R'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:157:41 Unresolved reference 'MediaRouteButton'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:157:63 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:157:69 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:158:45 Unresolved reference 'CastButtonFactory'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:158:90 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:166:60 Unresolved reference 'cast_play'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:168:52 Unresolved reference 'sessionManager'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:173:49 Unresolved reference 'MediaInfo'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:174:56 Unresolved reference 'MediaInfo'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:175:44 Unresolved reference 'load'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:175:49 Unresolved reference 'MediaLoadRequestData'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:176:75 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:176:96 Unresolved reference 'it'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastScreen.kt:273:72 Unresolved reference 'cast_browser_hint'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:37:92 Unresolved reference 'cast_importing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:42:73 Unresolved reference 'cast_network_missing'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:44:53 Unresolved reference 'cast_import_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:55:112 Unresolved reference 'cast_file_too_large'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:59:55 Unresolved reference 'cast_import_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:60:71 Unresolved reference 'cast_import_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:71:85 Unresolved reference 'cast_ready'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:75:53 Unresolved reference 'cast_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:96:105 Unresolved reference 'cast_discovery_failed'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:113:102 Unresolved reference 'cast_loading'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:115:104 Unresolved reference 'cast_loaded'.
+e: file:///home/runner/work/Deadcow-App/Deadcow-App/app/src/main/java/com/droid/dolphy/tvcast/TvCastViewModel.kt:116:41 Unresolved reference 'cast_failed'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:46)
+	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
+	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:287)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:335)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:318)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:323)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:252)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeAndStoreInCache(BuildCacheStep.java:145)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$4(BuildCacheStep.java:101)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$5(BuildCacheStep.java:101)
+	at org.gradle.internal.Try$Success.map(Try.java:175)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithCache(BuildCacheStep.java:85)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$0(BuildCacheStep.java:74)
+	at org.gradle.internal.Either$Left.fold(Either.java:115)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:61)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:46)
+	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
+	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:21)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:119)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:76)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)
+	... 2 more
+
+
+BUILD FAILED in 2m 1s
+40 actionable tasks: 36 executed, 4 from cache
