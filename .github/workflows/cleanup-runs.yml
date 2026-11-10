@@ -1,0 +1,43 @@
+name: Clean Old Workflow Runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      keep_last:
+        description: 'Number of recent runs to keep'
+        required: false
+        default: '3'
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup:
+    name: Purge Old Workflow Runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Old Runs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KEEP_LAST: ${{ github.event.inputs.keep_last || 3 }}
+        run: |
+          echo "Fetching workflow runs to clean up (keeping last $KEEP_LAST)..."
+          CURRENT_RUN_ID="${{ github.run_id }}"
+          
+          # Get list of run IDs excluding current run
+          RUN_IDS=$(gh api "/repos/${{ github.repository }}/actions/runs?per_page=100" --jq ".workflow_runs[] | select(.id != $CURRENT_RUN_ID) | .id")
+          
+          COUNT=0
+          SKIPPED=0
+          for RUN_ID in $RUN_IDS; do
+            if [ "$SKIPPED" -lt "$KEEP_LAST" ]; then
+              echo "Keeping recent run $RUN_ID"
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+            echo "Deleting run $RUN_ID..."
+            gh api --method DELETE "/repos/${{ github.repository }}/actions/runs/$RUN_ID" || true
+            COUNT=$((COUNT + 1))
+          done
+          echo "Successfully cleaned up $COUNT old workflow runs."

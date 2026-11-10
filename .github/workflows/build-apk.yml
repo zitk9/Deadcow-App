@@ -22,6 +22,7 @@ on:
 permissions:
   contents: write
   pages: write
+  actions: write
 
 jobs:
   build:
@@ -187,3 +188,23 @@ jobs:
           git push origin "$COMMIT":refs/heads/gh-pages --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-Prune Old Workflow Runs
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Pruning old workflow runs (keeping last 5)..."
+          CURRENT_RUN_ID="${{ github.run_id }}"
+          RUN_IDS=$(gh api "/repos/${{ github.repository }}/actions/runs?per_page=100" --jq ".workflow_runs[] | select(.id != $CURRENT_RUN_ID) | .id" 2>/dev/null || true)
+          SKIPPED=0
+          DELETED=0
+          for RUN_ID in $RUN_IDS; do
+            if [ "$SKIPPED" -lt 5 ]; then
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+            gh api --method DELETE "/repos/${{ github.repository }}/actions/runs/$RUN_ID" >/dev/null 2>&1 || true
+            DELETED=$((DELETED + 1))
+          done
+          echo "Pruned $DELETED old workflow runs."
