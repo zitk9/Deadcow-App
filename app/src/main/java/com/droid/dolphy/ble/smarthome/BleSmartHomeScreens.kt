@@ -209,21 +209,10 @@ fun BleSmartHomeScanScreen(navController: NavController) {
                 com.droid.dolphy.AccentButton(onClick = { ensurePerms() }) { Text(stringResource(R.string.ble_allow)) }
                 return@Column
             }
-            if (bluetoothAdapter.isEnabled != true) {
-                Text("Bluetooth is off. Enable Bluetooth.", color = MaterialTheme.colorScheme.onBackground)
+            if (bluetoothAdapter?.isEnabled != true) {
+                Text("Bluetooth désactivé. Veuillez activer le Bluetooth.", color = MaterialTheme.colorScheme.onBackground)
                 return@Column
             }
-
-                if (!hasPerm) {
-                    Text(stringResource(R.string.ble_smarthome_need_perms), color = MaterialTheme.colorScheme.onBackground)
-                    Spacer(Modifier.height(12.dp))
-                    com.droid.dolphy.AccentButton(onClick = { ensurePerms() }) { Text(stringResource(R.string.ble_allow)) }
-                    return@Column
-                }
-                if (bluetoothAdapter?.isEnabled != true) {
-                    Text("Bluetooth désactivé. Veuillez activer le Bluetooth.", color = MaterialTheme.colorScheme.onBackground)
-                    return@Column
-                }
             if (items.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     if (isScanning) {

@@ -1,0 +1,64 @@
+name: Upstream Sync Monitor
+
+on:
+  schedule:
+    # Check for upstream updates every night at 04:00 UTC
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      auto_merge:
+        description: 'Auto-merge if no conflicts detected'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-upstream:
+    name: Check for Upstream Updates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch and Check Upstream Commits
+        id: check_step
+        run: |
+          git remote add upstream https://github.com/unvoiddd/Dolphy-App.git || git remote set-url upstream https://github.com/unvoiddd/Dolphy-App.git
+          git fetch upstream main || git fetch upstream master || true
+
+          UPSTREAM_BRANCH="main"
+          if ! git rev-parse upstream/main >/dev/null 2>&1; then
+            UPSTREAM_BRANCH="master"
+          fi
+
+          UPSTREAM_NEW=$(git rev-list HEAD..upstream/${UPSTREAM_BRANCH} --count || echo "0")
+          echo "New upstream commits: $UPSTREAM_NEW"
+          echo "count=$UPSTREAM_NEW" >> "$GITHUB_OUTPUT"
+          echo "branch=$UPSTREAM_BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Attempt Safe Merge
+        if: steps.check_step.outputs.count != '0' && github.event.inputs.auto_merge == 'true'
+        run: |
+          UPSTREAM_BRANCH="${{ steps.check_step.outputs.branch }}"
+          echo "Attempting clean merge of upstream/$UPSTREAM_BRANCH..."
+          if git merge --no-commit --no-ff upstream/$UPSTREAM_BRANCH; then
+            git commit -m "chore(sync): clean merge from official upstream ($UPSTREAM_BRANCH)"
+            git push origin main
+            echo "Clean merge completed and pushed."
+          else
+            echo "Conflicts detected. Aborting merge to prevent repository corruption."
+            git merge --abort
+            echo "Please resolve conflicts manually or inspect upstream changes."
+          fi

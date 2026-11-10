@@ -16,8 +16,7 @@ import android.content.IntentFilter
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.droid.dolphy.ble.smarthome.BleVendorDb
-import com.droid.dolphy.bluetooth.whisperpair.FastPairDevice
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -346,41 +345,10 @@ class NrfScannerViewModel : ViewModel() {
 
         val serviceUuids = scanRecord?.serviceUuids?.map { it.toString() } ?: emptyList()
         val manufacturerData = scanRecord?.manufacturerSpecificData
-        val manufacturerId = if (manufacturerData != null && manufacturerData.size() > 0) {
-            (0 until manufacturerData.size()).map { manufacturerData.keyAt(it) }
-                .firstOrNull { BleVendorDb.getCompanyIdentifierName(it) != null }
-                ?: manufacturerData.keyAt(0)
-        } else null
+        val manufacturerId = manufacturerData?.takeIf { it.size() > 0 }?.keyAt(0)
 
-        val isFastPair = serviceUuids.contains("0000fe2c-0000-1000-8000-00805f9b34fb")
-        val isWhisperPair = serviceUuids.any { it.contains("fe2c", ignoreCase = true) }
-        val isAppleDevice = manufacturerId == 0x004C
-        val isSamsungDevice = manufacturerId == 0x0075
-        val isXiaomiDevice = manufacturerId == 0x0157
-        val isVivoDevice = manufacturerId == 0x0837 ||
-            serviceUuids.any {
-                it.equals("00008486-0000-1000-8000-00805f9b34fb", ignoreCase = true) ||
-                    it.equals("00000837-0000-1000-8000-00805f9b34fb", ignoreCase = true)
-            }
-
-        val isVulnerable = isFastPair || isWhisperPair || isAppleDevice || isSamsungDevice || isXiaomiDevice || isVivoDevice
-        val vulnerabilityType = when {
-            isFastPair -> VulnerabilityType.FAST_PAIR_KBP
-            isWhisperPair -> VulnerabilityType.WHISPER_PAIR
-            isAppleDevice || isSamsungDevice || isXiaomiDevice || isVivoDevice -> VulnerabilityType.STANDARD_PAIRING
-            else -> VulnerabilityType.NONE
-        }
-
-        val advertisedName = scanRecord?.deviceName?.takeIf { it.isNotBlank() }
-        val systemName = device.name?.takeIf { it.isNotBlank() && !it.equals("Unknown", ignoreCase = true) }
-        val companyVendor = manufacturerId?.let { getManufacturerName(it) }
-        val macVendor = context?.let { ctx ->
-            com.droid.dolphy.ble.smarthome.BleVendorDb.getVendorLabel(ctx, device.address).takeIf { it != "Unknown" }
-        }
-        val resolvedVendor = companyVendor ?: macVendor
-
-        val deviceType = classifyDeviceType(device, serviceUuids, manufacturerId, advertisedName ?: systemName)
-        val manufacturerName = resolvedVendor
+        val deviceType = classifyDeviceType(device, serviceUuids, manufacturerId, device.name)
+        val manufacturerName = manufacturerId?.let { getManufacturerName(it) }
 
         val hasHID = serviceUuids.any { it.contains("1812", ignoreCase = true) }
         val hasAudio = serviceUuids.any {
@@ -389,20 +357,6 @@ class NrfScannerViewModel : ViewModel() {
             it.contains("110f", ignoreCase = true)
         }
         val hasBattery = serviceUuids.any { it.contains("180f", ignoreCase = true) }
-
-        val resolvedName = advertisedName
-            ?: systemName
-            ?: if (resolvedVendor != null) {
-                val categorySuffix = when {
-                    hasAudio -> "Audio"
-                    hasHID -> "Clavier/Souris"
-                    isFastPair -> "Fast Pair"
-                    else -> "BLE"
-                }
-                "$resolvedVendor ($categorySuffix)"
-            } else {
-                "Périphérique BLE (${device.address.takeLast(5)})"
-            }
 
         val existingDevice = deviceMap[device.address]
         if (existingDevice == null) {
@@ -418,7 +372,7 @@ class NrfScannerViewModel : ViewModel() {
 
         val nrfDevice = NrfDevice(
             address = device.address,
-            name = resolvedName,
+            name = device.name ?: "Unknown",
             type = deviceType,
             rssi = rssi,
             txPower = scanRecord?.txPowerLevel,
@@ -463,25 +417,15 @@ class NrfScannerViewModel : ViewModel() {
                                     val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE).toInt()
 
                                     device?.let {
-                                        val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
-                                        val sysName = extraName?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
-                                            ?: it.name?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
-                                        val macVendor = context?.let { ctx ->
-                                            com.droid.dolphy.ble.smarthome.BleVendorDb.getVendorLabel(ctx, it.address).takeIf { v -> v != "Unknown" }
-                                        }
-                                        val resolvedClassicName = sysName
-                                            ?: if (macVendor != null) "$macVendor (Bluetooth)"
-                                            else "Appareil Bluetooth (${it.address.takeLast(5)})"
-
                                         val nrfDevice = NrfDevice(
                                             address = it.address,
-                                            name = resolvedClassicName,
+                                            name = it.name ?: "Unknown",
                                             type = DeviceType.CLASSIC_DEVICE,
                                             rssi = rssi,
                                             deviceClass = it.bluetoothClass?.deviceClass,
                                             lastSeen = System.currentTimeMillis(),
                                             scanCount = (deviceMap[it.address]?.scanCount ?: 0) + 1,
-                                            manufacturerName = macVendor,
+                                            vendor = deviceMap[it.address]?.vendor ?: lookupVendor(it.address),
                                             deviceTypeClass = "Classic"
                                         )
 

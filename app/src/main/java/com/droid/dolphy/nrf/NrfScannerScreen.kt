@@ -32,7 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.droid.dolphy.BluetoothHelper
+import com.droid.dolphy.BluetoothPermissionGate
+import com.droid.dolphy.BlurHeaderBox
 import com.droid.dolphy.ConnectedButtonGroup
 import com.droid.dolphy.ExpressiveBounceButton
 import com.droid.dolphy.R
@@ -59,7 +60,7 @@ private fun NrfScannerContent(
     val colorScheme = MaterialTheme.colorScheme
 
     LaunchedEffect(Unit) {
-        val bluetoothAdapter = BluetoothHelper.bluetoothAdapter
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         viewModel.initialize(context, bluetoothAdapter)
     }
 

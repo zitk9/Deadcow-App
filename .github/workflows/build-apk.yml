@@ -1,0 +1,189 @@
+name: Build Deadcow APK
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type (release or debug)'
+        required: true
+        type: choice
+        options:
+          - release
+          - debug
+        default: release
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  build:
+    name: Build Deadcow Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Python for Chaquopy
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Accept Android SDK Licenses & Install Components
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" 2>/dev/null || true
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x gradlew
+
+      - name: Build Android APK
+        run: |
+          set +e
+          set +o pipefail
+          BUILD_TYPE="${{ github.event.inputs.build_type || 'release' }}"
+          echo "Starting Gradle build ($BUILD_TYPE)..."
+          BUILD_SUCCESS=false
+
+          if [ "$BUILD_TYPE" = "debug" ]; then
+            ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee build_output.log
+            if [ ${PIPESTATUS[0]} -eq 0 ] && [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+              cp app/build/outputs/apk/debug/app-debug.apk Deadcow-debug.apk
+              echo "APK_PATH=Deadcow-debug.apk" >> "$GITHUB_ENV"
+              BUILD_SUCCESS=true
+            fi
+          else
+            ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee build_output.log
+            if [ ${PIPESTATUS[0]} -eq 0 ] && [ -f app/build/outputs/apk/release/app-release.apk ]; then
+              cp app/build/outputs/apk/release/app-release.apk Deadcow-release.apk
+              echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
+              BUILD_SUCCESS=true
+            else
+              echo "Release minification failed, attempting debug APK build fallback..."
+              ./gradlew :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee -a build_output.log
+              if [ ${PIPESTATUS[0]} -eq 0 ] && [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+                cp app/build/outputs/apk/debug/app-debug.apk Deadcow-release.apk
+                echo "APK_PATH=Deadcow-release.apk" >> "$GITHUB_ENV"
+                BUILD_SUCCESS=true
+              fi
+            fi
+          fi
+
+          if [ "$BUILD_SUCCESS" = "false" ]; then
+            echo "ERROR: Gradle compilation failed to produce a Deadcow APK." >&2
+            exit 1
+          fi
+          echo "APK successfully prepared."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show Build Logs on Failure
+        if: failure()
+        run: |
+          if [ -f build_output.log ]; then
+            echo "=== Gradle Build Logs (Failure) ==="
+            tail -n 250 build_output.log
+          fi
+
+      - name: Push Build Log to Branch on Failure
+        if: failure()
+        run: |
+          if [ -f build_output.log ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git checkout -B build-log
+            git add -f build_output.log
+            git commit -m "chore(ci): build failure log [skip ci]" || true
+            git push origin build-log --force || true
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Build Log Artifact on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Deadcow-Build-Log
+          path: build_output.log
+          retention-days: 7
+
+      - name: Extract App Version & Generate version.json
+        if: success()
+        id: app_version
+        run: |
+          VER_CODE=$(grep -oP 'versionCode\s*=\s*\K\d+' app/build.gradle.kts || echo "59")
+          VER_NAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "1.30")
+          TAG_NAME="v${VER_NAME}-b${VER_CODE}"
+          echo "ver_code=${VER_CODE}" >> "$GITHUB_OUTPUT"
+          echo "ver_name=${VER_NAME}" >> "$GITHUB_OUTPUT"
+          echo "tag_name=${TAG_NAME}" >> "$GITHUB_OUTPUT"
+          cat <<EOF > version.json
+          {
+            "versionCode": ${VER_CODE},
+            "versionName": "${VER_NAME}",
+            "tagName": "${TAG_NAME}",
+            "apkUrl": "https://github.com/zitk9/Deadcow-App/releases/download/${TAG_NAME}/Deadcow-release.apk"
+          }
+          EOF
+          cat version.json
+
+      - name: Upload APK Artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Deadcow-APK
+          path: ${{ env.APK_PATH }}
+          retention-days: 30
+
+      - name: Publish Auto-Update Release
+        if: github.ref == 'refs/heads/main' && success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.app_version.outputs.tag_name }}
+          name: "Deadcow v${{ steps.app_version.outputs.ver_name }} (Build ${{ steps.app_version.outputs.ver_code }})"
+          prerelease: false
+          make_latest: true
+          body: |
+            ### 🐮 Deadcow Android Release v${{ steps.app_version.outputs.ver_name }} (Build ${{ steps.app_version.outputs.ver_code }})
+
+            - **Nom** : Deadcow
+            - **Version** : v${{ steps.app_version.outputs.ver_name }} (`versionCode = ${{ steps.app_version.outputs.ver_code }}`)
+            - **Mise à jour automatique** : L'application Deadcow détecte et installe automatiquement cette mise à jour au lancement.
+            - **Mascotte** : Vache Deadcow (Animations 128x64, Level Up, Portraits Passeport, NFC/RFID/IR/BLE).
+            - **Synchronisation upstream** : Aligné sur Dolphy 2.7 (Material 3 Expressive, TV Cast, Plugin Store, NRF Scanner rapide avec base OUI).
+            - **APK officiel Deadcow** : Téléchargez `Deadcow-release.apk` ci-dessous.
+          files: |
+            ${{ env.APK_PATH }}
+            version.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync Documentation to gh-pages
+        if: github.ref == 'refs/heads/main' && success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp -f version.json docs/version.json || true
+          git add -f docs/version.json || true
+          git commit -m "chore(pages): add version.json [skip ci]" || true
+          TREE=$(git rev-parse HEAD:docs)
+          COMMIT=$(git commit-tree "$TREE" -m "chore(pages): deploy website and version.json from main docs [skip ci]")
+          git push origin "$COMMIT":refs/heads/gh-pages --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

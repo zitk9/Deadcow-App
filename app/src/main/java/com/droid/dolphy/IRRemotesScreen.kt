@@ -3391,12 +3391,6 @@ fun IRJammerScreen(navController: NavController? = null) {
                                                 }
                                                 delay(8)
                                             }
-                                            withContext(Dispatchers.Main) {
-                                                sentCommands = index + 1
-                                                statusMessage = context.getString(R.string.ir_jammer_sending_signals) +
-                                                    " · cycle $cycle"
-                                            }
-                                            delay(8)
                                         }
                                     } catch (_: kotlinx.coroutines.CancellationException) {
                                     } finally {

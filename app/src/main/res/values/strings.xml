@@ -1119,4 +1119,466 @@ Sous licence GNU GPL.</string>
     <string name="other_ble_spam_desc">Spam de requêtes d\'appairage Apple, Android, Windows, Samsung</string>
     <string name="other_bond_spam_desc">Requêtes d\'association Bluetooth Classic (Bond flood)</string>
     <string name="ble_swift_pair_windows">Swift Pair sur Windows</string>
+
+    <!-- Merged upstream strings -->
+
+    <string name="chat_status_connected">Connected</string>
+
+    <string name="chat_status_scanning">Scanning…</string>
+
+    <string name="chat_status_offline">Offline</string>
+
+    <string name="chat_empty_title">No messages yet</string>
+
+    <string name="chat_empty_hint">Say hello to a nearby Dolphy user — new messages will show up here.</string>
+
+    <string name="pmanager_import_plugin">Import plugin</string>
+
+    <string name="pmanager_plugin_store">Plugin Store</string>
+
+    <string name="pabout_section_minimal">Minimal plugin</string>
+
+    <string name="pabout_section_full_access">Full access</string>
+
+    <string name="pabout_title_root">Android, Root and Shizuku</string>
+
+    <string name="pabout_body_root">api.getContext(), api.getApplicationContext(), api.getClassLoader(), api.getAndroid(), and api.getDevice() return real Dolphy Java objects. Commands are available through api.shellExec(), api.rootExec(), api.shizukuExec(), and api.smartExec().</string>
+
+    <string name="pabout_section_radio">Radio interfaces</string>
+
+    <string name="pabout_title_bluetooth">Bluetooth and BLE</string>
+
+    <string name="pabout_body_bluetooth">api.getAndroid() provides advertising, GATT client/server, RFCOMM, bonding, and adapter details. api.getDevice() provides BLE scan, hardware capabilities, and system operations.</string>
+
+    <string name="pabout_title_wifi">Wi-Fi and networking</string>
+
+    <string name="pabout_body_wifi">Wi-Fi scan results, interfaces, DHCP, channels, NSD, sockets, HTTP, and direct access to the Android WifiManager are available. Root and Shizuku unlock the device\'s system networking tools.</string>
+
+    <string name="pabout_section_hooking">App hooking</string>
+
+    <string name="pabout_title_hooks">Screens, actions, and services</string>
+
+    <string name="pabout_body_hooks">hook_screen() adds an overlay, a FAB, or fully replaces the stock screen. hook_action() intercepts named operations and can modify the data, handle, or cancel the action. provide_service() installs a new implementation of a system capability with priority and a stock fallback.</string>
+
+    <string name="pabout_title_hook_modes">Screen hook modes</string>
+
+    <string name="pabout_body_hook_modes">replace swaps the screen, overlay draws a free-form layer on top of it, top and bottom add a Material 3 panel, and fab adds a compact floating action. Route masks support *, e.g. ir_* or other/*.</string>
+
+    <string name="pabout_section_state">State and settings</string>
+
+    <string name="pabout_title_trusted">Trusted model</string>
+
+    <string name="pabout_body_trusted">A Python plugin runs inside the Dolphy process and can obtain app permissions, internal data, Root, and Shizuku. Only install code you have read or fully trust.</string>
+
+    <string name="psafe_clipboard_label">Dolphy plugin crash log</string>
+
+    <string name="psafe_size_mb">%.1f MB</string>
+
+    <string name="ppreview_size_mb">%.1f MB</string>
+
+    <string name="ppreview_size_kb">%.1f KB</string>
+
+    <string name="ppreview_size_bytes">%1$d B</string>
+
+    <string name="bt_jammer_scanning">Scanning for devices…</string>
+
+    <string name="bt_jammer_found">Found: %1$d</string>
+
+    <string name="bt_jammer_tap_hint">Tap a device to attack</string>
+
+    <string name="plugin_auto_safe_mode_title">Enable safe mode automatically on crashes</string>
+
+    <string name="plugin_auto_safe_mode_body">If the app crashes while plugins are running, safe mode turns on by itself on the next launch so the culprit stays disabled</string>
+
+    <string name="bluetooth_permission_title">Bluetooth access</string>
+
+    <string name="bluetooth_permission_explanation">This section needs device discovery and Bluetooth access. Android requires location permission for BLE discovery. You can use other sections without granting it.</string>
+
+    <string name="bluetooth_permission_grant">Grant access</string>
+
+    <string name="bluetooth_permission_settings">Open app settings</string>
+
+    <string name="bluetooth_permission_required">Grant Bluetooth access for this section.</string>
+
+    <string name="bluetooth_enable_first">Turn on Bluetooth and try again.</string>
+
+    <string name="bluetooth_scan_failed">Discovery failed. Check Bluetooth, permissions and location services.</string>
+
+    <string name="chat_advertising_failed">Could not make this chat discoverable.</string>
+
+    <string name="chat_start_failed">Could not start chat. Check Bluetooth and BLE advertising support.</string>
+
+    <string name="chat_no_recipients">No Dolphy users nearby. Open chat on the other device.</string>
+
+    <string name="chat_send_not_ready">Chat is not ready yet — check Bluetooth and your name, then try again</string>
+
+    <string name="chat_message_too_long">The message is too long. Shorten it and try again.</string>
+
+    <string name="chat_change_name">Chat name</string>
+
+    <string name="chat_save_name">Save</string>
+
+    <string name="chat_peers">Nearby users: %d</string>
+
+    <string name="chat_privacy_notice">A nearby group chat. Messages are not encrypted; history lasts until the app closes.</string>
+
+    <string name="chat_delivery_pending">Sending…</string>
+
+    <string name="chat_delivery_sent">Delivered to all discovered users</string>
+
+    <string name="chat_delivery_failed">Delivery failed for one or more users</string>
+
+    <string name="chat_retry">Retry</string>
+
+    <string name="print_invalid_address">Invalid printer address</string>
+
+    <string name="print_accepted">Printer accepted job%s</string>
+
+    <string name="print_certificate_error">Printer certificate is not trusted</string>
+
+    <string name="print_timeout">Printer response timed out</string>
+
+    <string name="print_connection_error">Cannot connect to printer</string>
+
+    <string name="cast_importing">Preparing video…</string>
+
+    <string name="cast_ready">Video ready. Choose a device.</string>
+
+    <string name="cast_failed">Could not cast video: %s</string>
+
+    <string name="cast_loading">Loading on device…</string>
+
+    <string name="cast_loaded">Device accepted the video</string>
+
+    <string name="cast_discovery_failed">TV discovery failed: %s</string>
+
+    <string name="cast_google">Google Cast</string>
+
+    <string name="cast_google_hint">Choose a Google Cast device using the button on the right, then tap Play.</string>
+
+    <string name="cast_play">Play on Google Cast</string>
+
+    <string name="cast_no_session">Connect to a Google Cast device first.</string>
+
+    <string name="cast_browser_hint">Other TVs: open the local site in the TV browser.</string>
+
+    <string name="cast_import_failed">Could not read the video</string>
+
+    <string name="cast_network_missing">Connect to a local Wi-Fi network.</string>
+
+    <string name="cast_file_too_large">Not enough free space for this video</string>
+
+    <string name="nfc_hce_ready">NFC Forum Type 4 · hold the phone near a reader</string>
+
+    <string name="catalog_ble_desc">Test BLE advertisements for Apple, Android, Windows and Samsung</string>
+
+    <string name="catalog_bond_desc">Bluetooth Classic pairing request test</string>
+
+    <string name="qr_service_active">Local server is running in the background</string>
+
+    <string name="nrf_mac">MAC address</string>
+
+    <string name="nrf_type">Device type</string>
+
+    <string name="nrf_signal">Signal strength</string>
+
+    <string name="nrf_vendor">Manufacturer</string>
+
+    <string name="nrf_battery_level">Battery level</string>
+
+    <string name="nrf_capabilities">Capabilities</string>
+
+    <string name="nrf_keyboard">Keyboard</string>
+
+    <string name="nrf_audio">Audio</string>
+
+    <string name="nrf_battery">Battery</string>
+
+    <string name="nrf_profile">Profile</string>
+
+    <string name="nrf_disconnect">Disconnect</string>
+
+    <string name="nrf_unknown">Unknown</string>
+
+    <string name="nrf_gatt_count">GATT services (%d)</string>
+
+    <string name="nrf_characteristics_count">%d characteristics</string>
+
+    <string name="nrf_more_services">%d more services</string>
+
+    <string name="nrf_advertised_count">Advertised services (%d)</string>
+
+    <string name="qr_notice_1">Cannot read file</string>
+
+    <string name="qr_notice_2">HTML is empty</string>
+
+    <string name="qr_notice_3">Imported HTML: %1$s (%2$s characters)</string>
+
+    <string name="qr_notice_4">HTML import failed: %1$s</string>
+
+    <string name="qr_notice_5">Audio added: %1$s</string>
+
+    <string name="qr_notice_6">Audio import failed: %1$s</string>
+
+    <string name="qr_notice_7">Import an HTML file first</string>
+
+    <string name="qr_notice_8">Local server is already running</string>
+
+    <string name="qr_notice_9">Local network is unavailable</string>
+
+    <string name="qr_notice_10">Connect to Wi-Fi, Ethernet or a hotspot and try again</string>
+
+    <string name="qr_notice_11">Internet hosting is not used</string>
+
+    <string name="qr_notice_12">Starting local server…</string>
+
+    <string name="qr_notice_13">Local network mode</string>
+
+    <string name="qr_notice_14">External servers and tunnels are disabled</string>
+
+    <string name="qr_notice_15">Local server failed to start</string>
+
+    <string name="qr_notice_16">Ports 8080–8110 are busy or the health check failed</string>
+
+    <string name="qr_notice_17">Local server is ready: %1$s</string>
+
+    <string name="qr_notice_18">This QR link is available only in this local network</string>
+
+    <string name="qr_notice_19">Error: %1$s</string>
+
+    <string name="qr_notice_20">Server stopped</string>
+
+    <string name="qr_log_1">Server is already running on port %1$s</string>
+
+    <string name="qr_log_2">Starting Netty on port %1$s…</string>
+
+    <string name="qr_log_3">Rejected nonlocal connection: %1$s</string>
+
+    <string name="qr_log_4">Audio error: %1$s</string>
+
+    <string name="qr_log_5">Page connected (WS): %1$s, id=%2$s</string>
+
+    <string name="qr_log_6">Page visit: %1$s</string>
+
+    <string name="qr_log_7">Input: %1$s</string>
+
+    <string name="qr_log_8">Page disconnected: %1$s</string>
+
+    <string name="qr_log_9">Health check failed on port %1$s; trying another port…</string>
+
+    <string name="qr_log_10">Server started on port %1$s; health check passed</string>
+
+    <string name="qr_log_11">Port %1$s failed: %2$s: %3$s</string>
+
+    <string name="qr_log_12">Server could not start; no available ports</string>
+
+    <string name="qr_log_13">HTML error: %1$s</string>
+
+    <string name="qr_log_14">Local server stopped</string>
+
+    <string name="nfc_detail_1">Hold the tag near the phone</string>
+
+    <string name="nfc_detail_2">NFC is unavailable</string>
+
+    <string name="nfc_detail_3">Enable NFC in phone settings</string>
+
+    <string name="nfc_detail_4">Technologies</string>
+
+    <string name="nfc_detail_5">Yes</string>
+
+    <string name="nfc_detail_6">No</string>
+
+    <string name="nfc_detail_7">Memory size</string>
+
+    <string name="nfc_detail_8">Record type</string>
+
+    <string name="nfc_detail_9">Content</string>
+
+    <string name="nfc_detail_10">Hide HEX</string>
+
+    <string name="nfc_detail_11">Show HEX</string>
+
+    <string name="nfc_detail_12">Enabled</string>
+
+    <string name="nfc_detail_13">Disabled</string>
+
+    <string name="nfc_detail_14">Unknown</string>
+
+    <string name="nfc_detail_15">Analysis</string>
+
+    <string name="nfc_detail_16">Type</string>
+
+    <string name="nfc_detail_17">EMV card</string>
+
+    <string name="nfc_detail_18">Save URL for Type 4 emulation</string>
+
+    <string name="nfc_detail_19">This tag cannot be emulated</string>
+
+    <string name="nfc_detail_20">Tag copy</string>
+
+    <string name="nfc_detail_21">History</string>
+
+    <string name="nfc_copy_title">Tag copy</string>
+
+    <string name="plugin_store_section">Store</string>
+
+    <string name="plugin_auto_update_title">Auto-update from store</string>
+
+    <string name="plugin_auto_update_body">Update installed plugins to newer catalog versions</string>
+
+    <string name="plugin_translate_title">Online plugin translation</string>
+
+    <string name="plugin_translate_body">Translate plugin names and descriptions to your language</string>
+
+    <string name="hid_attack_in_progress">ATTACK IN PROGRESS</string>
+
+    <string name="hid_payloads">Payloads</string>
+
+    <string name="hid_phantom_clicks">Phantom Clicks</string>
+
+    <string name="hid_quick_actions">Quick Actions</string>
+
+    <string name="hid_url_to_open">URL to open</string>
+
+    <string name="hid_open_link">Open Link</string>
+
+    <string name="hid_center_cursor">Center Cursor</string>
+
+    <string name="hid_ducky_scripts">Ducky Scripts</string>
+
+    <string name="hid_open">Open</string>
+
+    <string name="hid_blueducky_info_cd">About BlueDucky</string>
+
+    <string name="store_title">Plugin Store</string>
+
+    <string name="store_search_hint">Search plugins</string>
+
+    <string name="store_active_source">Source: %1$s</string>
+
+    <string name="store_items_count">%1$d items</string>
+
+    <string name="store_featured">Featured</string>
+
+    <string name="store_all_plugins">All plugins</string>
+
+    <string name="store_empty_source">No plugins in this source</string>
+
+    <string name="store_nothing_found">Nothing found</string>
+
+    <string name="store_loading_catalog">Loading catalog…</string>
+
+    <string name="store_error_catalog">Failed to load catalog</string>
+
+    <string name="store_retry">Retry</string>
+
+    <string name="store_refresh">Refresh</string>
+
+    <string name="store_sources">Sources</string>
+
+    <string name="store_update_available">Update available</string>
+
+    <string name="store_installed">Installed</string>
+
+    <string name="store_delete">Delete</string>
+
+    <string name="store_plugin">Plugin</string>
+
+    <string name="store_no_plugin_selected">No plugin selected</string>
+
+    <string name="store_error_prefix">Error: %1$s</string>
+
+    <string name="store_install">Install</string>
+
+    <string name="store_installing">Installing…</string>
+
+    <string name="store_update_to_version">Update to v%1$s</string>
+
+    <string name="store_reinstall">Reinstall</string>
+
+    <string name="store_install_success">\"%1$s\" installed</string>
+
+    <string name="store_open_link_failed">Failed to open link</string>
+
+    <string name="store_discussion">Discussion / post</string>
+
+    <string name="store_installed_version">Installed version v%1$s</string>
+
+    <string name="store_description">Description</string>
+
+    <string name="store_no_description">No description.</string>
+
+    <string name="store_author">Author</string>
+
+    <string name="store_version">Version</string>
+
+    <string name="store_updated">Updated</string>
+
+    <string name="store_file">File</string>
+
+    <string name="store_sources_title">Plugin sources</string>
+
+    <string name="store_sources_hint">Connect a GitHub repository containing an index.json file. Paste a repository link, owner/repo, or a direct link to index.json.</string>
+
+    <string name="store_source_input_hint">github.com/owner/repo or index.json link</string>
+
+    <string name="store_add_source">Add source</string>
+
+    <string name="store_source_connected">Source connected: %1$s</string>
+
+    <string name="store_invalid_link">Invalid link</string>
+
+    <string name="store_source">Source</string>
+
+    <string name="store_error_not_ready">Store is not ready</string>
+
+    <string name="store_error_install">Installation failed</string>
+
+    <string name="store_error_redirect_no_url">Redirect without a URL (%1$d)</string>
+
+    <string name="store_error_file_too_large">File is too large</string>
+
+    <string name="store_error_too_many_redirects">Too many redirects</string>
+
+    <string name="store_error_parse_url">Could not parse the URL</string>
+
+    <string name="nrf_unknown_device">Unknown device</string>
+
+    <string name="nrf_filter_named_only">Named only</string>
+
+    <string name="nrf_filter_known_vendors">Known vendors</string>
+
+    <string name="nrf_sort_signal">By signal</string>
+
+    <string name="nrf_sort_name">By name</string>
+
+    <string name="nrf_last_seen">Last seen</string>
+
+    <string name="nrf_last_seen_now">just now</string>
+
+    <string name="nrf_last_seen_seconds">%1$d s ago</string>
+
+    <string name="nrf_last_seen_minutes">%1$d min ago</string>
+
+    <string name="nrf_last_seen_hours">%1$d h ago</string>
+
+    <string name="nrf_scans">Appearances: %1$d</string>
+
+    <string name="nrf_tx_power">Tx power</string>
+
+    <string name="nrf_connectable">Connectable</string>
+
+    <string name="nrf_signal_excellent">Excellent</string>
+
+    <string name="nrf_signal_good">Good</string>
+
+    <string name="nrf_signal_fair">Fair</string>
+
+    <string name="nrf_signal_weak">Weak</string>
+
+    <string name="nrf_signal_very_weak">Very weak</string>
+
+    <string name="nrf_bluetooth_off_title">Bluetooth is off</string>
+
+    <string name="nrf_bluetooth_off_message">Turn on Bluetooth to discover nearby devices</string>
 </resources>

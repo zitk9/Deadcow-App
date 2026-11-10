@@ -181,8 +181,29 @@ object PluginManager {
             val acceptedByHints = fileName.endsWith(".dolphyplugin", true) ||
                 fileName.endsWith(".js", true) ||
                 uri.path?.endsWith(".dolphyplugin", true) == true ||
-                mime.equals("application/x-dolphy-plugin", true)
-            if (!accepted) return Result.failure(IllegalArgumentException("Fichiers .dolphyplugin uniquement"))
+                uri.path?.endsWith(".js", true) == true ||
+                mime.equals("application/x-dolphy-plugin", true) ||
+                mime.contains("javascript", true) ||
+                mime.contains("python", true)
+            if (!acceptedByHints) {
+                val sniff = runCatching {
+                    appContext.contentResolver.openInputStream(uri)?.use { input ->
+                        val buffer = ByteArray(8192)
+                        val read = input.read(buffer)
+                        if (read <= 0) null else String(buffer, 0, read, Charsets.UTF_8)
+                    }
+                }.getOrNull()
+                val looksLikeSource = sniff != null && !sniff.contains('\u0000') && (
+                    sniff.contains("manifest") ||
+                        sniff.contains("def ") ||
+                        sniff.contains("import ") ||
+                        sniff.contains("function") ||
+                        sniff.contains("const ")
+                    )
+                if (!looksLikeSource) {
+                    return Result.failure(IllegalArgumentException("Fichiers .dolphyplugin uniquement"))
+                }
+            }
             val bytes = appContext.contentResolver.openInputStream(uri)?.use { input ->
                 val output = ByteArrayOutputStream()
                 val buffer = ByteArray(8192)
