@@ -19,30 +19,16 @@ enum class BlurDirection {
     BOTTOM
 }
 
-
-
-
-
-
-
-
-
-
-
-
-@Composable
-fun ProgressiveBlurContent(
-    modifier: Modifier = Modifier,
-    topHeightPx: Float = 0f,
-    bottomHeightPx: Float = 0f,
-    blurRadius: Float = 18f,
-    overlayColor: Color = MaterialTheme.colorScheme.surfaceContainer,
-    content: @Composable () -> Unit
-) {
-    val isSamsung = remember {
-        android.os.Build.MANUFACTURER.equals("samsung", ignoreCase = true) ||
-        android.os.Build.BRAND.equals("samsung", ignoreCase = true)
-    }
+/**
+ *
+ */
+@Language("AGSL")
+private val PROGRESSIVE_BLUR_SKSL = """
+    uniform shader content;
+    uniform float blurRadius;
+    uniform float height;
+    uniform float contentHeight;
+    uniform int isTop;
 
     half4 main(float2 fragCoord) {
         float progress;

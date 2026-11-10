@@ -23,6 +23,41 @@ class BluetoothAdvertiser {
 
     @Synchronized
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
+    fun advertise(
+        advertiseData: AdvertiseData,
+        scanResponse: AdvertiseData? = null,
+        forceLegacy: Boolean = true,
+        connectable: Boolean = false
+    ) {
+        val pluginDecision = PluginBluetoothHooks.interceptAdvertising(
+            advertiseData,
+            scanResponse,
+            JSONObject().put("source", "ble_spam"),
+        )
+        if (pluginDecision.skipNative) return
+        val effectiveData = pluginDecision.advertiseData
+        val effectiveScanResponse = pluginDecision.scanResponse
+
+        // BLE pair/setup protocols (Samsung Watch/Buds, FastPair, SwiftPair, Continuity)
+        // require standard legacy Bluetooth 4.x advertisements (channels 37/38/39).
+        // Extended advertising with setLegacyMode(false) is only used when explicitly requested
+        // or when payload exceeds standard 31-byte legacy limit.
+        if (!forceLegacy && Helper.canUseExtendedAdvertising()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                advertiseExtended(effectiveData, effectiveScanResponse, connectable)
+                return
+            }
+        }
+        advertiseLegacy(effectiveData, effectiveScanResponse, connectable)
+    }
+
+    @Synchronized
+    @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
+    private fun advertiseLegacy(
+        advertiseData: AdvertiseData,
+        scanResponse: AdvertiseData?,
+        connectable: Boolean = false
+    ) {
         val adv = advertiser ?: run {
             Helper.log("BluetoothLeAdvertiser is null - Bluetooth disabled or peripheral mode unsupported")
             return
@@ -120,6 +155,16 @@ class BluetoothAdvertiser {
 
     @Synchronized
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
+    fun stopAdvertising() {
+        val pluginDecision = PluginBluetoothHooks.action("bluetooth.advertising.stop", JSONObject().put("source", "ble_spam"))
+        if (pluginDecision.cancelled) return
+        if (pluginDecision.handled) {
+            currentLegacyCallback = null
+            currentExtCallback = null
+            return
+        }
+        stopAdvertisingInternal()
+    }
 
     @Synchronized
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)

@@ -180,38 +180,9 @@ fun BluetoothJammerScanScreen(onBack: () -> Unit, accentColor: Color) {
                 }
             }
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(bottom = 32.dp)
-                ) {
-                    items(devices, key = { it.address }) { device ->
-                        MaterialCard(
-                            modifier = Modifier.fillMaxWidth().clickable { selectedDevice = device },
-                            accentColor = accentColor,
-                            cornerRadius = 24.dp,
-                            contentPadding = 16.dp
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier.size(48.dp).background(accentColor.copy(alpha = 0.1f), CircleShape),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(Icons.Default.Bluetooth, null, tint = accentColor)
-                                }
-                                Spacer(Modifier.width(16.dp))
-                                Column {
-                                    Text(device.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    val subtitle = if (!device.manufacturer.isNullOrBlank() && !device.name.contains(device.manufacturer, ignoreCase = true)) {
-                                        "${device.address} • ${device.manufacturer}"
-                                    } else {
-                                        device.address
-                                    }
-                                    Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                        }
-                    }
+            if (devices.isEmpty() && !isScanning) {
+                item(key = "empty") {
+                    JammerEmptyState()
                 }
             }
         }

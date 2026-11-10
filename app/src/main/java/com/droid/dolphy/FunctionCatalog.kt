@@ -35,7 +35,7 @@ fun functionDestinationSections(): List<Pair<String, List<FunctionDestination>>>
     val bySection = androidx.compose.runtime.remember(revision, pluginCards) { PluginRegistry.otherBySection() }
 
     val irFlipperTitle = stringResource(R.string.ir_flipper_remotes)
-    val irFlipperDesc = stringResource(R.string.other_ir_flipper_desc) + " + " + stringResource(R.string.tv_remotes_label)
+    val irFlipperDesc = stringResource(R.string.other_ir_flipper_desc)
     val irStormTitle = stringResource(R.string.ir_storm)
     val irStormDesc = stringResource(R.string.other_ir_storm_desc)
     val irJammerTitle = stringResource(R.string.ir_jammer)
@@ -89,7 +89,7 @@ fun functionDestinationSections(): List<Pair<String, List<FunctionDestination>>>
             FunctionDestination(Icons.Default.WifiTethering, irJammerTitle, irJammerDesc, "other/ir_jammer", OtherSections.INFRARED),
             FunctionDestination(Icons.Default.Tv, irUnivTitle, irUnivDesc, "other/universal_remotes_home", OtherSections.INFRARED),
         ) + plugins(OtherSections.INFRARED)
-        sections += OtherSections.BLUETOOTH to listOf(
+        sections += OtherSections.BLUETOOTH to (listOf(
             FunctionDestination(Icons.Default.Bolt, bleSpamTitle, bleSpamDesc, "ble_spam_screen", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.Link, "Bond Spam", bondSpamDesc, "bond_spam_screen", OtherSections.BLUETOOTH),
             FunctionDestination(Icons.Default.BluetoothAudio, audioScanTitle, audioScanDesc, "other/audio_scanner", OtherSections.BLUETOOTH),

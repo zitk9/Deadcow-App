@@ -382,6 +382,106 @@ class NrfScannerViewModel : ViewModel() {
         val deviceType = classifyDeviceType(device, serviceUuids, manufacturerId, advertisedName ?: systemName)
         val manufacturerName = resolvedVendor
 
+        val hasHID = serviceUuids.any { it.contains("1812", ignoreCase = true) }
+        val hasAudio = serviceUuids.any {
+            it.contains("110b", ignoreCase = true) ||
+            it.contains("110e", ignoreCase = true) ||
+            it.contains("110f", ignoreCase = true)
+        }
+        val hasBattery = serviceUuids.any { it.contains("180f", ignoreCase = true) }
+
+        val resolvedName = advertisedName
+            ?: systemName
+            ?: if (resolvedVendor != null) {
+                val categorySuffix = when {
+                    hasAudio -> "Audio"
+                    hasHID -> "Clavier/Souris"
+                    isFastPair -> "Fast Pair"
+                    else -> "BLE"
+                }
+                "$resolvedVendor ($categorySuffix)"
+            } else {
+                "Périphérique BLE (${device.address.takeLast(5)})"
+            }
+
+        val existingDevice = deviceMap[device.address]
+        if (existingDevice == null) {
+            context?.let { ctx -> com.droid.dolphy.trackNrfDevices(ctx, 1) }
+        }
+
+        val vendor = existingDevice?.vendor ?: lookupVendor(device.address)
+        val isConnectable = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            result.isConnectable
+        } else {
+            null
+        }
+
+        val nrfDevice = NrfDevice(
+            address = device.address,
+            name = resolvedName,
+            type = deviceType,
+            rssi = rssi,
+            txPower = scanRecord?.txPowerLevel,
+            manufacturerId = manufacturerId,
+            manufacturerData = if (manufacturerId != null) manufacturerData?.get(manufacturerId)?.clone() else null,
+            serviceUuids = serviceUuids,
+            deviceClass = device.bluetoothClass?.deviceClass,
+            isProfiling = existingDevice?.isProfiling ?: false,
+            lastSeen = System.currentTimeMillis(),
+            scanCount = (existingDevice?.scanCount ?: 0) + 1,
+            manufacturerName = manufacturerName,
+            vendor = vendor,
+            isConnectable = isConnectable,
+            deviceTypeClass = getDeviceTypeLabel(deviceType),
+            gattServices = existingDevice?.gattServices ?: emptyList(),
+            batteryLevel = existingDevice?.batteryLevel,
+            deviceInfo = existingDevice?.deviceInfo,
+            isConnected = existingDevice?.isConnected ?: false,
+            hasHID = hasHID,
+            hasAudio = hasAudio,
+            hasBattery = hasBattery
+        )
+
+        deviceMap[device.address] = nrfDevice
+        updateDevicesList()
+    }
+
+    private fun startClassicScanning() {
+        viewModelScope.launch {
+            try {
+                context?.let { ctx ->
+                    classicScanReceiver = object : BroadcastReceiver() {
+                        override fun onReceive(context: Context?, intent: Intent?) {
+                            try {
+                                if (intent?.action == BluetoothDevice.ACTION_FOUND) {
+                                    val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
+                                    } else {
+                                        @Suppress("DEPRECATION")
+                                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                                    }
+                                    val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE).toInt()
+
+                                    device?.let {
+                                        val extraName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME)
+                                        val sysName = extraName?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
+                                            ?: it.name?.takeIf { n -> n.isNotBlank() && !n.equals("Unknown", ignoreCase = true) }
+                                        val macVendor = context?.let { ctx ->
+                                            com.droid.dolphy.ble.smarthome.BleVendorDb.getVendorLabel(ctx, it.address).takeIf { v -> v != "Unknown" }
+                                        }
+                                        val resolvedClassicName = sysName
+                                            ?: if (macVendor != null) "$macVendor (Bluetooth)"
+                                            else "Appareil Bluetooth (${it.address.takeLast(5)})"
+
+                                        val nrfDevice = NrfDevice(
+                                            address = it.address,
+                                            name = resolvedClassicName,
+                                            type = DeviceType.CLASSIC_DEVICE,
+                                            rssi = rssi,
+                                            deviceClass = it.bluetoothClass?.deviceClass,
+                                            lastSeen = System.currentTimeMillis(),
+                                            scanCount = (deviceMap[it.address]?.scanCount ?: 0) + 1,
+                                            manufacturerName = macVendor,
                                             deviceTypeClass = "Classic"
                                         )
 

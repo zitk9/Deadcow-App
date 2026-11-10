@@ -100,64 +100,42 @@ fun NfcWaitScreen(navController: NavController, viewModel: NfcViewModel) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        MaterialBackground(accentColor = accent) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-            ) {
-                NfcTopBar(
-                    title = stringResource(R.string.nfc_read_title),
-                    onBack = { navController.popBackStack() },
-            onHistory = { navController.navigate("other/nfc_history") },
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        if(nfcReady) {
-                            TintedFrameAnimation(
-                                frames = listOf(
-                                    R.drawable.mm_nfc_14_frame_01,
-                                    R.drawable.mm_nfc_14_frame_02,
-                                    R.drawable.mm_nfc_14_frame_03,
-                                    R.drawable.mm_nfc_14_frame_04,
-                                ),
-                                modifier = Modifier.size(width = 53.dp, height = 53.dp),
-                                frameDelayMs = 333L,
-                                tintColor = accent,
-                                contentDescription = "NFC reading animation",
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.passport_bad2_46x49),
-                                contentDescription = "NFC unavailable",
-                                modifier = Modifier.size(width = 138.dp, height = 147.dp),
-                                colorFilter = ColorFilter.tint(
-                                    color = accent,
-                                    blendMode = BlendMode.Modulate
-                                ),
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = if(nfcReady) "Approchez le badge NFC du téléphone" else "NFC non disponible",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = FontWeight.SemiBold,
+    NfcHeaderScaffold(
+        title = stringResource(R.string.nfc_read_title),
+        onBack = { navController.popBackStack() },
+        onHistory = { navController.navigate("other/nfc_history") },
+        accentColor = accent,
+    ) { headerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = headerPadding + 24.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        ) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if(nfcReady) {
+                        TintedFrameAnimation(
+                            frames = listOf(
+                                R.drawable.mm_nfc_14_frame_01,
+                                R.drawable.mm_nfc_14_frame_02,
+                                R.drawable.mm_nfc_14_frame_03,
+                                R.drawable.mm_nfc_14_frame_04,
+                            ),
+                            modifier = Modifier.size(width = 53.dp, height = 53.dp),
+                            frameDelayMs = 333L,
+                            tintColor = accent,
+                            contentDescription = "NFC reading animation",
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = if(nfcReady) {
-                                if (rootMode) "En attente NFC... (root)" else "En attente NFC..."
-                            } else {
-                                "Activez le NFC dans les paramètres du téléphone"
-                            },
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp),
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.passport_bad2_46x49),
+                            contentDescription = "NFC unavailable",
+                            modifier = Modifier.size(width = 138.dp, height = 147.dp),
+                            colorFilter = ColorFilter.tint(
+                                color = accent,
+                                blendMode = BlendMode.Modulate
+                            ),
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -259,139 +237,24 @@ fun NfcResultScreen(navController: NavController, viewModel: NfcViewModel, scanI
                 }
             }
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 140.dp),
-                ) {
-                    item {
-                        SectionCard(title = stringResource(R.string.nfc_section_main)) {
-                            KeyValue("UID (hex)", scan!!.uidHex)
-                            KeyValue("Technologies", scan!!.techListCsv)
-                            KeyValue("Modifiable", scan!!.writable?.let { if(it) "Oui" else "Non" } ?: "—")
-                            KeyValue("Taille mémoire", scan!!.maxSizeBytes?.let { "$it octets" } ?: "—")
-                        }
-                    }
-
-                    if(!scan!!.ndefRecordType.isNullOrBlank()) {
-                        item {
-                            SectionCard(title = stringResource(R.string.nfc_section_ndef)) {
-                                KeyValue("Type d'enregistrement", scan!!.ndefRecordType ?: "—")
-                                KeyValue("Contenu", scan!!.ndefContent ?: "—")
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { showHex = !showHex }
-                                        .padding(vertical = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                ) {
-                                    Text(
-                                        text = if(showHex) "Masquer HEX" else "Afficher HEX",
-                                        color = accent,
-                                        fontWeight = FontWeight.SemiBold,
-                                    )
-                                }
-                                if(showHex) {
-                                    KeyValue("HEX", scan!!.ndefHex ?: "—")
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        SectionCard(title = stringResource(R.string.nfc_section_analysis)) {
-                            KeyValue("NTAG", scan!!.ntagType ?: "—")
-                            KeyValue("Lecture seule", scan!!.isReadOnly?.let { if(it) "Oui" else "Non" } ?: "—")
-                            KeyValue(
-                                "Protection mot de passe",
-                                when {
-                                    scan!!.passwordProtectionSupported != true -> "—"
-                                    scan!!.passwordProtectionEnabled == true -> "Activé"
-                                    scan!!.passwordProtectionEnabled == false -> "Désactivé"
-                                    else -> "Inconnu"
-                                },
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            KeyValue("Verdict", scan!!.analysisVerdict)
-                        }
-                    }
-
-                    if(scan!!.emvDetected) {
-                        item {
-                            SectionCard(title = stringResource(R.string.nfc_section_emv)) {
-                                val lines = scan!!.emvInfo.orEmpty()
-                                    .lineSequence()
-                                    .map { it.trim() }
-                                    .filter { it.isNotEmpty() }
-                                    .toList()
-                                if(lines.isEmpty()) {
-                                    KeyValue("Type", "Carte EMV")
-                                } else {
-                                    lines.forEach { line ->
-                                        val idx = line.indexOf(':')
-                                        if(idx > 0 && idx < line.lastIndex) {
-                                            val key = line.substring(0, idx).trim()
-                                            val value = line.substring(idx + 1).trim()
-                                            KeyValue(key, value)
-                                        } else {
-                                            Text(
-                                                text = line,
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                            )
-                                            Spacer(modifier = Modifier.height(8.dp))
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (!link.isNullOrBlank()) {
-                        item {
-                            SectionCard(title = stringResource(R.string.nfc_section_link)) {
-                                Text(
-                                    text = link,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = accent,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { uriHandler.openUri(link) }
-                                        .padding(vertical = 6.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    item {
-                        if (canCopyForEmulation) {
-                            MaterialCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        emulationName = "Copie ${scan!!.type.ifBlank { "du badge" }}"
-                                        showCopyDialog = true
-                                    },
-                                accentColor = accent,
-                                cornerRadius = 12.dp,
-                            ) {
-                                Text(
-                                    text = "Copier le badge pour émulation",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = accent,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(vertical = 12.dp)
-                                )
-                            }
-                        } else {
+            if(!scan!!.ndefRecordType.isNullOrBlank()) {
+                item {
+                    SectionCard(title = stringResource(R.string.nfc_section_ndef)) {
+                        KeyValue(AppLocale.getString(context, R.string.nfc_detail_8), scan!!.ndefRecordType ?: "—")
+                        KeyValue(AppLocale.getString(context, R.string.nfc_detail_9), scan!!.ndefContent ?: "—")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showHex = !showHex }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
                             Text(
-                                text = "Ce badge ne peut pas être émulé",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                                text = if(showHex) AppLocale.getString(context, R.string.nfc_detail_10) else AppLocale.getString(context, R.string.nfc_detail_11),
+                                color = accent,
+                                fontWeight = FontWeight.SemiBold,
                             )
                         }
                         if(showHex) {

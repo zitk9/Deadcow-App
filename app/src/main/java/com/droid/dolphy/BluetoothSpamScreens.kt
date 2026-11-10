@@ -159,59 +159,37 @@ private fun BondSpamContent(
                                             onClick = {
                                                 vibrate(context)
                                                 viewModel.selectDevice(device)
-                                            },
-                                            modifier = Modifier.fillMaxWidth(),
-                                            shape = RoundedCornerShape(12.dp),
-                                            colors = CardDefaults.cardColors(
-                                                containerColor = if (isSelected) {
-                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                                                } else {
-                                                    MaterialTheme.colorScheme.surfaceContainer
-                                                }
-                                            ),
-                                            border = if (isSelected) {
-                                                BorderStroke(1.5.dp, accentColor)
-                                            } else null
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(12.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Bluetooth,
-                                                    contentDescription = null,
-                                                    tint = if (isSelected) accentColor else MaterialTheme.colorScheme.onSurfaceVariant,
-                                                    modifier = Modifier.size(24.dp)
-                                                )
-                                                Spacer(modifier = Modifier.width(12.dp))
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text(
-                                                        text = deviceName,
-                                                        style = MaterialTheme.typography.bodyLarge,
-                                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                                        color = MaterialTheme.colorScheme.onSurface
-                                                    )
-                                                    val subtitle = if (!resolved.manufacturer.isNullOrBlank() && !deviceName.contains(resolved.manufacturer, ignoreCase = true)) {
-                                                        "${device.address} • ${resolved.manufacturer}"
-                                                    } else {
-                                                        device.address
-                                                    }
-                                                    Text(
-                                                        text = subtitle,
-                                                        style = MaterialTheme.typography.bodySmall,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                                if (isSelected) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.CheckCircle,
-                                                        contentDescription = "Selected",
-                                                        tint = accentColor,
-                                                        modifier = Modifier.size(20.dp)
-                                                    )
-                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        shape = RoundedCornerShape(28.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                val targetName = selectedDevice?.let { BluetoothDeviceResolver.resolve(it, context = context).name }
                                 val targetText = if (targetName != null) {
                                     "${stringResource(R.string.bond_spam_target)} $targetName"
                                 } else {

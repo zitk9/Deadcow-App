@@ -32,7 +32,7 @@ object DeadcowChangelog {
 
     val ENTRIES = listOf(
         ChangelogEntry(
-            version = "v1.28",
+            version = "v1.30",
             date = "Novembre 2026",
             isCurrent = true,
             items = listOf(

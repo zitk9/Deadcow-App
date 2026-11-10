@@ -224,83 +224,8 @@ fun BleSmartHomeScanScreen(navController: NavController) {
                     Text("Bluetooth désactivé. Veuillez activer le Bluetooth.", color = MaterialTheme.colorScheme.onBackground)
                     return@Column
                 }
-
-                if (items.isEmpty()) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        if (isScanning) {
-                            val pulse = rememberInfiniteTransition(label = "scanPulse")
-                            val scale by pulse.animateFloat(
-                                initialValue = 1f,
-                                targetValue = 1.2f,
-                                animationSpec = infiniteRepeatable(tween(800), RepeatMode.Reverse),
-                                label = "scanPulseScale"
-                            )
-                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                Box(
-                                    modifier = Modifier
-                                        .size((34f * scale).dp)
-                                        .background(accent.copy(alpha = 0.16f), CircleShape),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Lightbulb,
-                                        contentDescription = null,
-                                        tint = accent,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                                Text(stringResource(R.string.us_scanning), color = MaterialTheme.colorScheme.onBackground)
-                            }
-                        } else if (noDevicesFound) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                Text(stringResource(R.string.ir_not_found), color = MaterialTheme.colorScheme.onBackground)
-                                DolphyIconButton(
-                                    onClick = { startScan() },
-                                    modifier = Modifier
-                                        .size(52.dp)
-                                        .background(accent.copy(alpha = 0.18f), CircleShape)
-                                ) {
-                                    Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.ble_rescan), tint = accent)
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    M3SegmentedList(
-                        items = items,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { index, count, item ->
-                        val hasRealName = !com.droid.dolphy.BluetoothDeviceResolver.isGenericUnknown(item.name)
-                        val title = if (hasRealName) {
-                            item.name
-                        } else if (item.vendor != "Unknown" && item.vendor.isNotBlank()) {
-                            "${item.vendor} (Lumière)"
-                        } else {
-                            "Lumière intelligente (${if (item.address.length >= 5) item.address.takeLast(5) else "BLE"})"
-                        }
-                        val supportingText = buildString {
-                            if (item.vendor != "Unknown" && item.vendor.isNotBlank() && !title.contains(item.vendor, ignoreCase = true)) {
-                                append(item.vendor)
-                                append(" • ")
-                            }
-                            append(item.address)
-                            append(" • ")
-                            append(item.rssi)
-                            append(" dBm")
-                        }
-                        M3SegmentedListItem(
-                            index = index,
-                            count = count,
-                            headline = title,
-                            supporting = supportingText,
-                            leadingIcon = Icons.Default.Lightbulb,
-                            leadingIconTint = accent,
-                            onClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                navController.navigate("ble_smart_home_device/${item.address}")
-                            },
-                        )
-                    }
+            if (items.isEmpty()) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     if (isScanning) {
                         val pulse = rememberInfiniteTransition(label = "scanPulse")
                         val scale by pulse.animateFloat(

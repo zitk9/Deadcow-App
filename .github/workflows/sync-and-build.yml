@@ -60,12 +60,11 @@ jobs:
             UPSTREAM_BRANCH="master"
           fi
 
-          LOCAL_REV=$(git rev-parse HEAD)
-          UPSTREAM_REV=$(git rev-parse upstream/${UPSTREAM_BRANCH})
-          echo "Local rev: $LOCAL_REV"
-          echo "Upstream rev: $UPSTREAM_REV"
+          # Check if upstream has new commits not yet merged into HEAD
+          UPSTREAM_NEW_COMMITS=$(git rev-list HEAD..upstream/${UPSTREAM_BRANCH} --count || echo "0")
+          echo "New upstream commits: $UPSTREAM_NEW_COMMITS"
 
-          if [ "$LOCAL_REV" != "$UPSTREAM_REV" ] || [ "${{ github.event.inputs.force_sync }}" == "true" ]; then
+          if [ "$UPSTREAM_NEW_COMMITS" -gt 0 ] || [ "${{ github.event.inputs.force_sync }}" == "true" ]; then
             echo "Attempting to merge upstream/${UPSTREAM_BRANCH}..."
             git merge upstream/${UPSTREAM_BRANCH} -m "chore(sync): merge upstream changes from official repo" || {
               echo "Resolving merge conflicts favoring Deadcow customizations..."

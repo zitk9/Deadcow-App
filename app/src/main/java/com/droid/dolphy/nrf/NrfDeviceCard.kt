@@ -268,381 +268,46 @@ private fun ExpandedDetails(
                     interactionSource = interaction,
                     enabled = !device.isProfiling
                 ) {
-
-                    DetailRow(
-                        label = "Adresse MAC",
-                        value = device.address,
-                        icon = Icons.Filled.ContentCopy,
-                        valueColor = Color.White
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
                     )
-
-
-                    DetailRow(
-                        label = "Type d'appareil",
-                        value = getDeviceTypeLabel(device.type),
-                        valueColor = Color.White
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.nrf_profile),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-
-                    DetailRow(
-                        label = "Puissance du signal",
-                        value = "${device.rssi} dBm (${getSignalStrength(device.rssi)})",
-                        valueColor = Color.White
+            if (device.isConnected) {
+                val (interaction, scale) = rememberPressShrink(pressedScale = 0.96f)
+                Button(
+                    onClick = { onDisconnect(device) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(44.dp)
+                        .scale(scale),
+                    shape = RoundedCornerShape(22.dp),
+                    interactionSource = interaction,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorScheme.error,
+                        contentColor = colorScheme.onError
                     )
-
-
-                    if (device.manufacturerName != null) {
-                        DetailRow(
-                            label = "Constructeur",
-                            value = device.manufacturerName,
-                            valueColor = Color.White
-                        )
-                    }
-
-
-                    if (device.batteryLevel != null) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    Color(0xFF4CAF50).copy(alpha = 0.1f),
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.BatteryFull,
-                                contentDescription = null,
-                                tint = Color(0xFF4CAF50),
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Niveau de batterie",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF4CAF50)
-                                )
-                                Text(
-                                    text = "${device.batteryLevel}%",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color(0xFF4CAF50)
-                                )
-                            }
-                        }
-                    }
-
-
-                    if (device.hasHID || device.hasAudio || device.hasBattery) {
-                        Column {
-                            Text(
-                                text = "Capacités détectées",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 4.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                if (device.hasHID) {
-                                    Surface(
-                                        shape = RoundedCornerShape(4.dp),
-                                        color = Color(0xFF2196F3).copy(alpha = 0.2f)
-                                    ) {
-                                        Text(
-                                            text = "Clavier HID",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = Color(0xFF2196F3),
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                        )
-                                    }
-                                }
-                                if (device.hasAudio) {
-                                    Surface(
-                                        shape = RoundedCornerShape(4.dp),
-                                        color = Color(0xFF9C27B0).copy(alpha = 0.2f)
-                                    ) {
-                                        Text(
-                                            text = "Audio",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = Color(0xFF9C27B0),
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                        )
-                                    }
-                                }
-                                if (device.hasBattery) {
-                                    Surface(
-                                        shape = RoundedCornerShape(4.dp),
-                                        color = Color(0xFF4CAF50).copy(alpha = 0.2f)
-                                    ) {
-                                        Text(
-                                            text = "Batterie",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = Color(0xFF4CAF50),
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                    if (device.gattServices.isNotEmpty()) {
-                        Column {
-                            Text(
-                                text = "Services GATT (${device.gattServices.size})",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            device.gattServices.take(5).forEach { service ->
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 8.dp, top = 4.dp)
-                                        .background(
-                                            colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                                            RoundedCornerShape(4.dp)
-                                        )
-                                        .padding(8.dp)
-                                ) {
-                                    Text(
-                                        text = service.name,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                    Text(
-                                        text = service.uuid,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = colorScheme.onSurfaceVariant
-                                    )
-                                    if (service.characteristics.isNotEmpty()) {
-                                        Text(
-                                            text = "${service.characteristics.size} caractéristiques",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = colorScheme.primary,
-                                            modifier = Modifier.padding(top = 2.dp)
-                                        )
-                                    }
-                                }
-                            }
-                            if (device.gattServices.size > 5) {
-                                Text(
-                                    text = "+${device.gattServices.size - 5} autres services",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = colorScheme.primary,
-                                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-                                )
-                            }
-                        }
-                    }
-
-
-                    if (device.serviceUuids.isNotEmpty() && device.gattServices.isEmpty()) {
-                        Column {
-                            Text(
-                                text = "Services annoncés (${device.serviceUuids.size})",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            device.serviceUuids.take(3).forEach { uuid ->
-                                Column(modifier = Modifier.padding(start = 8.dp, top = 4.dp)) {
-                                    Text(
-                                        text = getServiceName(uuid),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                    Text(
-                                        text = uuid,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-                            if (device.serviceUuids.size > 3) {
-                                Text(
-                                    text = "+${device.serviceUuids.size - 3} autres",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = colorScheme.primary,
-                                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-                                )
-                            }
-                        }
-                    }
-
-
-                    if (device.isVulnerable) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    Color(0xFFFF9800).copy(alpha = 0.1f),
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Warning,
-                                contentDescription = null,
-                                tint = Color(0xFFFF9800),
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Vulnérabilité potentielle",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFFFF9800)
-                                )
-                                Text(
-                                    text = device.vulnerabilityType?.name ?: "Standard",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color(0xFFFF9800)
-                                )
-                            }
-                        }
-                    }
-
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-
-                        if (!device.isConnected && device.gattServices.isEmpty()) {
-                            com.droid.dolphy.AccentButton(
-                                onClick = {
-                                    connectionState = ConnectionState.CONNECTING
-                                    onProfile(device)
-                                },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(40.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorScheme.primary
-                                ),
-                                enabled = connectionState == null
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Search,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Profile",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-
-                        if (device.isConnected) {
-                            com.droid.dolphy.AccentButton(
-                                onClick = {
-
-                                },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(40.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFF44336)
-                                )
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.LinkOff,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Disconnect",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-
-                        if (device.isVulnerable) {
-                            com.droid.dolphy.AccentButton(
-                                onClick = {
-                                    connectionState = ConnectionState.BYPASS_1
-
-                                },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(40.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFFF9800)
-                                ),
-                                enabled = connectionState == null
-                            ) {
-                                when (connectionState) {
-                                    ConnectionState.CONNECTING -> Text(
-                                        text = "Connecting...",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    ConnectionState.BYPASS_1 -> Text(
-                                        text = "Bypass 1...",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    ConnectionState.BYPASS_2 -> Text(
-                                        text = "Bypass 2...",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    ConnectionState.BYPASS_3 -> Text(
-                                        text = "Bypass 3...",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    ConnectionState.ERROR -> Text(
-                                        text = "Error",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    ConnectionState.SUCCESS -> Text(
-                                        text = "Success",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    null -> {
-                                        Icon(
-                                            imageVector = Icons.Filled.Link,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(
-                                            text = "Connect",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.LinkOff,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.nrf_disconnect),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }

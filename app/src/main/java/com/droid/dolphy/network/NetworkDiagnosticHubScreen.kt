@@ -1118,25 +1118,24 @@ fun NetworkDiagnosticHubScreen(navController: NavController) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        MaterialBackground(accentColor = MaterialTheme.colorScheme.primary) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-                    .navigationBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                SectionTopBar(
-                    title = stringResource(R.string.network_hub_title),
-                    onBack = { navController.popBackStack() },
-                    actions = {
-                        DolphyIconButton(onClick = { showPasswordDialog = true }) {
-                            Icon(Icons.Filled.VpnKey, contentDescription = stringResource(R.string.wifi_brute_force_passwords), tint = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                )
+    BlurHeaderBox(
+        title = stringResource(R.string.network_hub_title),
+        onBack = { navController.popBackStack() },
+        accentColor = MaterialTheme.colorScheme.primary,
+        actions = {
+            DolphyIconButton(onClick = { showPasswordDialog = true }) {
+                Icon(Icons.Filled.VpnKey, contentDescription = stringResource(R.string.wifi_brute_force_passwords), tint = MaterialTheme.colorScheme.primary)
+            }
+        },
+    ) { headerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(headerPadding))
 
             if (!wifiPermissionsGranted) {
                 Surface(

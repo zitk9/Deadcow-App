@@ -29,9 +29,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.droid.dolphy.BlurHeaderBox
+import com.droid.dolphy.MaterialBackground
 import com.droid.dolphy.MaterialCard
 import com.droid.dolphy.R
+import com.droid.dolphy.SectionTopBar
 
 @Composable
 fun PluginAboutScreen(navController: NavController) {
@@ -146,11 +147,26 @@ fun PluginAboutScreen(navController: NavController) {
                     CodeBlock(
                         """
                         def on_plugin_load(self):
-                            self.add_module(
-                                title="Radio Lab",
-                                description="Wireless diagnostics",
-                                icon="bluetooth",
-                                section="BLUETOOTH"
+                            self.hook_screen("ir_*", "ir_tools", "fab", 50)
+                            self.hook_action("infrared.transmit", 50)
+                            self.provide_service("infrared.transmitter", 100)
+
+                        def screen_ir_tools(self, ui, api, state):
+                            return ui.icon_button("usb", self.open_usb)
+
+                        def hook_infrared_transmit(self, payload):
+                            payload["source"] = "plugin"
+                            return {"payload": payload}
+
+                        def service_infrared_transmitter_available(self, payload):
+                            return {"available": self.usb_connected()}
+
+                        def service_infrared_transmitter_transmit(self, payload):
+                            if not self.usb_connected():
+                                return {"handled": False}
+                            ok = self.send_usb(
+                                payload["frequency"],
+                                payload["pattern"]
                             )
                             return {"handled": True, "ok": ok}
                         """.trimIndent(),
@@ -170,6 +186,22 @@ fun PluginAboutScreen(navController: NavController) {
                         """
                         enabled = self.get_setting("enabled", True)
                         self.set_setting("enabled", not enabled)
+
+                        self.api.registerSettings(
+                            "Radio Lab",
+                            '[{"type":"switch","key":"enabled","title":"Enabled","default":true}]'
+                        )
+                        """.trimIndent(),
+                    )
+                }
+                item {
+                    GuideCard(
+                        icon = Icons.Default.Security,
+                        title = "Modèle de sécurité de confiance",
+                        body = "Les plugins Python s'exécutent au sein du processus Deadcow et disposent des permissions de l'application, des données internes, du Root et de Shizuku. N'installez que du code audité ou en qui vous avez totale confiance.",
+                        accent = accent,
+                    )
+                }
             }
         }
     }

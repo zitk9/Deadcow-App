@@ -35,7 +35,6 @@ object OtherSections {
     const val OTHER = "OTHER"
     const val PLUGINS = "PLUGINS"
 
-
     val BUILTIN: Set<String> = setOf(INFRARED, BLUETOOTH, OTHER, PLUGINS, "ПРОЧЕЕ", "ПЛАГИНЫ")
 
     fun normalize(raw: String?): String {
