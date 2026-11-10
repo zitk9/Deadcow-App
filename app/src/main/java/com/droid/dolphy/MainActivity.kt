@@ -998,29 +998,17 @@ fun MainScaffold(
         NavHost(
             navController = screenNavController,
             startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
             modifier = Modifier.fillMaxSize()
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                 .then(
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                     if (showBottomBar && !performanceModeEnabled)
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                         Modifier.progressiveBlur(
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                             blurRadius = 40f,
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                             height = bottomBlurHeight,
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                             direction = BlurDirection.BOTTOM,
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                         )
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                     else Modifier
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                 )
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                 .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-            startDestination = if (appStyleMode == 1 || !hasBtHardware) "other" else "bluetooth",
                 .imePadding(),
             enterTransition = {
                 rootSectionEnterTransition(
@@ -1772,14 +1760,6 @@ private fun isSettingsSectionRoute(route: String): Boolean {
     if (route == "plugin_manager" || route == "plugin_security" ||
         route == "plugin_about" ||
         route == "plugin_install_helper" ||
-        route == "customize_animations" ||
-        route == "accent_color" ||
-        route == "plugin_store" ||
-        route == "plugin_store_detail"
-        route == "customize_animations" ||
-        route == "accent_color" ||
-        route == "plugin_store" ||
-        route == "plugin_store_detail"
         route == "customize_animations" ||
         route == "accent_color" ||
         route == "plugin_store" ||
