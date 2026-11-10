@@ -5,6 +5,7 @@ package com.droid.dolphy
 import android.bluetooth.le.*
 import android.content.*
 import android.os.*
+import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -44,6 +45,8 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
     val dolphyState by dolphyViewModel.dolphyState.collectAsState()
     val context = LocalContext.current
     var showAuthDialog by remember { mutableStateOf(false) }
+    var showChangelogDialog by remember { mutableStateOf(false) }
+    var showLeaderboardDialog by remember { mutableStateOf(false) }
 
     val appVersion = remember {
         runCatching {
@@ -91,7 +94,19 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                         accentColor = accentColor,
                         contentPadding = 12.dp
                     ) {
-                        DolphyScreen(dolphyViewModel, navController)
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            DolphyScreen(dolphyViewModel, navController)
+                            Spacer(Modifier.height(8.dp))
+                            FilledTonalButton(
+                                onClick = { showLeaderboardDialog = true },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Icon(Icons.Default.EmojiEvents, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Tableau des Rangs & Classement Cyber")
+                            }
+                        }
                     }
                 }
             }
@@ -126,18 +141,20 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
+                            val availableLanguages = listOf(
+                                "Français" to "fr",
+                                "English" to "en",
+                                stringResource(R.string.language_russian) to "ru",
+                            )
                             SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                                listOf(
-                                    stringResource(R.string.language_russian) to "ru",
-                                    "English" to "en",
-                                ).forEachIndexed { index, (label, language) ->
+                                availableLanguages.forEachIndexed { index, (label, language) ->
                                     SegmentedButton(
                                         selected = appLanguage == language,
                                         onClick = {
                                             spamViewModel.setAppLanguage(language)
                                             applyInAppLocale(context)
                                         },
-                                        shape = SegmentedButtonDefaults.itemShape(index, 2),
+                                        shape = SegmentedButtonDefaults.itemShape(index, availableLanguages.size),
                                         label = { Text(label) },
                                     )
                                 }
@@ -370,7 +387,7 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                     val isAdaptiveColor by spamViewModel.isAdaptiveColor.collectAsState()
                     val colorOptions = remember {
                         val base = listOf(
-                            SettingColorOption("Dolphy", OrangeAccent),
+                            SettingColorOption("Deadcow", OrangeAccent),
                             SettingColorOption("Red", RedThemeAccent),
                             SettingColorOption("Green", GreenThemeAccent),
                             SettingColorOption("Purple", PurpleThemeAccent),
@@ -725,19 +742,103 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                         contentPadding = 0.dp
                     ) {
                         Column {
-                            SettingsItem(onClick = { uriHandler.openUri("https://t.me/Dolphy_app_official") }) {
-                                Icon(Icons.AutoMirrored.Filled.Send, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                            SettingsItem(onClick = { uriHandler.openUri("https://zitk9.github.io/Deadcow-App/") }) {
+                                Icon(Icons.Default.Language, null, tint = accentColor, modifier = Modifier.size(24.dp))
                                 Spacer(Modifier.width(12.dp))
-                                Text("Dolphy dev", style = MaterialTheme.typography.bodyLarge)
+                                Text("Documentation Deadcow", style = MaterialTheme.typography.bodyLarge)
                                 Spacer(Modifier.weight(1f))
                                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                             MaterialDivider()
-                            SettingsItem(onClick = { uriHandler.openUri("https://github.com/unvoiddd/Dolphy-App") }) {
-                                Icon(Icons.Default.Circle, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                            SettingsItem(onClick = { uriHandler.openUri("https://github.com/zitk9/Deadcow-App") }) {
+                                Icon(Icons.Default.Code, null, tint = accentColor, modifier = Modifier.size(24.dp))
                                 Spacer(Modifier.width(12.dp))
-                                Text("Github", style = MaterialTheme.typography.bodyLarge)
+                                Text("GitHub Repository", style = MaterialTheme.typography.bodyLarge)
                                 Spacer(Modifier.weight(1f))
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = { AutoUpdater.checkForUpdates(context, manualTrigger = true) }) {
+                                Icon(Icons.Default.SystemUpdate, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Mise à jour automatique (GitHub)", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Vérifier et installer la dernière version Deadcow",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = { showChangelogDialog = true }) {
+                                Icon(Icons.Default.Article, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Journal des modifications (Changelog)", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Nouveautés v1.30 : M3 Expressive, TV Cast, NRF Scanner rapide & Plugin Store",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = { showLeaderboardDialog = true }) {
+                                Icon(Icons.Default.EmojiEvents, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Système de classement & Rangs", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Voir le tableau d'honneur des Cyber Bovins et votre score",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = {
+                                val ok = DeadcowBackupManager.saveBackup(context)
+                                Toast.makeText(
+                                    context,
+                                    if (ok) "Progression et thèmes sauvegardés !" else "Erreur de sauvegarde",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }) {
+                                Icon(Icons.Default.CloudUpload, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Sauvegarder ma progression & mes thèmes", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Sauvegarde persistante de vos données (XP, paquets, thèmes)",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            MaterialDivider()
+                            SettingsItem(onClick = {
+                                val ok = DeadcowBackupManager.restoreBackup(context)
+                                Toast.makeText(
+                                    context,
+                                    if (ok) "Progression et thèmes restaurés avec succès !" else "Aucune sauvegarde trouvée",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }) {
+                                Icon(Icons.Default.CloudDownload, null, tint = accentColor, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Restaurer ma progression & mes thèmes", style = MaterialTheme.typography.bodyLarge)
+                                    Text(
+                                        text = "Restaure vos statistiques et configurations enregistrées",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
@@ -748,14 +849,13 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Dolphy ($appVersion)\nLicensed under GNU GPL",
+                    text = "Deadcow Tool ($appVersion)\nCrédits : deadcow.ghw\nLicence GNU GPLv3",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
             }
-
 
             item {
                 Column(
@@ -765,40 +865,41 @@ fun SettingsScreen(spamViewModel: SpamViewModel, dolphyViewModel: DolphyViewMode
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Credits:",
+                        text = "Crédits :",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "ZalexDev",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "deadcow.ghw",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "ars3nb",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "Astrocodee",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "Winterballs",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "Pinaplast",
+                        text = "Communauté Deadcow / cDc",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         }
+        }
+
+        if (showChangelogDialog) {
+            ChangelogDialog(
+                currentVersion = appVersion,
+                onDismiss = { showChangelogDialog = false }
+            )
+        }
+
+        if (showLeaderboardDialog) {
+            DeadcowLeaderboardDialog(
+                dolphyState = dolphyState,
+                onDismiss = { showLeaderboardDialog = false }
+            )
         }
     }
 }

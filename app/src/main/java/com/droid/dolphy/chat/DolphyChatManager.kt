@@ -82,11 +82,12 @@ class DolphyChatManager(context: Context) : AutoCloseable {
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             val text = result.scanRecord?.getServiceData(CHAT_UUID)?.toString(Charsets.UTF_8) ?: return
-            if (!text.startsWith("DOLPHY:")) return
+            if (!text.startsWith("DOLPHY:") && !text.startsWith("DEADCOW:")) return
             val address = result.device.address
             main.post {
                 if (closed || !scanning) return@post
-                val user = ChatUser(address, text.removePrefix("DOLPHY:"), address)
+                val name = if (text.startsWith("DEADCOW:")) text.removePrefix("DEADCOW:") else text.removePrefix("DOLPHY:")
+                val user = ChatUser(address, name, address)
                 val index = discoveredUsers.indexOfFirst { it.id == address }
                 if (index >= 0) discoveredUsers[index] = user else discoveredUsers.add(user)
             }

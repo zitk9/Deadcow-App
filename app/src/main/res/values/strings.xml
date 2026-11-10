@@ -1122,55 +1122,55 @@ Sous licence GNU GPL.</string>
 
     <!-- Merged upstream strings -->
 
-    <string name="chat_status_connected">Connected</string>
+    <string name="chat_status_connected">Connecté</string>
 
-    <string name="chat_status_scanning">Scanning…</string>
+    <string name="chat_status_scanning">Recherche…</string>
 
-    <string name="chat_status_offline">Offline</string>
+    <string name="chat_status_offline">Hors-ligne</string>
 
-    <string name="chat_empty_title">No messages yet</string>
+    <string name="chat_empty_title">Aucun message pour l\'instant</string>
 
-    <string name="chat_empty_hint">Say hello to a nearby Dolphy user — new messages will show up here.</string>
+    <string name="chat_empty_hint">Dites bonjour à un utilisateur Deadcow à proximité — les nouveaux messages apparaîtront ici.</string>
 
-    <string name="pmanager_import_plugin">Import plugin</string>
+    <string name="pmanager_import_plugin">Importer un plugin</string>
 
     <string name="pmanager_plugin_store">Plugin Store</string>
 
-    <string name="pabout_section_minimal">Minimal plugin</string>
+    <string name="pabout_section_minimal">Plugin minimal</string>
 
-    <string name="pabout_section_full_access">Full access</string>
+    <string name="pabout_section_full_access">Accès complet</string>
 
-    <string name="pabout_title_root">Android, Root and Shizuku</string>
+    <string name="pabout_title_root">Android, Root et Shizuku</string>
 
-    <string name="pabout_body_root">api.getContext(), api.getApplicationContext(), api.getClassLoader(), api.getAndroid(), and api.getDevice() return real Dolphy Java objects. Commands are available through api.shellExec(), api.rootExec(), api.shizukuExec(), and api.smartExec().</string>
+    <string name="pabout_body_root">api.getContext(), api.getApplicationContext(), api.getClassLoader(), api.getAndroid() et api.getDevice() retournent les objets Java réels de Deadcow. Les commandes système sont exécutables via api.shellExec(), api.rootExec(), api.shizukuExec() et api.smartExec().</string>
 
-    <string name="pabout_section_radio">Radio interfaces</string>
+    <string name="pabout_section_radio">Interfaces radio</string>
 
-    <string name="pabout_title_bluetooth">Bluetooth and BLE</string>
+    <string name="pabout_title_bluetooth">Bluetooth et BLE</string>
 
-    <string name="pabout_body_bluetooth">api.getAndroid() provides advertising, GATT client/server, RFCOMM, bonding, and adapter details. api.getDevice() provides BLE scan, hardware capabilities, and system operations.</string>
+    <string name="pabout_body_bluetooth">api.getAndroid() fournit la diffusion, le client/serveur GATT, RFCOMM, l\'appairage et les détails de l\'adaptateur. api.getDevice() fournit le scan BLE, les fonctionnalités matérielles et les opérations système.</string>
 
-    <string name="pabout_title_wifi">Wi-Fi and networking</string>
+    <string name="pabout_title_wifi">Wi-Fi et réseau</string>
 
-    <string name="pabout_body_wifi">Wi-Fi scan results, interfaces, DHCP, channels, NSD, sockets, HTTP, and direct access to the Android WifiManager are available. Root and Shizuku unlock the device\'s system networking tools.</string>
+    <string name="pabout_body_wifi">Les résultats de scan Wi-Fi, les interfaces, le DHCP, les canaux, le NSD, les sockets, le HTTP et l\'accès direct au WifiManager Android sont disponibles. Root et Shizuku débloquent les outils réseau système.</string>
 
-    <string name="pabout_section_hooking">App hooking</string>
+    <string name="pabout_section_hooking">Crochets d\'application (Hooking)</string>
 
-    <string name="pabout_title_hooks">Screens, actions, and services</string>
+    <string name="pabout_title_hooks">Écrans, actions et services</string>
 
-    <string name="pabout_body_hooks">hook_screen() adds an overlay, a FAB, or fully replaces the stock screen. hook_action() intercepts named operations and can modify the data, handle, or cancel the action. provide_service() installs a new implementation of a system capability with priority and a stock fallback.</string>
+    <string name="pabout_body_hooks">hook_screen() ajoute une surcouche, un FAB ou remplace complètement l\'écran d\'origine. hook_action() intercepte les opérations nommées. provide_service() installe une nouvelle implémentation d\'une capacité système.</string>
 
-    <string name="pabout_title_hook_modes">Screen hook modes</string>
+    <string name="pabout_title_hook_modes">Modes de crochet d\'écran</string>
 
-    <string name="pabout_body_hook_modes">replace swaps the screen, overlay draws a free-form layer on top of it, top and bottom add a Material 3 panel, and fab adds a compact floating action. Route masks support *, e.g. ir_* or other/*.</string>
+    <string name="pabout_body_hook_modes">replace échange l\'écran, overlay dessine une couche libre par-dessus, top et bottom ajoutent un panneau Material 3, et fab ajoute une action flottante compacte.</string>
 
-    <string name="pabout_section_state">State and settings</string>
+    <string name="pabout_section_state">État et paramètres</string>
 
-    <string name="pabout_title_trusted">Trusted model</string>
+    <string name="pabout_title_trusted">Modèle de confiance</string>
 
-    <string name="pabout_body_trusted">A Python plugin runs inside the Dolphy process and can obtain app permissions, internal data, Root, and Shizuku. Only install code you have read or fully trust.</string>
+    <string name="pabout_body_trusted">Les plugins Python s\'exécutent au sein du processus Deadcow et disposent des permissions de l\'application, des données internes, du Root et de Shizuku. N\'installez que du code audité ou en qui vous avez totale confiance.</string>
 
-    <string name="psafe_clipboard_label">Dolphy plugin crash log</string>
+    <string name="psafe_clipboard_label">Journal de crash du plugin Deadcow</string>
 
     <string name="psafe_size_mb">%.1f MB</string>
 
@@ -1208,7 +1208,7 @@ Sous licence GNU GPL.</string>
 
     <string name="chat_start_failed">Could not start chat. Check Bluetooth and BLE advertising support.</string>
 
-    <string name="chat_no_recipients">No Dolphy users nearby. Open chat on the other device.</string>
+    <string name="chat_no_recipients">Aucun utilisateur Deadcow à proximité. Ouvrez le chat sur l\'autre appareil.</string>
 
     <string name="chat_send_not_ready">Chat is not ready yet — check Bluetooth and your name, then try again</string>
 

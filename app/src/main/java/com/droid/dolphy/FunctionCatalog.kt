@@ -35,7 +35,7 @@ fun functionDestinationSections(): List<Pair<String, List<FunctionDestination>>>
     val bySection = androidx.compose.runtime.remember(revision, pluginCards) { PluginRegistry.otherBySection() }
 
     val irFlipperTitle = stringResource(R.string.ir_flipper_remotes)
-    val irFlipperDesc = stringResource(R.string.other_ir_flipper_desc)
+    val irFlipperDesc = stringResource(R.string.other_ir_flipper_desc) + " + " + stringResource(R.string.tv_remotes_label)
     val irStormTitle = stringResource(R.string.ir_storm)
     val irStormDesc = stringResource(R.string.other_ir_storm_desc)
     val irJammerTitle = stringResource(R.string.ir_jammer)
